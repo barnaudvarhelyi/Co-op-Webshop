@@ -85,15 +85,6 @@ public class User {
     }
     return new ArrayList<>();
   }
-
-  public List<Ad> getAds() {
-    return ads;
-  }
-
-  public void setAds(List<Ad> ads) {
-    this.ads = ads;
-  }
-
   public Boolean isVerified() {
     return isVerified;
   }
@@ -120,7 +111,6 @@ public class User {
         && Objects.equals(email, user.email)
         && Objects.equals(password, user.password)
         && Objects.equals(role, user.role)
-        && Objects.equals(ads, user.ads)
         && Objects.equals(isVerified, user.isVerified);
   }
 

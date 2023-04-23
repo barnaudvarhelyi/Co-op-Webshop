@@ -1,5 +1,6 @@
 package mine.homeworkproject.security;
 
+import mine.homeworkproject.repositories.UserRepository;
 import mine.homeworkproject.services.UserPrincipalDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,57 +12,22 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfiguration {
   private final UserPrincipalDetailsService userPrincipalDetailsService;
   private final UserRepository userRepository;
-  private final MessageService messageService;
 
   @Autowired
   public SecurityConfiguration(
       UserPrincipalDetailsService userPrincipalDetailsService,
-      UserRepository userRepository,
-      MessageService messageService) {
+      UserRepository userRepository) {
     this.userPrincipalDetailsService = userPrincipalDetailsService;
     this.userRepository = userRepository;
-    this.messageService = messageService;
   }
 
-  @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.authorizeRequests()
-        .and()
-        .cors()
-        .disable()
-        .csrf()
-        .disable()
-        .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-        .addFilter(
-            new JwtAuthenticationFilter(
-                authenticationManager(http, passwordEncoder(), userPrincipalDetailsService),
-                userRepository,
-                messageService))
-        .addFilter(
-            new JwtAuthorizationFilter(
-                authenticationManager(http, passwordEncoder(), userPrincipalDetailsService),
-                userRepository));
-    return http.build();
-  }
-  @Bean
-  DaoAuthenticationProvider authenticationProvider() {
-    DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-    daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-    daoAuthenticationProvider.setUserDetailsService(this.userPrincipalDetailsService);
-
-    return daoAuthenticationProvider;
-  }
   @Bean
   public AuthenticationManager authenticationManager(
       HttpSecurity http,
@@ -75,7 +41,40 @@ public class SecurityConfiguration {
         .build();
   }
   @Bean
-  public PasswordEncoder passwordEncoder() {
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.authorizeRequests()
+        .antMatchers(
+            "/login*",
+            "/register*").permitAll()
+        .and()
+        .cors().disable()
+        .csrf().disable()
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .addFilter(
+            new AuthenticationFilter(
+                authenticationManager(http, passwordEncoder(), userPrincipalDetailsService),
+                userRepository))
+        .addFilter(
+            new AuthorizationFilter(
+                authenticationManager(http, passwordEncoder(), userPrincipalDetailsService),
+                userRepository));
+
+    return http.build();
+  }
+
+  @Bean
+  public BCryptPasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
+  }
+
+  @Bean
+  DaoAuthenticationProvider authenticationProvider() {
+    DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+    daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+    daoAuthenticationProvider.setUserDetailsService(this.userPrincipalDetailsService);
+
+    return daoAuthenticationProvider;
   }
 }
