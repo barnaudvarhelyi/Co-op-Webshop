@@ -1,7 +1,20 @@
 import logo from './logo.svg';
 import './App.css';
+import React from 'react'
 
 function App() {
+
+  const [data, setData] = React.useState({})
+
+
+  React.useEffect(() => {
+    fetch(`http://localhost:8080/api/useres/all`)
+      .then(res => res.json())
+      .then(data => setData(data))
+  }, [])
+
+  console.log(data);
+
   return (
     <div className="App">
       <header className="App-header">
