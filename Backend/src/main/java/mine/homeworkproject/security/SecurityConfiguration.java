@@ -45,9 +45,9 @@ public class SecurityConfiguration {
     http.authorizeRequests()
         .antMatchers(
             "/login*",
-            "/register*").permitAll()
+            "/register*",
+            "/api/*").permitAll()
         .and()
-        .cors().disable()
         .csrf().disable()
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
