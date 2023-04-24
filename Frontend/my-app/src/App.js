@@ -6,7 +6,6 @@ function App() {
 
   const [data, setData] = React.useState({})
 
-
   React.useEffect(() => {
     fetch(`http://localhost:8080/api/users/all`)
       .then(res => res.json())
