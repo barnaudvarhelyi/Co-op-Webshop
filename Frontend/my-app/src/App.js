@@ -8,7 +8,7 @@ function App() {
 
 
   React.useEffect(() => {
-    fetch(`http://localhost:8080/api/useres/all`)
+    fetch(`http://localhost:8080/api/users/all`)
       .then(res => res.json())
       .then(data => setData(data))
   }, [])
