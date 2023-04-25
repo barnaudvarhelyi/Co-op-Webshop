@@ -27,7 +27,6 @@ public class SecurityConfiguration {
     this.userPrincipalDetailsService = userPrincipalDetailsService;
     this.userRepository = userRepository;
   }
-
   @Bean
   public AuthenticationManager authenticationManager(
       HttpSecurity http,
