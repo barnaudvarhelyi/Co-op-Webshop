@@ -27,16 +27,11 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
   private final AuthenticationManager authenticationManager;
   private final UserRepository userRepository;
-  private Boolean isEmptyPassword;
-  private Boolean isEmptyUsername;
-
   public AuthenticationFilter(
       AuthenticationManager authenticationManager,
       UserRepository userRepository) {
     this.authenticationManager = authenticationManager;
     this.userRepository = userRepository;
-    this.isEmptyPassword = false;
-    this.isEmptyUsername = false;
   }
 
   @Override
@@ -44,25 +39,38 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
       HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
     UserDto user;
+    boolean isEmptyPassword = false;
+    boolean isEmptyUsername = false;
 
     try {
       user = new ObjectMapper().readValue(request.getInputStream(), UserDto.class);
 
       if (user.getPassword().equals("") || user.getPassword() == null) {
         isEmptyPassword = true;
-      } else if (user.getUsername().equals("") || user.getUsername() == null) {
+        response.setStatus(401);
+      }
+      if (user.getUsername().equals("") || user.getUsername() == null) {
         isEmptyUsername = true;
+        response.setStatus(401);
       }
 
-      if (!isEmptyUsername
-          && !userRepository.findByUsername(user.getUsername()).isPresent()) {
-        response.setStatus(401);
-        responseInBody(
-            response,
-            new ResponseDto("no_user_for_username_response"));
-
+      if (isEmptyUsername && isEmptyPassword) {
+        responseInBody(response, new ResponseDto("Username and password fields are empty!"));
+        return null;
+      } else if (isEmptyUsername) {
+        responseInBody(response, new ResponseDto("Username field is empty!"));
+        return null;
+      } else if (isEmptyPassword) {
+        responseInBody(response, new ResponseDto("Password field is empty!"));
         return null;
       }
+      if (!userRepository.findByUsername(user.getUsername()).isPresent()) {
+        response.setStatus(401);
+        responseInBody(response,
+            new ResponseDto("Username or password field is incorrect!"));
+        return null;
+      }
+
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -83,7 +91,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
       throws IOException {
 
     UserPrincipal principal = (UserPrincipal) authResult.getPrincipal();
-
+    response.setStatus(200);
     String token =
         JWT.create()
             .withClaim("userId", principal.getUser().getId())
@@ -93,7 +101,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
 
     response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + token);
-    responseInBody(response, new LoginResponseDto(response.getStatus(), principal.getUsername(), token));
+    responseInBody(response,
+        new LoginResponseDto(response.getStatus(), principal.getUsername(), token));
   }
 
   @Override
@@ -101,20 +110,12 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
       HttpServletRequest request, HttpServletResponse response, AuthenticationException failed)
       throws IOException {
 
-    if (isEmptyUsername || isEmptyPassword) {
-      response.setStatus(400);
-      responseInBody(
-          response,
-          new ResponseDto("username_or_password_field_is_empty_response"));
-    } else {
-      response.setStatus(401);
-      responseInBody(
-          response,
-          new ResponseDto("username_or_password_field_is_incorrect_response"));
-    }
-    this.isEmptyUsername = false;
-    this.isEmptyPassword = false;
+    response.setStatus(401);
+    responseInBody(
+        response,
+        new ResponseDto("Username or password field is incorrect!"));
   }
+
   private void responseInBody(HttpServletResponse response, Object message) throws IOException {
     ServletServerHttpResponse servletServerHttpResponse = new ServletServerHttpResponse(response);
     MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter =

@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
         .orElseThrow(
             () ->
                 new RuntimeException(
-                    username + "no_user_for_username_response"));
+                    username + " is not found!"));
 
   }
 
