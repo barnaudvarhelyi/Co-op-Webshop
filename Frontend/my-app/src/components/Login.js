@@ -7,16 +7,18 @@ export default function Login() {
     const ProceedLogin = (e) => {
         e.preventDefault()
         if(validate()){
-            // console.log('proceed');
             fetch("http://localhost:8080/login", {
                 method: 'POST',
+                mode: "no-cors",
                 headers: { "Content-Type": "application/json"},
-            }).then((res) =>{
-                return res.json()
-            }).then((resp) => {
-                console.log(resp);
+                body: JSON.stringify({
+                    'username': username,
+                    'password': password})
+            }).then((res) =>  res.json()
+            ).then((result) => {
+                console.log(result)
             }).catch((err) => {
-                console.log('Login Failed due to :'+err.message);
+                console.log('Login Failed due to : '+ err.message);
             })
         }
     }
@@ -36,7 +38,7 @@ export default function Login() {
 
     return (
         <div>
-            <form onSubmit={ProceedLogin} action="http://localhost:8080/login" method="POST">
+            <form onSubmit={ProceedLogin} method="POST">
                 <input value={username} onChange={e => setUsername(e.target.value)} name="username" />
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} name="password" />
                 <button type="submit">Login</button>

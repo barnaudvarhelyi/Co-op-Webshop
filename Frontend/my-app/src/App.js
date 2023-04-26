@@ -16,7 +16,7 @@ function App() {
       .then(data => setData(data))
   }, [])
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <BrowserRouter>

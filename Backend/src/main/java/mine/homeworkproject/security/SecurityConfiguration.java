@@ -1,5 +1,6 @@
 package mine.homeworkproject.security;
 
+import java.util.Arrays;
 import mine.homeworkproject.repositories.UserRepository;
 import mine.homeworkproject.services.UserPrincipalDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +14,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-@CrossOrigin(origins = "http://localhost:3000")
 public class SecurityConfiguration {
   private final UserPrincipalDetailsService userPrincipalDetailsService;
   private final UserRepository userRepository;
@@ -49,6 +51,8 @@ public class SecurityConfiguration {
             "/register*",
             "/api/*").permitAll()
         .and()
+        .cors().configurationSource(corsConfiguration())
+        .and()
         .csrf().disable()
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -77,5 +81,23 @@ public class SecurityConfiguration {
     daoAuthenticationProvider.setUserDetailsService(this.userPrincipalDetailsService);
 
     return daoAuthenticationProvider;
+  }
+
+  @Bean
+  public CorsConfigurationSource corsConfiguration() {
+    CorsConfiguration corsConfig = new CorsConfiguration();
+    corsConfig.applyPermitDefaultValues();
+    corsConfig.setAllowCredentials(true);
+    corsConfig.addAllowedMethod("GET");
+    corsConfig.addAllowedMethod("PATCH");
+    corsConfig.addAllowedMethod("POST");
+    corsConfig.addAllowedMethod("OPTIONS");
+    corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+    corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Requestor-Type"));
+    corsConfig.setExposedHeaders(Arrays.asList("X-Get-Header"));
+    UrlBasedCorsConfigurationSource source =
+        new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", corsConfig);
+    return source;
   }
 }
