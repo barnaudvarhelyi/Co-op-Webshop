@@ -20,7 +20,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-public class SecurityConfiguration {
+public class SecurityConfiguration  {
   private final UserPrincipalDetailsService userPrincipalDetailsService;
   private final UserRepository userRepository;
 
@@ -45,13 +45,13 @@ public class SecurityConfiguration {
   }
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.authorizeRequests()
+    http.cors().configurationSource(corsConfigurationSource())
+        .and()
+        .authorizeRequests()
         .antMatchers(
             "/login*",
             "/register*",
             "/api/*").permitAll()
-        .and()
-        .cors().configurationSource(corsConfiguration())
         .and()
         .csrf().disable()
         .sessionManagement()
@@ -84,20 +84,9 @@ public class SecurityConfiguration {
   }
 
   @Bean
-  public CorsConfigurationSource corsConfiguration() {
-    CorsConfiguration corsConfig = new CorsConfiguration();
-    corsConfig.applyPermitDefaultValues();
-    corsConfig.setAllowCredentials(true);
-    corsConfig.addAllowedMethod("GET");
-    corsConfig.addAllowedMethod("PATCH");
-    corsConfig.addAllowedMethod("POST");
-    corsConfig.addAllowedMethod("OPTIONS");
-    corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-    corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Requestor-Type"));
-    corsConfig.setExposedHeaders(Arrays.asList("X-Get-Header"));
-    UrlBasedCorsConfigurationSource source =
-        new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", corsConfig);
+  CorsConfigurationSource corsConfigurationSource() {
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
     return source;
   }
 }

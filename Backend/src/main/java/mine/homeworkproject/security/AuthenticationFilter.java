@@ -9,6 +9,7 @@ import java.util.Date;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import mine.homeworkproject.dtos.LoginResponseDto;
 import mine.homeworkproject.dtos.ResponseDto;
 import mine.homeworkproject.dtos.UserDto;
@@ -69,7 +70,6 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             new ResponseDto("Username or password field is incorrect!"));
         return null;
       }
-
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

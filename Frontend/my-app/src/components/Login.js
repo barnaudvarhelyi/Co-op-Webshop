@@ -19,16 +19,18 @@ export default function Login() {
 
     function submitForm(e){
         e.preventDefault()
-        console.log(formData);
-    }
 
-    fetch('http://localhost:8080/login', {
+        fetch('http://localhost:8080/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData),
-    })
+        body: JSON.stringify(formData)
+        })
+        .then(res => res.json())
+        .then(data => console.log(data))
+        .catch(err => console.log("Error: " + err))
+    }
 
     return (
         <div>
