@@ -1,45 +1,41 @@
 import { useState } from "react"
 
 export default function Login() {
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
 
-    const ProceedLogin = (e) => {
+    const [formData, setFormData] = useState({
+        username: '',
+        password: ''
+    })
+
+    function handleChange(e){
+        const name = e.target.name;
+        const value = e.target.value;
+
+        setFormData({
+            ...formData,
+            [name]: value
+        })
+    }
+
+    function submitForm(e){
         e.preventDefault()
-        if(validate()){
-            // console.log('proceed');
-            fetch("http://localhost:8080/login", {
-                method: 'POST',
-                headers: { "Content-Type": "application/json"},
-            }).then((res) =>{
-                return res.json()
-            }).then((resp) => {
-                console.log(resp);
-            }).catch((err) => {
-                console.log('Login Failed due to :'+err.message);
-            })
-        }
+        console.log(formData);
     }
 
-    const validate = () => {
-        let result = true
-        if(username === '' || username === null){
-            result = false;
-            console.log("Please enter username");
-        }
-        if(password === '' || password === null){
-            result = false;
-            console.log("Please enter password");
-        }
-        return result
-    }
+    fetch('http://localhost:8080/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData),
+    })
 
     return (
         <div>
-            <form onSubmit={ProceedLogin} action="http://localhost:8080/login" method="POST">
-                <input value={username} onChange={e => setUsername(e.target.value)} name="username" />
-                <input type="password" value={password} onChange={e => setPassword(e.target.value)} name="password" />
-                <button type="submit">Login</button>
+            <form onSubmit={submitForm} method="POST">
+                <input name="username" type="text" placeholder="username" onChange={handleChange} value={formData.name}/>
+                <input name="password" type="password" placeholder="password" onChange={handleChange} value={formData.name}/>
+                <button type="submit">Submit</button>
             </form>
         </div>
     )
