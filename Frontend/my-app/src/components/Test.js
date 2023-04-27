@@ -1,5 +1,8 @@
-export default function Test(){
+export default function Test(props){
     return(
-        <h1>Test page</h1>
+        <div>
+            <h1>Test page</h1>
+            <p>Welcome, {props.formData.username}</p>
+        </div>
     )
 }
