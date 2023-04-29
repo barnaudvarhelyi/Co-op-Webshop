@@ -52,7 +52,7 @@ public class SecurityConfiguration  {
         .antMatchers(
             "/login*",
             "/register*",
-            "/api/*").permitAll()
+            "/api*").permitAll()
         .and()
         .csrf().disable()
         .sessionManagement()

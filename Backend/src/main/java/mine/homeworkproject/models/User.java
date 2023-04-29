@@ -22,22 +22,22 @@ public class User {
   private String email;
   private String password;
   private String role;
-  private Boolean isVerified;
+  @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH)
+  private List<Product> products;
+
+  public User() {}
 
   public User(String username, String email, String password, String role) {
     this.username = username;
     this.email = email;
     this.password = password;
     this.role = role;
-    this.isVerified = false;
   }
 
   public User(Long id, String username) {
     this.id = id;
     this.username = username;
   }
-
-  public User() {}
 
   public Long getId() {
     return id;
@@ -85,16 +85,13 @@ public class User {
     }
     return new ArrayList<>();
   }
-  public Boolean isVerified() {
-    return isVerified;
+
+  public List<Product> getProducts() {
+    return products;
   }
 
-  public void setVerified(boolean verified) {
-    isVerified = verified;
-  }
-
-  public void verifyUser() {
-    isVerified = true;
+  public void setProducts(List<Product> products) {
+    this.products = products;
   }
 
   @Override
@@ -106,16 +103,14 @@ public class User {
       return false;
     }
     User user = (User) o;
-    return Objects.equals(id, user.id)
-        && Objects.equals(username, user.username)
-        && Objects.equals(email, user.email)
-        && Objects.equals(password, user.password)
-        && Objects.equals(role, user.role)
-        && Objects.equals(isVerified, user.isVerified);
+    return Objects.equals(id, user.id) && Objects.equals(username, user.username)
+        && Objects.equals(email, user.email) && Objects.equals(password,
+        user.password) && Objects.equals(role, user.role) && Objects.equals(
+        products, user.products);
   }
 
   @Override
   public int hashCode() {
-    return 0;
+    return Objects.hash(id, username, email, password, role, products);
   }
 }
