@@ -1,7 +1,7 @@
 package mine.homeworkproject.controllers;
 
 import java.util.List;
-import mine.homeworkproject.dtos.ProductAPIDto;
+import mine.homeworkproject.dtos.ProductDto;
 import mine.homeworkproject.models.Product;
 import mine.homeworkproject.models.User;
 import mine.homeworkproject.services.ProductService;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class APIController {
-  private UserService userService;
-  private ProductService productService;
+  private final UserService userService;
+  private final ProductService productService;
 
   public APIController(UserService userService, ProductService productService) {
     this.userService = userService;
@@ -32,6 +32,6 @@ public class APIController {
 
   @GetMapping("/api/products/all")
   public List<Product> getAllProducts() {
-    return productService.getAll();
+    return productService.getAllProducts();
   }
 }
