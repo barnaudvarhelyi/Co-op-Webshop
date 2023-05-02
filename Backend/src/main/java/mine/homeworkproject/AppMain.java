@@ -31,7 +31,7 @@ public class AppMain implements CommandLineRunner {
   public void run(String... args) throws Exception {
 //    userRepository.save(new User("Admin", "admin@gmail.com", passwordEncoder.encode("Admin"), "Admin"));
 //    userRepository.save(new User("User", "user@gmail.com", passwordEncoder.encode("User"), "User"));
-//
+
 //    productService.getRandomProductsFromAPI();
     System.out.println("---------- App has been started! ----------");
   }
