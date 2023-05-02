@@ -9,7 +9,11 @@ export default function Home() {
     useEffect(() => {
         fetch('http://localhost:8080/api/products/all')
         .then(res => res.json())
-        .then(data => console.log(data))
+        .then(data => {
+            for (let index = 0; index < data.length; index++) {
+                console.log(data[index].name);
+            }
+        })
         .catch(err => console.log("Error: " + err))
     }, [])
 
@@ -44,8 +48,6 @@ export default function Home() {
     }
     
     function addProduct(e){
-        e.preventDefault()
-  
         fetch('http://localhost:8080/products/create', {
         method: 'POST',
         headers: {
