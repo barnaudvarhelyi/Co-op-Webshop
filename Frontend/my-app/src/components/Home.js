@@ -43,9 +43,7 @@ export default function Home() {
         console.log(productData);
     }
     
-    function addProduct(e){
-        e.preventDefault()
-  
+    function addProduct(e){ 
         fetch('http://localhost:8080/products/create', {
         method: 'POST',
         headers: {
