@@ -9,6 +9,8 @@ export default function Login(props) {
   useEffect(()=> {
     if(!props.loginData.message && props.formData.username && props.formData.password)
     navigate('/test');
+    localStorage.setItem("username", props.formData.username)
+    localStorage.setItem("token", props.loginData.token)
 }, [props.loginData, navigate])
 
     return (
