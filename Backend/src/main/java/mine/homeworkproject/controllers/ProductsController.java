@@ -22,7 +22,6 @@ public class ProductsController {
 
   @PostMapping("/products/create")
   public ResponseEntity createNewProduct(@RequestBody @Valid ProductCreateDto product, HttpServletRequest request) {
-    System.out.println(product.getName() +  product.getDescription() + product.getPhotoUrl() + product.getPurchasePrice() + " " + product.getStartingPrice());
     return productService.createProduct(product, request);
   }
 }
