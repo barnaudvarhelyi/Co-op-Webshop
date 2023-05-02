@@ -53,6 +53,8 @@ public class SecurityConfiguration  {
             "/login*",
             "/register*",
             "/api*").permitAll()
+        //TODO hibaforrás
+        .antMatchers("/products**").authenticated()
         .and()
         .csrf().disable()
         .sessionManagement()
