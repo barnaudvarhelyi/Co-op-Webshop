@@ -5,7 +5,7 @@ export default function Login(props) {
 
     const navigate = useNavigate()
 
-    
+
   useEffect(()=> {
     if(!props.loginData.message && props.formData.username && props.formData.password)
     navigate('/test');
@@ -26,7 +26,7 @@ export default function Login(props) {
                 <input name="password" type="password" placeholder="Password" onChange={props.handleChange} value={props.formData.name}/>
                 <button type="submit">Login</button>
             </form>
-            </div>
+        </div>
         </section>
     )
 }
