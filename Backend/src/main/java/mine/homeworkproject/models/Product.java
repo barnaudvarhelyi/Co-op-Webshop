@@ -1,5 +1,7 @@
 package mine.homeworkproject.models;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import mine.homeworkproject.dtos.ProductCreateDto;
 
 @Entity
 @Table(name = "products")
@@ -28,13 +31,14 @@ public class Product {
   public Product() {
   }
 
-  public Product(String name, String description, String photoUrl, Double purchasePrice) {
+  public Product(String name, String description, String photoUrl, Double purchasePrice, Double startingPrice) {
     this.name = name;
     this.description = description;
     this.photoUrl = photoUrl;
-    this.startingPrice = purchasePrice * 0.8;
+    this.startingPrice = startingPrice;
     this.purchasePrice = purchasePrice;
   }
+
   public Long getId() {
     return id;
   }
@@ -43,10 +47,9 @@ public class Product {
     this.id = id;
   }
 
-  public User getUser() {
-    return user;
+  public Long getUser() {
+    return user == null ? null : user.getId();
   }
-
   public void setUser(User user) {
     this.user = user;
   }

@@ -11,20 +11,13 @@ public class ProductCreateDto {
   private Double purchasePrice;
 
   public ProductCreateDto() {}
-  public ProductCreateDto(Product product) {
-    this.name = product.getName();
-    this.description = product.getDescription();
-    this.photoUrl = product.getPhotoUrl();
-    this.startingPrice = product.getStartingPrice();
-    this.purchasePrice = product.getPurchasePrice();
-  }
 
-  public ProductCreateDto(String title, String description, String image, Double price){
-    this.name = title;
+  public ProductCreateDto(String name, String description, String photoUrl, Double purchasePrice, Double startingPrice){
+    this.name = name;
     this.description = description;
-    this.photoUrl = image;
-    this.startingPrice = price * 0.8;
-    this.purchasePrice = price;
+    this.photoUrl = photoUrl;
+    this.startingPrice = startingPrice;
+    this.purchasePrice = purchasePrice;
   }
 
   public String getName() {

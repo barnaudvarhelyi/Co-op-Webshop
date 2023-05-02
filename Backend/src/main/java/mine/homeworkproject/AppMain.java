@@ -33,5 +33,6 @@ public class AppMain implements CommandLineRunner {
     userRepository.save(new User("User", "user@gmail.com", passwordEncoder.encode("User"), "User"));
 
     productService.getRandomProductsFromAPI();
+    System.out.println("---------- App has been started! ----------");
   }
 }

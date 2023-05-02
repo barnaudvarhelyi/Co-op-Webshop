@@ -86,8 +86,13 @@ public class User {
     return new ArrayList<>();
   }
 
-  public List<Product> getProducts() {
-    return products;
+  public List<Long> getProducts() {
+
+    List<Long> longs = new ArrayList<>();
+    for (Product i : products) {
+      longs.add(i.getId());
+    }
+    return longs;
   }
 
   public void setProducts(List<Product> products) {
