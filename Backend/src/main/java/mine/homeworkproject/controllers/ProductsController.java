@@ -1,7 +1,6 @@
 package mine.homeworkproject.controllers;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import mine.homeworkproject.dtos.ProductCreateDto;
 import mine.homeworkproject.services.ProductService;
 import mine.homeworkproject.services.UserService;
@@ -21,7 +20,7 @@ public class ProductsController {
   }
 
   @PostMapping("/products/create")
-  public ResponseEntity createNewProduct(@RequestBody @Valid ProductCreateDto product, HttpServletRequest request) {
+  public ResponseEntity createNewProduct(@RequestBody ProductCreateDto product, HttpServletRequest request) {
     return productService.createProduct(product, request);
   }
 }

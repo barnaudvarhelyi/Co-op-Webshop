@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -47,6 +48,7 @@ public class ProductServiceImpl implements ProductService {
     Optional<User> user = userService.getUserByToken(request);
     ResponseDto responseDto;
 
+
     if (!user.isPresent()) {
       responseDto = new ResponseDto("User not found!");
       return ResponseEntity.status(404).body(responseDto);
@@ -54,6 +56,12 @@ public class ProductServiceImpl implements ProductService {
 
     try {
       Product product = new Product(productCreateDto.getName(), productCreateDto.getDescription(), productCreateDto.getPhotoUrl(), productCreateDto.getPurchasePrice(), productCreateDto.getStartingPrice());
+
+      ResponseEntity response = validateInputFields(product);
+      if (response != null) {
+        return response;
+      }
+
       product.setUser(user.get());
       productRepository.save(product);
       return ResponseEntity.status(201).body(new ProductDto(product));
@@ -101,10 +109,28 @@ public class ProductServiceImpl implements ProductService {
     }
     return response.toString();
   }
-
   private List<ProductAPIDto> parseRespons(String data) {
     Gson gson = new Gson();
     Type productListType = new TypeToken<List<ProductAPIDto>>() {}.getType();
     return gson.fromJson(data, productListType);
+  }
+  private ResponseEntity validateInputFields(Product p) {
+    ResponseDto responseDto;
+
+    if (p.getDescription().equals("") || p.getDescription() == null
+        || p.getPhotoUrl().equals("") || p.getPhotoUrl() == null
+        || p.getName().equals("") || p.getName() == null
+        || p.getPurchasePrice() == null
+        || p.getStartingPrice() == null
+    ) {
+      responseDto = new ResponseDto("Please provide valid inputs!");
+      return ResponseEntity.status(400).body(responseDto);
+    }
+    if (p.getPurchasePrice() <= 0 || p.getStartingPrice() <= 0) {
+      responseDto = new ResponseDto("Please provide valid numbers!");
+      return ResponseEntity.status(400).body(responseDto);
+    }
+
+    return null;
   }
 }
