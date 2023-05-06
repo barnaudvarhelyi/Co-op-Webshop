@@ -2,25 +2,25 @@ import logo from './logo.svg';
 import './App.css';
 import './style.scss';
 import React from 'react'
-import { BrowserRouter, Routes, Route } from "react-router-dom"
-import Home from './components/Home';
 import { useState, useEffect } from "react"
-import Test from './components/Test'
+import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Navbar from './components/Navbar';
-import Dashboard from './components/Dashboard';
+import Home from './components/Home';
 import Login from './components/Login';
+import Profile from './components/Profile';
+import SingleProduct from './components/SingleProduct';
 
 function App() {
 
-  const [data, setData] = React.useState({})
+  const [data, setData] = useState()
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetch(`http://localhost:8080/api/users/all`)
       .then(res => res.json())
       .then(data => setData(data))
   }, [])
-  
-  const [loginData, setLoginData] = useState([])
+
+  const [loginData, setLoginData] = useState()
 
   const [formData, setFormData] = useState({
       username: '',
@@ -52,14 +52,23 @@ function App() {
       .catch(err => console.log("Error: " + err))
   }
 
+  const [products, setProducts] = useState([])
+
+  useEffect(() => {
+      fetch('http://localhost:8080/api/products/all')
+      .then(res => res.json())
+      .then(data => setProducts(data))
+      .catch(err => console.log("Error: " + err))
+  }, [])
+
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navbar />}>
-          <Route index element={<Home />} />
-          <Route path="dashboard" element={<Dashboard />} />
+          <Route index element={<Home products={products}/>} />
           <Route path="login" element={<Login loginData={loginData} submitForm={submitForm} handleChange={handleChange} formData={formData}/>} />
-          <Route path="test" element={<Test formData={formData}/>} />
+          <Route path="profile" element={<Profile products={products} />} />
+          <Route path="products/:productId" element={<SingleProduct products={products}/>}/>
         </Route>
       </Routes>
     </BrowserRouter>

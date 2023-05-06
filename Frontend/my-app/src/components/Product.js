@@ -1,10 +1,17 @@
+import { Link } from "react-router-dom"
+
 export default function Product(props){
     return(
         <div className="product">
-            <img className="product-img" src={props.img}></img>
+            <div className="product-img">
+                <img src={props.image} />
+            </div>
             <div className="product-text">
-                <h1>{props.title}</h1>
-                <h3>{props.price}</h3>
+                <h3>{props.title}</h3>
+                <h4>Purchasing Price:</h4>
+                <h4>${props.purchasePrice}</h4>
+                <h4>Starting Price:</h4>
+                <h4>${props.startingPrice}</h4>
             </div>
         </div>
     )
