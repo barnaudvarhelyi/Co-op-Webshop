@@ -71,7 +71,3 @@ yarn-debug.log*
 yarn-error.log*
 /.changelog
 .npm/
-<<<<<<< HEAD
->>>>>>> f16e13202b801c715d2de189036082093105525f
-=======
->>>>>>> ba3e3ca3efb66cc5d103ed4411947a92dfc8e491

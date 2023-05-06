@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import mine.homeworkproject.dtos.ProductAPIDto;
+import mine.homeworkproject.dtos.ProductByIdResponsDto;
 import mine.homeworkproject.dtos.ProductCreateDto;
 import mine.homeworkproject.dtos.ProductDto;
 import mine.homeworkproject.dtos.ResponseDto;
@@ -44,10 +45,10 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public ResponseEntity createProduct(ProductCreateDto productCreateDto, HttpServletRequest request) {
+  public ResponseEntity createProduct(ProductCreateDto productCreateDto,
+      HttpServletRequest request) {
     Optional<User> user = userService.getUserByToken(request);
     ResponseDto responseDto;
-
 
     if (!user.isPresent()) {
       responseDto = new ResponseDto("User not found!");
@@ -55,7 +56,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     try {
-      Product product = new Product(productCreateDto.getName(), productCreateDto.getDescription(), productCreateDto.getPhotoUrl(), productCreateDto.getPurchasePrice(), productCreateDto.getStartingPrice());
+      Product product = new Product(productCreateDto.getName(), productCreateDto.getDescription(),
+          productCreateDto.getPhotoUrl(), productCreateDto.getPurchasePrice(),
+          productCreateDto.getStartingPrice());
 
       ResponseEntity response = validateInputFields(product);
       if (response != null) {
@@ -72,10 +75,30 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public void getRandomProductsFromAPI() {
+  public ResponseEntity getProductById(Long id) {
+    Optional<Product> product = productRepository.findById(id);
+    ResponseDto responseDto;
 
+    if (!product.isPresent()) {
+      responseDto = new ResponseDto("Product not found!");
+      return ResponseEntity.status(404).body(responseDto);
+    }
+    String user;
+    if (product.get().getUser() == null) {
+      user = "Not given!";
+    } else {
+      user = userService.findUserById(product.get().getUser()).getUsername();
+    }
+
+    ProductByIdResponsDto respons = new ProductByIdResponsDto(product.get(), user);
+    return ResponseEntity.status(200).body(respons);
+  }
+
+  @Override
+  public void getRandomProductsFromAPI() {
     for (ProductAPIDto p : parseRespons(getDataFromAPI())) {
-      Product product = new Product(p.getTitle(), p.getDescription(), p.getImage(), p.getPrice(), p.getPrice() * 0.8);
+      Product product = new Product(p.getTitle(), p.getDescription(), p.getImage(), p.getPrice(),
+          p.getPrice() * 0.8);
       productRepository.save(product);
     }
   }
@@ -109,11 +132,14 @@ public class ProductServiceImpl implements ProductService {
     }
     return response.toString();
   }
+
   private List<ProductAPIDto> parseRespons(String data) {
     Gson gson = new Gson();
-    Type productListType = new TypeToken<List<ProductAPIDto>>() {}.getType();
+    Type productListType = new TypeToken<List<ProductAPIDto>>() {
+    }.getType();
     return gson.fromJson(data, productListType);
   }
+
   private ResponseEntity validateInputFields(Product p) {
     ResponseDto responseDto;
 

@@ -13,4 +13,6 @@ public interface ProductService {
   List<Product> getAllProducts();
 
   ResponseEntity createProduct(ProductCreateDto product, HttpServletRequest request);
+
+  ResponseEntity getProductById(Long id);
 }
