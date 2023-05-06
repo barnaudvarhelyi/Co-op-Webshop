@@ -12,15 +12,7 @@ import SingleProduct from './components/SingleProduct';
 
 function App() {
 
-  const [data, setData] = useState()
-
-  useEffect(() => {
-    fetch(`http://localhost:8080/api/users/all`)
-      .then(res => res.json())
-      .then(data => setData(data))
-  }, [])
-
-  const [loginData, setLoginData] = useState()
+  const [loginData, setLoginData] = useState([])
 
   const [formData, setFormData] = useState({
       username: '',
@@ -55,11 +47,15 @@ function App() {
   const [products, setProducts] = useState([])
 
   useEffect(() => {
-      fetch('http://localhost:8080/api/products/all')
-      .then(res => res.json())
-      .then(data => setProducts(data))
-      .catch(err => console.log("Error: " + err))
+    displayAllProducts()
   }, [])
+
+  function displayAllProducts(){
+    fetch('http://localhost:8080/api/products/all')
+    .then(res => res.json())
+    .then(data => setProducts(data))
+    .catch(err => console.log("Error: " + err))
+  }
 
   return (
     <BrowserRouter>
@@ -67,7 +63,7 @@ function App() {
         <Route path="/" element={<Navbar />}>
           <Route index element={<Home products={products}/>} />
           <Route path="login" element={<Login loginData={loginData} submitForm={submitForm} handleChange={handleChange} formData={formData}/>} />
-          <Route path="profile" element={<Profile products={products} />} />
+          <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts}/>} />
           <Route path="products/:productId" element={<SingleProduct products={products}/>}/>
         </Route>
       </Routes>
