@@ -5,7 +5,6 @@ export default function Login(props) {
 
     const navigate = useNavigate()
 
-    
   useEffect(()=> {
     if(!props.loginData.message && props.formData.username && props.formData.password)
     navigate('/test');
