@@ -57,15 +57,6 @@ function App() {
     .catch(err => console.log("Error: " + err))
   }
 
-  function getProductById(){
-
-  }
-
-  fetch(`http://localhost:8080/products/3`)
-  .then(res => res.json())
-  .then(data => console.log(data))
-  .catch(err => console.log(err))
-
   return (
     <BrowserRouter>
       <Routes>
@@ -73,7 +64,7 @@ function App() {
           <Route index element={<Home products={products}/>} />
           <Route path="login" element={<Login loginData={loginData} submitForm={submitForm} handleChange={handleChange} formData={formData}/>} />
           <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts}/>} />
-          <Route path="products/:productId" element={<SingleProduct products={products} getProductById={getProductById} />}/>
+          <Route path="products/:productId" element={<SingleProduct products={products} />}/>
         </Route>
       </Routes>
     </BrowserRouter>
