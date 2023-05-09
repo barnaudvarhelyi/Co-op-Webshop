@@ -1,5 +1,6 @@
 package mine.homeworkproject.models;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,8 +36,8 @@ public class Product {
     this.name = name;
     this.description = description;
     this.photoUrl = photoUrl;
-    this.startingPrice = startingPrice;
-    this.purchasePrice = purchasePrice;
+    this.startingPrice = Math.round(startingPrice*100.0)/100.0;
+    this.purchasePrice = Math.round(purchasePrice*100.0)/100.0;
   }
 
   public Long getId() {
@@ -48,8 +49,9 @@ public class Product {
   }
 
   public Long getUser() {
-    return user == null ? null : user.getId();
+    return user == null ? 1 : user.getId();
   }
+
   public void setUser(User user) {
     this.user = user;
   }
