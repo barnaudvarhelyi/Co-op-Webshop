@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import mine.homeworkproject.models.User;
+import org.springframework.http.ResponseEntity;
 
 public interface UserService {
   User findUserByUsername(String username);
@@ -13,4 +14,6 @@ public interface UserService {
   User findUserById(Long id);
 
   Optional<User> getUserByToken(HttpServletRequest request);
+
+  ResponseEntity getUserProfile(HttpServletRequest request);
 }

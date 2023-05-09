@@ -99,6 +99,7 @@ public class ProductServiceImpl implements ProductService {
     for (ProductAPIDto p : parseRespons(getDataFromAPI())) {
       Product product = new Product(p.getTitle(), p.getDescription(), p.getImage(), p.getPrice(),
           p.getPrice() * 0.8);
+      product.setUser(userService.findUserById(1L));
       productRepository.save(product);
     }
   }

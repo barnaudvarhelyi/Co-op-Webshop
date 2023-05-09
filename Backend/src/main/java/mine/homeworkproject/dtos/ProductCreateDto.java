@@ -1,5 +1,6 @@
 package mine.homeworkproject.dtos;
 
+import java.text.DecimalFormat;
 import java.util.Objects;
 import mine.homeworkproject.models.Product;
 
@@ -16,8 +17,8 @@ public class ProductCreateDto {
     this.name = name;
     this.description = description;
     this.photoUrl = photoUrl;
-    this.startingPrice = startingPrice;
-    this.purchasePrice = purchasePrice;
+    this.startingPrice = Math.round(startingPrice*100.0)/100.0;
+    this.purchasePrice = Math.round(purchasePrice*100.0)/100.0;
   }
 
   public String getName() {
