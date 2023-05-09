@@ -1,7 +1,7 @@
 import { Outlet, Link } from "react-router-dom"
 import { useState } from "react"
 
-export default function Navbar(){
+export default function Navbar(props){
 
     let loggedIn = localStorage.getItem("username")
 

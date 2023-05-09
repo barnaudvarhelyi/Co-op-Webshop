@@ -7,8 +7,8 @@ export default function Login(props) {
  
   useEffect(()=> {
     if(!props.loginData.message && props.formData.username && props.formData.password){
-        localStorage.setItem("username", props.formData.username)
         localStorage.setItem("token", props.loginData.token)
+        localStorage.setItem("username", props.loginData.username)
         navigate('/profile');
     }
 }, [props.loginData])

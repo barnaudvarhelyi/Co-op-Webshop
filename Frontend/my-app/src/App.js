@@ -57,13 +57,25 @@ function App() {
     .catch(err => console.log("Error: " + err))
   }
 
+  const [userProfile, setUserProfile] = useState()
+
+  useEffect(() => {
+    fetch('http://localhost:8080/profile', {
+      headers: {
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+    .then(res => res.json())
+    .then(data => setUserProfile(data))
+  }, [])
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navbar />}>
+        <Route path="/" element={<Navbar/>}>
           <Route index element={<Home products={products}/>} />
-          <Route path="login" element={<Login loginData={loginData} submitForm={submitForm} handleChange={handleChange} formData={formData}/>} />
-          <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts}/>} />
+          <Route path="login" element={<Login loginData={loginData} submitForm={submitForm} handleChange={handleChange} formData={formData} />} />
+          <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts} userProfile={userProfile} />} />
           <Route path="products/:productId" element={<SingleProduct products={products} />}/>
         </Route>
       </Routes>
