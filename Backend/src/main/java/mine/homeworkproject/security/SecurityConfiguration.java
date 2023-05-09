@@ -1,6 +1,9 @@
 package mine.homeworkproject.security;
 
+import com.google.common.collect.Lists;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import mine.homeworkproject.repositories.UserRepository;
 import mine.homeworkproject.services.UserPrincipalDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,9 +94,25 @@ public class SecurityConfiguration  {
   }
 
   @Bean
-  CorsConfigurationSource corsConfigurationSource() {
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(Arrays.asList("*"));
+    configuration.setAllowedMethods(Arrays.asList("*"));
+    configuration.setAllowedHeaders(Arrays.asList("*"));
+    configuration.setExposedHeaders(Arrays.asList("Authorization"));
+    configuration.setAllowCredentials(true);
+    configuration.setMaxAge(3600L);
+
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+    source.registerCorsConfiguration("/**", configuration);
+
     return source;
   }
+//  @Bean
+//  CorsConfigurationSource corsConfigurationSource() {
+//    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//    source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+//    return source;
+//
+//  }
 }
