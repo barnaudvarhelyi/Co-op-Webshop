@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -77,10 +75,9 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public ResponseEntity getProductById(Long id) {
     Optional<Product> product = productRepository.findById(id);
-    ResponseDto responseDto;
 
     if (!product.isPresent()) {
-      responseDto = new ResponseDto("Product not found!");
+      ResponseDto responseDto = new ResponseDto("Product not found!");
       return ResponseEntity.status(404).body(responseDto);
     }
     String user;
@@ -92,6 +89,25 @@ public class ProductServiceImpl implements ProductService {
 
     ProductByIdResponsDto respons = new ProductByIdResponsDto(product.get(), user);
     return ResponseEntity.status(200).body(respons);
+  }
+
+  @Override
+  public ResponseEntity deleteProductById(Long id, HttpServletRequest request) {
+    Optional<Product> product = productRepository.findById(id);
+    Optional<User> user = userService.getUserByToken(request);
+    ResponseDto responseDto;
+
+    if (!user.isPresent()){
+      return ResponseEntity.status(404).body(new ResponseDto("User not found!"));
+    }
+    if (!product.isPresent()) {
+      return ResponseEntity.status(404).body(new ResponseDto("Product not found!"));
+    }
+    if (!product.get().getUser().equals(user.get().getId())) {
+      return ResponseEntity.status(403).body(new ResponseDto("Access denied!"));
+    }
+    productRepository.delete(product.get());
+    return ResponseEntity.status(200).body(new ResponseDto("Resource deleted successfully!"));
   }
 
   @Override
