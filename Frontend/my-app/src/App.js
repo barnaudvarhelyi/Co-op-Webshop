@@ -48,6 +48,7 @@ function App() {
 
   useEffect(() => {
     displayAllProducts()
+    displayProfileInformations()
   }, [])
 
   function displayAllProducts(){
@@ -59,7 +60,7 @@ function App() {
 
   const [userProfile, setUserProfile] = useState()
 
-  useEffect(() => {
+  function displayProfileInformations(){
     fetch('http://localhost:8080/profile', {
       headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`
@@ -67,7 +68,7 @@ function App() {
     })
     .then(res => res.json())
     .then(data => setUserProfile(data))
-  }, [])
+  }
 
   return (
     <BrowserRouter>
@@ -75,7 +76,7 @@ function App() {
         <Route path="/" element={<Navbar/>}>
           <Route index element={<Home products={products}/>} />
           <Route path="login" element={<Login loginData={loginData} submitForm={submitForm} handleChange={handleChange} formData={formData} />} />
-          <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts} userProfile={userProfile} />} />
+          <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts} userProfile={userProfile} displayProfileInformations={displayProfileInformations} />} />
           <Route path="products/:productId" element={<SingleProduct products={products} />}/>
         </Route>
       </Routes>
