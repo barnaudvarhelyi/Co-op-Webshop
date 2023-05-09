@@ -5,14 +5,14 @@ import mine.homeworkproject.models.Product;
 
 public class UserProfileResponsDto {
   private String username;
-  private Integer uplodedProductsCount;
-  private List<Product> uplodedProducts;
+  private Integer uploadedProductsCount;
+  private List<Product> uploadedProducts;
 
-  public UserProfileResponsDto(String username, Integer uplodedProductsCount,
-      List<Product> uplodedProducts) {
+  public UserProfileResponsDto(String username, Integer uploadedProductsCount,
+      List<Product> uploadedProducts) {
     this.username = username;
-    this.uplodedProductsCount = uplodedProductsCount;
-    this.uplodedProducts = uplodedProducts;
+    this.uploadedProductsCount = uploadedProductsCount;
+    this.uploadedProducts = uploadedProducts;
   }
 
   public String getUsername() {
@@ -23,19 +23,19 @@ public class UserProfileResponsDto {
     this.username = username;
   }
 
-  public Integer getUplodedProductsCount() {
-    return uplodedProductsCount;
+  public Integer getUploadedProductsCount() {
+    return uploadedProductsCount;
   }
 
-  public void setUplodedProductsCount(Integer uplodedProductsCount) {
-    this.uplodedProductsCount = uplodedProductsCount;
+  public void setUploadedProductsCount(Integer uploadedProductsCount) {
+    this.uploadedProductsCount = uploadedProductsCount;
   }
 
-  public List<Product> getUplodedProducts() {
-    return uplodedProducts;
+  public List<Product> getUploadedProducts() {
+    return uploadedProducts;
   }
 
-  public void setUplodedProducts(List<Product> uplodedProducts) {
-    this.uplodedProducts = uplodedProducts;
+  public void setUploadedProducts(List<Product> uploadedProducts) {
+    this.uploadedProducts = uploadedProducts;
   }
 }
