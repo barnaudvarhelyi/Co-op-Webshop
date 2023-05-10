@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Product from "./Product"
 import { json, useNavigate } from "react-router-dom"
 
@@ -21,6 +21,16 @@ export default function Profile(props){
         setProductData({
             ...productData,
             [name]: value
+        })
+    }
+
+    function clearProductData(){
+        setProductData({
+            name: "",
+            description: "",
+            photoUrl: "",
+            startingPrice: "",
+            purchasePrice: ""
         })
     }
 
@@ -68,6 +78,7 @@ export default function Profile(props){
         productForm.style.display = 'none'
         addProduct.style.display = 'flex'
         productForm.reset()
+        clearProductData()
     }
 
     let username
