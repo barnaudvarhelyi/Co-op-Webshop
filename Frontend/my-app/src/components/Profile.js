@@ -1,6 +1,6 @@
 import { useState } from "react"
 import Product from "./Product"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 export default function Profile(props){
 
@@ -24,31 +24,13 @@ export default function Profile(props){
         })
     }
 
-    function clearProductData(){
-        setProductData({
-            name: "",
-            description: "",
-            photoUrl: "",
-            purchasePrice: "",
-            startingPrice: ""
-        })
-
-        const productForm = document.querySelector('#addProductForm')
-        productForm.reset()
-    }
-
     const [uploadMessage, setUploadMessage] = useState()
 
-    function uploadedProduct(message){
-        if (message === undefined && productData.name && productData.description && productData.photoUrl && productData.startingPrice && productData.purchasePrice) {
-            cancelItem()
-        }
-        setUploadMessage(message)
-    }
+    const navigate = useNavigate()
     
-    function addProduct(e){
+    async function addProduct(e){
         e.preventDefault()
-        fetch('http://localhost:8080/products/create', {
+        const res = await fetch('http://localhost:8080/products', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -56,15 +38,14 @@ export default function Profile(props){
         },
         body: JSON.stringify(productData)
         })
-        .then(res => res.json())
-        .then(data => {
-            props.displayAllProducts()
-            props.displayProfileInformations()
-            const message = data.message
-            uploadedProduct(message)
-        })
-        .catch(err => console.log("Error: " + err))
-        clearProductData()
+        const data = await res.json()
+        props.displayAllProducts()
+        props.displayProfileInformations()
+        setUploadMessage(data.message)
+        if(res.status === 201){
+            cancelItem()
+            navigate(`/products/${data.productId}`)
+        }
     }
 
     function displayForm(){
@@ -84,7 +65,7 @@ export default function Profile(props){
 
     let uploadedProducts
     let uploadedProductsCount
-    
+
     if(props.userProfile){
 
         uploadedProducts = props.userProfile.uploadedProducts.map(function(item){
@@ -105,7 +86,7 @@ export default function Profile(props){
     }
 
     function deleteProduct(id){
-        fetch(`http://localhost:8080/products/delete/${id}`, {
+        fetch(`http://localhost:8080/products/${id}`, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem("token")}`
