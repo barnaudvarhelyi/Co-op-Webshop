@@ -1,6 +1,6 @@
 import { useState } from "react"
 import Product from "./Product"
-import { json, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 export default function Profile(props){
 
@@ -37,13 +37,11 @@ export default function Profile(props){
     const [uploadMessage, setUploadMessage] = useState()
 
     function uploadedProduct(message){
-        if (message == undefined && productData.name && productData.description && productData.photoUrl && productData.startingPrice && productData.purchasePrice) {
+        if (message === undefined && productData.name && productData.description && productData.photoUrl && productData.startingPrice && productData.purchasePrice) {
             cancelItem()
         }
         setUploadMessage(message)
     }
-
-    const navigate = useNavigate()
     
     function addProduct(e){
         e.preventDefault()
@@ -63,6 +61,7 @@ export default function Profile(props){
             uploadedProduct(message)
         })
         .catch(err => console.log("Error: " + err))
+        console.log(productData);
     }
 
     function displayForm(){
@@ -81,23 +80,25 @@ export default function Profile(props){
         clearProductData()
     }
 
-    let username
     let uploadedProducts
     let uploadedProductsCount
 
     if(props.userProfile){
-        username = props.userProfile.username
 
         uploadedProducts = props.userProfile.uploadedProducts.map(function(item){
-            return <Product key={item.id} title={item.name} />
+            console.log(item.id);
+            return <div key={item.id}>
+                <Product title={item.name} />
+                <button onClick={() => deleteProduct(item.id)}>Törlés</button>
+                <Link to={`/products/${item.id}`}>More information</Link>
+            </div>
         })
 
         uploadedProductsCount = props.userProfile.uploadedProductsCount
     }
 
-    function deleteProduct(e){
-        e.preventDefault()
-        fetch(`http://localhost:8080/products/delete/8`, {
+    function deleteProduct(id){
+        fetch(`http://localhost:8080/products/delete/${id}`, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem("token")}`
@@ -123,13 +124,13 @@ export default function Profile(props){
                 <input type="text" name="name" onChange={handleItem} placeholder="Title"/>
                 <input type="text" name="description" onChange={handleItem} placeholder="Description"/>
                 <input type="text" name="photoUrl" onChange={handleItem} placeholder="Photo"/>
-                <input type="number" name="purchasePrice" onChange={handleItem} placeholder="Purchase Price"/>
-                <input type="number" name="startingPrice" onChange={handleItem} placeholder="Starting Price"/>
-                <button type="submit">Add Item</button>
-                <br />
-                <button type="button" onClick={cancelItem}>Cancel</button>
+                <input type="number" name="purchasePrice" onChange={handleItem} placeholder="Purchase Price" step=".01"/>
+                <input type="number" name="startingPrice" onChange={handleItem} placeholder="Starting Price" step=".01"/>
+                <div className="button-container">
+                    <button type="button" onClick={cancelItem}>Cancel</button>
+                    <button type="submit">Add Item</button>
+                </div>
             </form>
-            <button onClick={deleteProduct}>Törlés</button>
             {uploadedProductsCount}
             {uploadedProducts}
             </div>
