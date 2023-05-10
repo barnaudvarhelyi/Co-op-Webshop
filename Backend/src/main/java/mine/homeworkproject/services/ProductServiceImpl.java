@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import mine.homeworkproject.dtos.ProductAPIDto;
@@ -45,6 +46,7 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public ResponseEntity createProduct(ProductCreateDto productCreateDto,
       HttpServletRequest request) {
+
     Optional<User> user = userService.getUserByToken(request);
     ResponseDto responseDto;
 
@@ -52,17 +54,14 @@ public class ProductServiceImpl implements ProductService {
       responseDto = new ResponseDto("User not found!");
       return ResponseEntity.status(404).body(responseDto);
     }
-
     try {
-      Product product = new Product(productCreateDto.getName(), productCreateDto.getDescription(),
-          productCreateDto.getPhotoUrl(), productCreateDto.getPurchasePrice(),
-          productCreateDto.getStartingPrice());
-
-      ResponseEntity response = validateInputFields(product);
+      ResponseEntity response = validateInputFields(productCreateDto);
       if (response != null) {
         return response;
       }
-
+      Product product = new Product(productCreateDto.getName(), productCreateDto.getDescription(),
+          productCreateDto.getPhotoUrl(), productCreateDto.getPurchasePrice(),
+          productCreateDto.getStartingPrice());
       product.setUser(user.get());
       productRepository.save(product);
       return ResponseEntity.status(201).body(new ProductDto(product));
@@ -157,14 +156,14 @@ public class ProductServiceImpl implements ProductService {
     return gson.fromJson(data, productListType);
   }
 
-  private ResponseEntity validateInputFields(Product p) {
+  private ResponseEntity validateInputFields(ProductCreateDto p) {
     ResponseDto responseDto;
 
     if (p.getDescription().equals("") || p.getDescription() == null
         || p.getPhotoUrl().equals("") || p.getPhotoUrl() == null
         || p.getName().equals("") || p.getName() == null
-        || p.getPurchasePrice() == null
-        || p.getStartingPrice() == null
+        || Objects.isNull(p.getStartingPrice())
+        || Objects.isNull(p.getPurchasePrice())
     ) {
       responseDto = new ResponseDto("Please provide valid inputs!");
       return ResponseEntity.status(400).body(responseDto);
@@ -173,7 +172,6 @@ public class ProductServiceImpl implements ProductService {
       responseDto = new ResponseDto("Please provide valid numbers!");
       return ResponseEntity.status(400).body(responseDto);
     }
-
     return null;
   }
 }
