@@ -29,9 +29,12 @@ export default function Profile(props){
             name: "",
             description: "",
             photoUrl: "",
-            startingPrice: "",
-            purchasePrice: ""
+            purchasePrice: "",
+            startingPrice: ""
         })
+
+        const productForm = document.querySelector('#addProductForm')
+        productForm.reset()
     }
 
     const [uploadMessage, setUploadMessage] = useState()
@@ -61,7 +64,7 @@ export default function Profile(props){
             uploadedProduct(message)
         })
         .catch(err => console.log("Error: " + err))
-        console.log(productData);
+        clearProductData()
     }
 
     function displayForm(){
@@ -77,20 +80,24 @@ export default function Profile(props){
         productForm.style.display = 'none'
         addProduct.style.display = 'flex'
         productForm.reset()
-        clearProductData()
     }
 
     let uploadedProducts
     let uploadedProductsCount
-
+    
     if(props.userProfile){
 
         uploadedProducts = props.userProfile.uploadedProducts.map(function(item){
-            console.log(item.id);
-            return <div key={item.id}>
-                <Product title={item.name} />
-                <button onClick={() => deleteProduct(item.id)}>Törlés</button>
-                <Link to={`/products/${item.id}`}>More information</Link>
+            return <div className="product" key={item.id}>
+                <Link to={`/products/${item.id}`}>
+                <div className="product-img">
+                    <img src={item.photoUrl} alt="" />
+                </div>
+                <div className="product-text">
+                <h3>{item.name}</h3>
+                </div>
+                </Link>
+                <button className="delete-btn" onClick={() => deleteProduct(item.id)}><i className="fa-solid fa-xmark"></i></button>
             </div>
         })
 
@@ -112,6 +119,13 @@ export default function Profile(props){
         .catch(err => console.log("Error: " + err))
     }
 
+    function deleteButton(){
+        const deleteBtn = document.querySelectorAll('.delete-btn')
+        deleteBtn.forEach(item => {
+            item.style.display = item.style.display == 'block' ? 'none' : 'block'
+        });
+    }
+
     return(
         <section className="profile">
             <div className="container">
@@ -131,8 +145,11 @@ export default function Profile(props){
                     <button type="submit">Add Item</button>
                 </div>
             </form>
-            {uploadedProductsCount}
-            {uploadedProducts}
+            <h1>Your Items ({uploadedProductsCount})</h1>
+            <button onClick={deleteButton}>Szerkesztés</button>
+            <div className="products">
+                {uploadedProducts}
+            </div>
             </div>
         </section>
     )
