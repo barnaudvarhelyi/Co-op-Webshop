@@ -1,5 +1,6 @@
 package mine.homeworkproject.security;
 
+import java.util.Arrays;
 import mine.homeworkproject.repositories.UserRepository;
 import mine.homeworkproject.services.UserPrincipalDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,11 +93,15 @@ public class SecurityConfiguration {
     return daoAuthenticationProvider;
   }
 
-    @Bean
+  @Bean
   CorsConfigurationSource corsConfigurationSource() {
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
-    return source;
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(Arrays.asList("*"));
+    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    configuration.setAllowedHeaders(Arrays.asList("*"));
 
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
   }
 }
