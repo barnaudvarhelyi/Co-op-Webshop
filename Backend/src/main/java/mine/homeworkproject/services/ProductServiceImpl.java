@@ -92,21 +92,32 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ResponseEntity deleteProductById(Long id, HttpServletRequest request) {
-    Optional<Product> product = productRepository.findById(id);
-    Optional<User> user = userService.getUserByToken(request);
-    ResponseDto responseDto;
-
-    if (!user.isPresent()){
-      return ResponseEntity.status(404).body(new ResponseDto("User not found!"));
+    Object[] response = getUserProductAndAccess(id, request);
+    if (response[0] != null) {
+      return (ResponseEntity) response[0];
     }
-    if (!product.isPresent()) {
-      return ResponseEntity.status(404).body(new ResponseDto("Product not found!"));
-    }
-    if (!product.get().getUser().equals(user.get().getId())) {
-      return ResponseEntity.status(403).body(new ResponseDto("Access denied!"));
-    }
-    productRepository.delete(product.get());
+    Product product = (Product)response[2];
+    productRepository.delete(product);
     return ResponseEntity.status(200).body(new ResponseDto("Resource deleted successfully!"));
+  }
+
+  @Override
+  public ResponseEntity editProductById(Long id, ProductCreateDto productCreateDto, HttpServletRequest request) {
+    Object[] response = getUserProductAndAccess(id, request);
+    if (response[0] != null) {
+      return (ResponseEntity) response[0];
+    }
+    User user = (User)response[1];
+    Product product = (Product)response[2];
+
+    product.setUser(user);
+    product.setName(productCreateDto.getName());
+    product.setDescription(productCreateDto.getDescription());
+    product.setPhotoUrl(productCreateDto.getPhotoUrl());
+    product.setPurchasePrice(productCreateDto.getPurchasePrice());
+    product.setStartingPrice(productCreateDto.getStartingPrice());
+
+    return ResponseEntity.status(200).body(productRepository.save(product));
   }
 
   @Override
@@ -117,6 +128,23 @@ public class ProductServiceImpl implements ProductService {
       product.setUser(userService.findUserById(1L));
       productRepository.save(product);
     }
+  }
+
+  private Object[] getUserProductAndAccess(Long id, HttpServletRequest request) {
+    Optional<Product> product = productRepository.findById(id);
+    Optional<User> user = userService.getUserByToken(request);
+    ResponseDto responseDto;
+
+    if (!user.isPresent()) {
+      return new Object[] {ResponseEntity.status(404).body(new ResponseDto("User not found!"))};
+    }
+    if (!product.isPresent()) {
+      return new Object[] {ResponseEntity.status(404).body(new ResponseDto("Product not found!"))};
+    }
+    if (!product.get().getUser().equals(user.get().getId())) {
+      return new Object[] {ResponseEntity.status(403).body(new ResponseDto("Access denied!"))};
+    }
+    return new Object[] {null, user.get(), product.get()};
   }
 
   private String getDataFromAPI() {
