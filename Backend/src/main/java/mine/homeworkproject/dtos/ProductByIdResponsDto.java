@@ -3,7 +3,7 @@ package mine.homeworkproject.dtos;
 import mine.homeworkproject.models.Product;
 
 public class ProductByIdResponsDto {
-  private String uploder;
+  private String uploader;
   private Long id;
   private String description;
   private String name;
@@ -18,7 +18,7 @@ public class ProductByIdResponsDto {
     this.photoUrl = p.getPhotoUrl();
     this.purchasePrice = p.getPurchasePrice();
     this.startingPrice = p.getStartingPrice();
-    this.uploder = username;
+    this.uploader = username;
   }
 
   public Long getId() {
@@ -61,11 +61,11 @@ public class ProductByIdResponsDto {
     this.startingPrice = startingPrice;
   }
 
-  public String getUploder() {
-    return uploder;
+  public String getUploader() {
+    return uploader;
   }
 
-  public void setUploder(String uploder) {
+  public void setUploader(String uploder) {
     uploder = uploder;
   }
 
