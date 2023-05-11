@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Product from "./Product"
-import { json, useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 export default function Profile(props){
 
@@ -26,18 +26,11 @@ export default function Profile(props){
 
     const [uploadMessage, setUploadMessage] = useState()
 
-    function uploadedProduct(message){
-        if (message == undefined && productData.name && productData.description && productData.photoUrl && productData.startingPrice && productData.purchasePrice) {
-            cancelItem()
-        }
-        setUploadMessage(message)
-    }
-
     const navigate = useNavigate()
     
-    function addProduct(e){
+    async function addProduct(e){
         e.preventDefault()
-        fetch('http://localhost:8080/products/create', {
+        const res = await fetch('http://localhost:8080/products', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -45,14 +38,14 @@ export default function Profile(props){
         },
         body: JSON.stringify(productData)
         })
-        .then(res => res.json())
-        .then(data => {
-            props.displayAllProducts()
-            props.displayProfileInformations()
-            const message = data.message
-            uploadedProduct(message)
-        })
-        .catch(err => console.log("Error: " + err))
+        const data = await res.json()
+        props.displayAllProducts()
+        props.displayProfileInformations()
+        setUploadMessage(data.message)
+        if(res.status === 201){
+            cancelItem()
+            navigate(`/products/${data.productId}`)
+        }
     }
 
     function displayForm(){
@@ -70,23 +63,30 @@ export default function Profile(props){
         productForm.reset()
     }
 
-    let username
     let uploadedProducts
     let uploadedProductsCount
 
     if(props.userProfile){
-        username = props.userProfile.username
 
         uploadedProducts = props.userProfile.uploadedProducts.map(function(item){
-            return <Product key={item.id} title={item.name} />
+            return <div className="product" key={item.id}>
+                <Link to={`/products/${item.id}`}>
+                <div className="product-img">
+                    <img src={item.photoUrl} alt="" />
+                </div>
+                <div className="product-text">
+                <h3>{item.name}</h3>
+                </div>
+                </Link>
+                <button className="delete-btn" onClick={() => deleteProduct(item.id)}><i className="fa-solid fa-xmark"></i></button>
+            </div>
         })
 
         uploadedProductsCount = props.userProfile.uploadedProductsCount
     }
 
-    function deleteProduct(e){
-        e.preventDefault()
-        fetch(`http://localhost:8080/products/delete/8`, {
+    function deleteProduct(id){
+        fetch(`http://localhost:8080/products/${id}`, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem("token")}`
@@ -98,6 +98,13 @@ export default function Profile(props){
             props.displayProfileInformations()
         })
         .catch(err => console.log("Error: " + err))
+    }
+
+    function deleteButton(){
+        const deleteBtn = document.querySelectorAll('.delete-btn')
+        deleteBtn.forEach(item => {
+            item.style.display = item.style.display == 'block' ? 'none' : 'block'
+        });
     }
 
     return(
@@ -112,15 +119,18 @@ export default function Profile(props){
                 <input type="text" name="name" onChange={handleItem} placeholder="Title"/>
                 <input type="text" name="description" onChange={handleItem} placeholder="Description"/>
                 <input type="text" name="photoUrl" onChange={handleItem} placeholder="Photo"/>
-                <input type="number" name="purchasePrice" onChange={handleItem} placeholder="Purchase Price"/>
-                <input type="number" name="startingPrice" onChange={handleItem} placeholder="Starting Price"/>
-                <button type="submit">Add Item</button>
-                <br />
-                <button type="button" onClick={cancelItem}>Cancel</button>
+                <input type="number" name="purchasePrice" onChange={handleItem} placeholder="Purchase Price" step=".01"/>
+                <input type="number" name="startingPrice" onChange={handleItem} placeholder="Starting Price" step=".01"/>
+                <div className="button-container">
+                    <button type="button" onClick={cancelItem}>Cancel</button>
+                    <button type="submit">Add Item</button>
+                </div>
             </form>
-            <button onClick={deleteProduct}>Törlés</button>
-            {uploadedProductsCount}
-            {uploadedProducts}
+            <h1>Your Items ({uploadedProductsCount})</h1>
+            <button onClick={deleteButton}>Szerkesztés</button>
+            <div className="products">
+                {uploadedProducts}
+            </div>
             </div>
         </section>
     )
