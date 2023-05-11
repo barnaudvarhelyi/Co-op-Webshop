@@ -110,9 +110,9 @@ export default function Profile(props){
     return(
         <section className="profile">
             <div className="container">
-            <div className="add-item-animation">
-                <button onClick={displayForm}>Create new item</button>
-                <button>+</button>
+            <div className="add-item-animation" onClick={displayForm}>
+                <h1>Create new item</h1>
+                <h1>+</h1>
             </div>
             <form onSubmit={addProduct} autoComplete="off" id="addProductForm">
                 <h4 className="error-message" style={uploadMessage ? {display: 'block'} : {display: 'none'}}>{uploadMessage}</h4>
@@ -126,8 +126,10 @@ export default function Profile(props){
                     <button type="submit">Add Item</button>
                 </div>
             </form>
-            <h1>Your Items ({uploadedProductsCount})</h1>
-            <button onClick={deleteButton}>Szerkesztés</button>
+            <div className="profile-text">
+                <h1>Your Items ({uploadedProductsCount})</h1>
+                <button onClick={deleteButton}>Szerkesztés</button>
+            </div>
             <div className="products">
                 {uploadedProducts}
             </div>

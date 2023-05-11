@@ -48,7 +48,6 @@ function App() {
 
   useEffect(() => {
     displayAllProducts()
-    displayProfileInformations()
   }, [])
 
   function displayAllProducts(){
@@ -75,7 +74,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navbar/>}>
           <Route index element={<Home products={products}/>} />
-          <Route path="login" element={<Login loginData={loginData} submitForm={submitForm} handleChange={handleChange} formData={formData} />} />
+          <Route path="login" element={<Login loginData={loginData} submitForm={submitForm} handleChange={handleChange} formData={formData} displayProfileInformations={displayProfileInformations}/>} />
           <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts} userProfile={userProfile} displayProfileInformations={displayProfileInformations} />} />
           <Route path="products/:productId" element={<SingleProduct products={products} />}/>
         </Route>

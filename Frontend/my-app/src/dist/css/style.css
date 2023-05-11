@@ -52,6 +52,9 @@ nav a {
   max-width: 1100px;
   margin: auto;
 }
+.profile .profile-text {
+  padding: 0em 1em;
+}
 .profile form {
   padding: 3em;
   display: flex;
@@ -83,14 +86,18 @@ nav a {
   gap: 1em;
 }
 .profile form .button-container button {
-  background-color: black;
-  color: white;
+  background-color: #2E8B57;
+  color: #FAF9F6;
   padding: 1em;
-  border: none;
+  border: 1px solid black;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 1em;
   width: 45%;
   margin: auto;
+}
+.profile form .button-container button:nth-of-type(1) {
+  background-color: #AA4A44;
 }
 .profile form .error-message {
   margin-top: 0em;
@@ -102,9 +109,17 @@ nav a {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  border: 1px solid black;
+  border: 1px solid #28282B;
   border-radius: 1em;
   margin: 1em;
+  background-color: #2E8B57;
+  color: #FAF9F6;
+  cursor: pointer;
+}
+.profile .add-item-animation button {
+  background-color: transparent;
+  border: none;
+  font-size: 2em;
 }
 
 .login {
@@ -191,7 +206,7 @@ nav a {
   right: 0;
   background-color: transparent;
   border: none;
-  color: rgba(255, 0, 0, 0.726);
+  color: #F88379;
   font-size: 20px;
   cursor: pointer;
 }

@@ -10,7 +10,6 @@ export default function SingleProduct(props){
         const res = await fetch(`http://localhost:8080/products/${productId}`)
         const data = await res.json()
         setProductPage(data)
-        console.log(data);
     }
     
     useEffect(() => {
@@ -22,6 +21,7 @@ export default function SingleProduct(props){
     return (
         <div className="single-product">
             <Link to="/">Back to Home Page</Link>
+            <h3>Uploaded by: {productPage.uploder}</h3>
             <h1>{productPage.name}</h1>
             <img src={productPage.photoUrl} alt={productPage.name} />
             <h3>Starting Price: ${productPage.startingPrice}</h3>
