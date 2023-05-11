@@ -33,6 +33,9 @@ public class User {
   @JoinColumn(name = "balance_id")
   private UserBalance balance;
 
+  @OneToMany(mappedBy = "user")
+  private List<Bid> bids= new ArrayList<>();
+
   public User() {
   }
 
@@ -64,39 +67,36 @@ public class User {
   public void setUsername(String username) {
     this.username = username;
   }
-
   public String getEmail() {
     return email;
   }
-
   public void setEmail(String email) {
     this.email = email;
   }
-
   public String getPassword() {
     return password;
   }
-
   public void setPassword(String password) {
     this.password = password;
   }
-
   public String getRole() {
     return role;
   }
-
   public void setRole(String role) {
     this.role = role;
   }
-
   public UserBalance getBalance() {
     return balance;
   }
-
   public void setBalance(Double balance) {
     this.balance.setBalance(this.balance.getBalance() + balance);
   }
-
+  public List<Bid> getBids() {
+    return bids;
+  }
+  public void setBids(Bid bid) {
+    this.bids.add(bid);
+  }
   public void setOnLicit(Double onLicit) {
     this.balance.setBalance(this.balance.getBalance() - onLicit);
     this.balance.setOnLicit(this.balance.getOnLicit() + onLicit);
@@ -107,7 +107,6 @@ public class User {
     }
     return new ArrayList<>();
   }
-
   public List<Long> getProducts() {
 
     List<Long> longs = new ArrayList<>();
@@ -116,7 +115,6 @@ public class User {
     }
     return longs;
   }
-
   public void setProducts(List<Product> products) {
     this.products = products;
   }
