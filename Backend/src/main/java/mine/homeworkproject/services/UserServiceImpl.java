@@ -2,7 +2,9 @@ package mine.homeworkproject.services;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import mine.homeworkproject.dtos.ResponseDto;
@@ -38,17 +40,14 @@ public class UserServiceImpl implements UserService {
                     username + " is not found!"));
 
   }
-
   @Override
   public List<User> findAllUsers() {
     return userRepository.findAll();
   }
-
   @Override
   public User findUserById(Long id) {
     return userRepository.findById(id).orElse(null);
   }
-
   @Override
   public Optional<User> getUserByToken(HttpServletRequest request) {
     String header = request.getHeader(JwtProperties.HEADER_STRING);
@@ -70,7 +69,6 @@ public class UserServiceImpl implements UserService {
     }
     return Optional.empty();
   }
-
   @Override
   public ResponseEntity getUserProfile(HttpServletRequest request) {
     Optional<User> user = getUserByToken(request);
@@ -80,6 +78,24 @@ public class UserServiceImpl implements UserService {
     }
     List<Product> products = productRepository.findAllByUser(user.get());
     return ResponseEntity.status(200).body(new UserProfileResponsDto(user.get().getUsername(),
-        products.size(), products));
+        products.size(), products, user.get().getBalance()));
+  }
+  @Override
+  public ResponseEntity addBalance(HashMap<String, String> balance, HttpServletRequest request) {
+    Optional<User> user = getUserByToken(request);
+    if (!user.isPresent()) {
+      ResponseDto response = new ResponseDto("User not found!");
+      return ResponseEntity.status(404).body(response);
+    }
+    Double balanceDb;
+    try {
+      balanceDb = Double.parseDouble(balance.get("balance"));
+    } catch (NumberFormatException nfe) {
+      ResponseDto response = new ResponseDto("Please provide valid amount!");
+      return ResponseEntity.status(404).body(response);
+    }
+    user.get().setBalance(balanceDb);
+    userRepository.save(user.get());
+    return ResponseEntity.status(200).body(new ResponseDto("Balance added successfully!"));
   }
 }

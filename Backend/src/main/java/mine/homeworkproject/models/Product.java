@@ -25,10 +25,10 @@ public class Product {
   private String photoUrl;
   private Double startingPrice;
   private Double purchasePrice;
-
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
   private User user;
+
   public Product() {
   }
 

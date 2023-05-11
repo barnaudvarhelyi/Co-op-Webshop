@@ -6,15 +6,20 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "users")
 public class User {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -24,14 +29,19 @@ public class User {
   private String role;
   @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH)
   private List<Product> products;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "balance_id")
+  private UserBalance balance;
 
-  public User() {}
+  public User() {
+  }
 
-  public User(String username, String email, String password, String role) {
+  public User(String username, String email, String password, String role, UserBalance balance) {
     this.username = username;
     this.email = email;
     this.password = password;
     this.role = role;
+    this.balance = balance;
   }
 
   public User(Long id, String username) {
@@ -79,6 +89,18 @@ public class User {
     this.role = role;
   }
 
+  public UserBalance getBalance() {
+    return balance;
+  }
+
+  public void setBalance(Double balance) {
+    this.balance.setBalance(this.balance.getBalance() + balance);
+  }
+
+  public void setOnLicit(Double onLicit) {
+    this.balance.setBalance(this.balance.getBalance() - onLicit);
+    this.balance.setOnLicit(this.balance.getOnLicit() + onLicit);
+  }
   public List<String> getRoleList() {
     if (this.role.length() > 0) {
       return Arrays.asList(this.role.split(","));

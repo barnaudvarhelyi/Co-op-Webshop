@@ -119,7 +119,6 @@ public class ProductServiceImpl implements ProductService {
 
     return ResponseEntity.status(200).body(productRepository.save(product));
   }
-
   @Override
   public void getRandomProductsFromAPI() {
     for (ProductAPIDto p : parseRespons(getDataFromAPI())) {
@@ -146,7 +145,6 @@ public class ProductServiceImpl implements ProductService {
     }
     return new Object[] {null, user.get(), product.get()};
   }
-
   private String getDataFromAPI() {
     String apiUrl = "https://fakestoreapi.com/products";
     StringBuilder response = new StringBuilder();
@@ -176,14 +174,12 @@ public class ProductServiceImpl implements ProductService {
     }
     return response.toString();
   }
-
   private List<ProductAPIDto> parseRespons(String data) {
     Gson gson = new Gson();
     Type productListType = new TypeToken<List<ProductAPIDto>>() {
     }.getType();
     return gson.fromJson(data, productListType);
   }
-
   private ResponseEntity validateInputFields(ProductCreateDto p) {
     ResponseDto responseDto;
 
