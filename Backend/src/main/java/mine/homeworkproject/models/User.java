@@ -15,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import mine.homeworkproject.dtos.BalanceDto;
 
 @Entity
 @Table(name = "users")
@@ -34,7 +35,7 @@ public class User {
   private UserBalance balance;
 
   @OneToMany(mappedBy = "user")
-  private List<Bid> bids= new ArrayList<>();
+  private List<Bid> bids;
 
   public User() {
   }
@@ -45,6 +46,7 @@ public class User {
     this.password = password;
     this.role = role;
     this.balance = balance;
+    this.bids = new ArrayList<>();
   }
 
   public User(Long id, String username) {
@@ -85,8 +87,8 @@ public class User {
   public void setRole(String role) {
     this.role = role;
   }
-  public UserBalance getBalance() {
-    return balance;
+  public BalanceDto getBalance() {
+    return new BalanceDto(this.balance);
   }
   public void setBalance(Double balance) {
     this.balance.setBalance(this.balance.getBalance() + balance);
