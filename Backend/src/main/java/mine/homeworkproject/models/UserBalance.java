@@ -39,19 +39,15 @@ public class UserBalance {
   public void setId(Long id) {
     this.id = id;
   }
-
   public Double getBalance() {
     return balance;
   }
-
   public void setBalance(Double balance) {
     this.balance = balance;
   }
-
   public Double getOnLicit() {
     return onLicit;
   }
-
   public void setOnLicit(Double onLicit) {
     this.onLicit = onLicit;
   }
