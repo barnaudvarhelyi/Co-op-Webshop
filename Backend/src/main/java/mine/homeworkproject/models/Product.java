@@ -1,6 +1,6 @@
 package mine.homeworkproject.models;
 
-import java.text.DecimalFormat;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import mine.homeworkproject.dtos.ProductCreateDto;
 
@@ -25,10 +26,12 @@ public class Product {
   private String photoUrl;
   private Double startingPrice;
   private Double purchasePrice;
-
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
   private User user;
+  @OneToMany(mappedBy = "product")
+  private List<Bid> bids = new ArrayList<>();
+
   public Product() {
   }
 
@@ -59,41 +62,38 @@ public class Product {
   public String getName() {
     return name;
   }
-
   public void setName(String name) {
     this.name = name;
   }
-
   public String getDescription() {
     return description;
   }
-
   public void setDescription(String description) {
     this.description = description;
   }
-
   public String getPhotoUrl() {
     return photoUrl;
   }
-
   public void setPhotoUrl(String photoUrl) {
     this.photoUrl = photoUrl;
   }
-
   public Double getStartingPrice() {
     return startingPrice;
   }
-
   public void setStartingPrice(Double startingPrice) {
     this.startingPrice = startingPrice;
   }
-
   public Double getPurchasePrice() {
     return purchasePrice;
   }
-
   public void setPurchasePrice(Double purchasePrice) {
     this.purchasePrice = purchasePrice;
+  }
+  public List<Bid> getBids() {
+    return bids;
+  }
+  public void setBid(Bid bid) {
+    this.bids.add(bid);
   }
 
   @Override

@@ -1,6 +1,8 @@
 package mine.homeworkproject;
 
 import mine.homeworkproject.models.User;
+import mine.homeworkproject.models.UserBalance;
+import mine.homeworkproject.repositories.BalanceRepository;
 import mine.homeworkproject.repositories.UserRepository;
 import mine.homeworkproject.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +14,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @SpringBootApplication
 public class AppMain implements CommandLineRunner {
 
-  private UserRepository userRepository;
-  private ProductService productService;
-  private BCryptPasswordEncoder passwordEncoder;
+  private final UserRepository userRepository;
+  private final ProductService productService;
+  private final BalanceRepository balanceRepository;
+  private final BCryptPasswordEncoder passwordEncoder;
 
   @Autowired
-  public AppMain(UserRepository userRepository, ProductService productService, BCryptPasswordEncoder passwordEncoder) {
+  public AppMain(UserRepository userRepository, ProductService productService,
+      BalanceRepository balanceRepository, BCryptPasswordEncoder passwordEncoder) {
     this.userRepository = userRepository;
     this.productService = productService;
+    this.balanceRepository = balanceRepository;
     this.passwordEncoder = passwordEncoder;
   }
 
@@ -29,10 +34,16 @@ public class AppMain implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    userRepository.save(new User("Admin", "admin@gmail.com", passwordEncoder.encode("Admin"), "Admin"));
-    userRepository.save(new User("User", "user@gmail.com", passwordEncoder.encode("User"), "User"));
+    UserBalance balance1 = new UserBalance(100.0, 0.0);
+    UserBalance balance2 = new UserBalance(100.0, 0.0);
+    balanceRepository.save(balance1);
+    balanceRepository.save(balance2);
+
+    userRepository.save(new User("Admin", "admin@gmail.com", passwordEncoder.encode("Admin"), "Admin", balance1));
+    userRepository.save(new User("User", "user@gmail.com", passwordEncoder.encode("User"), "User", balance2));
 
     productService.getRandomProductsFromAPI();
+
     System.out.println("---------- App has been started! ----------");
   }
 }
