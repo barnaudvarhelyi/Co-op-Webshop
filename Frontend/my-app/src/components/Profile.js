@@ -69,6 +69,7 @@ export default function Profile(props){
 
     let uploadedProducts
     let uploadedProductsCount
+    let balance
 
     if(props.userProfile){
 
@@ -87,6 +88,8 @@ export default function Profile(props){
         })
 
         uploadedProductsCount = props.userProfile.uploadedProductsCount
+        balance = props.userProfile.balance.balance
+
     }
 
     function deleteProduct(id){
@@ -120,9 +123,23 @@ export default function Profile(props){
         addItem.style.display = addItem.style.display == 'none' ? 'flex' : 'none'
     }
 
+    async function uploadFunds(e){
+        const res = await fetch('http://localhost:8080/balance', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({balance: e})
+        })
+        const data = await res.json()
+        props.displayProfileInformations()
+    }
+
     return(
         <section className="profile">
             <div className="container">
+            {balance}
             <div className="add-item-animation btn-grad">
                 <div onClick={displayForm} className="btn-grad">
                     <h1>Create new item</h1>
@@ -134,9 +151,9 @@ export default function Profile(props){
                 </div>
             </div>
             <div className="add-funds">
-                <div>$10</div>
-                <div>$50</div>
-                <div>$100</div>
+                <div value="10" onClick={() => uploadFunds(10)}>$10</div>
+                <div value="50" onClick={() => uploadFunds(50)}>$50</div>
+                <div value="100" onClick={() => uploadFunds(100)}>$100</div>
             </div>
             <h4 className="cancel-fund" onClick={addFunds}>Cancel</h4>
             <form onSubmit={addProduct} autoComplete="off" id="addProductForm">
