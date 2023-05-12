@@ -21,7 +21,7 @@ export default function SingleProduct(props){
     return (
         <div className="single-product">
             <Link to="/">Back to Home Page</Link>
-            <h3>Uploaded by: {productPage.uploder}</h3>
+            <h3>Uploaded by: {productPage.uploader}</h3>
             <h1>{productPage.name}</h1>
             <img src={productPage.photoUrl} alt={productPage.name} />
             <h3>Starting Price: ${productPage.startingPrice}</h3>

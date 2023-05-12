@@ -1,8 +1,12 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Product from "./Product"
 import { Link, useNavigate } from "react-router-dom"
 
 export default function Profile(props){
+
+    useEffect(() => {
+        props.displayProfileInformations()
+    }, [])
 
     const [productData, setProductData] = useState(
         {
@@ -107,13 +111,34 @@ export default function Profile(props){
         });
     }
 
+    function addFunds(){
+        const addFunds = document.querySelector('.add-funds')
+        const cancelItem = document.querySelector('.cancel-fund')
+        const addItem = document.querySelector('.add-item-animation')
+        addFunds.style.display = addFunds.style.display == 'flex' ? 'none' : 'flex'
+        cancelItem.style.display = cancelItem.style.display == 'flex' ? 'none' : 'flex'
+        addItem.style.display = addItem.style.display == 'none' ? 'flex' : 'none'
+    }
+
     return(
         <section className="profile">
             <div className="container">
-            <div className="add-item-animation" onClick={displayForm}>
-                <h1>Create new item</h1>
-                <h1>+</h1>
+            <div className="add-item-animation btn-grad">
+                <div onClick={displayForm} className="btn-grad">
+                    <h1>Create new item</h1>
+                    <h1>+</h1>
+                </div>
+                <div onClick={addFunds} className="btn-gradient">
+                    <h1>Add funds to your balance</h1>
+                    <h1>+</h1>
+                </div>
             </div>
+            <div className="add-funds">
+                <div>$10</div>
+                <div>$50</div>
+                <div>$100</div>
+            </div>
+            <h4 className="cancel-fund" onClick={addFunds}>Cancel</h4>
             <form onSubmit={addProduct} autoComplete="off" id="addProductForm">
                 <h4 className="error-message" style={uploadMessage ? {display: 'block'} : {display: 'none'}}>{uploadMessage}</h4>
                 <input type="text" name="name" onChange={handleItem} placeholder="Title"/>
@@ -128,7 +153,7 @@ export default function Profile(props){
             </form>
             <div className="profile-text">
                 <h1>Your Items ({uploadedProductsCount})</h1>
-                <button onClick={deleteButton}>Szerkesztés</button>
+                <button onClick={deleteButton}><i className="fa-solid fa-gear"></i>Edit</button>
             </div>
             <div className="products">
                 {uploadedProducts}

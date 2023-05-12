@@ -63,6 +63,17 @@ nav {
 
     .profile-text {
         padding: 0em 1em;
+
+        i {
+            margin-right: 0.3em;
+        }
+
+        button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            color: #696969;
+        }
     }
 
     form {
@@ -97,19 +108,28 @@ nav {
             gap: 1em;
 
             button {
-                background-color: $green-color;
+                background-image: linear-gradient(to right, #c2e59c 0%, #64b3f4  51%, #c2e59c  100%);
+                background-size: 200% auto;
+                transition: 0.5s;
                 color: $white-color;
                 padding: 1em;
-                border: 1px solid black;
+                border: none;
                 border-radius: 10px;
                 cursor: pointer;
                 font-size: 1em;
                 width: 45%;
                 margin: auto;
 
-                &:nth-of-type(1){
-                    background-color: #AA4A44;
+                &:hover {
+                    background-position: right center;
                 }
+
+                &:nth-of-type(1){
+                    background-image: linear-gradient(to right, #D66D75 0%, #E29587  51%, #D66D75  100%);
+                    background-size: 200% auto;
+                    transition: 0.5s;                           
+                }
+        
             }
 
         }
@@ -126,18 +146,98 @@ nav {
         display: flex;
         justify-content: center;
         align-items: center;
-        flex-direction: column;
-        border: 1px solid #28282B;
-        border-radius: 1em;
         margin: 1em;
-        background-color: $green-color;
         color: $white-color;
         cursor: pointer;
+        gap: 1em;   
+
+        div {
+            background-color: red;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border-radius: 1em;
+            background-image: linear-gradient(to right, #1D976C 0%, #93F9B9  51%, #1D976C  100%);
+            transition: 0.5s;
+            background-size: 200% auto;
+
+            &:last-of-type {
+                background-image: linear-gradient(to right, #4CB8C4 0%, #3CD3AD  51%, #4CB8C4  100%);
+            }
+            
+            &:hover {
+                background-position: right center; /* change the direction of the change here */
+              }
+        }
 
         button {
             background-color: transparent;
             border: none;
             font-size: 2em;
+        }
+    }
+
+    .add-funds {
+        height: 300px;
+        display: none;
+        gap: 1em;
+        margin: 1em;
+        color: $white-color;
+        
+        div {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: linear-gradient(to right, #78ffd6 0%, #007991  51%, #78ffd6  100%);
+            transition: 0.5s;
+            background-size: 200% auto;
+            border-radius: 1em;
+            cursor: pointer;
+            font-size: 1.5rem;
+
+            &:nth-of-type(2){
+                background-image: linear-gradient(to right, #0ABFBC 0%, #FC354C  51%, #0ABFBC  100%);
+            }
+
+            &:nth-of-type(3){
+                background-image: linear-gradient(to right, #DC2424 0%, #4A569D  51%, #DC2424  100%);
+            }
+
+            &:hover {
+                background-position: right center; /* change the direction of the change here */
+            }
+        }
+    }
+
+    .cancel-fund {
+        display: none;
+        cursor: pointer;
+        margin: 1em;
+        color: #696969;
+    }
+
+    .products {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    
+        .product {
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            border-radius: 10px;
+            padding: 1em;
+            transition: all 0.1s ease-in;
+
+            &:hover {
+                transform: scale(105%);
+            }
+
+            .product-img {
+                height: 200px;
+            }
+
         }
     }
 
@@ -235,9 +335,10 @@ nav {
             right: 0;
             background-color: transparent;
             border: none;
-            color: #F88379;
+            color: #FF2E2E;
             font-size: 20px;
             cursor: pointer;
+            padding: 0.5em;
         }
 
         .product-img {
@@ -316,5 +417,16 @@ nav {
 
         }
 
+        .add-item-animation {
+            flex-direction: column;
+            height: 300px;
+        }
+
+        .add-funds {
+            height: 500px;
+            flex-direction: column;
+        }
+
     }
+
 }

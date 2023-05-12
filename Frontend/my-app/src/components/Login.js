@@ -9,7 +9,6 @@ export default function Login(props) {
     if(!props.loginData.message && props.formData.username && props.formData.password){
         localStorage.setItem("token", props.loginData.token)
         localStorage.setItem("username", props.loginData.username)
-        props.displayProfileInformations()
         navigate('/profile');
     }
 }, [props.loginData])
