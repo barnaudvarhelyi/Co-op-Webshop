@@ -13,8 +13,8 @@ export default function Profile(props){
             name: "",
             description: "",
             photoUrl: "",
-            startingPrice: "",
-            purchasePrice: ""
+            purchasePrice: "",
+            startingPrice: ""
         }
     )
 

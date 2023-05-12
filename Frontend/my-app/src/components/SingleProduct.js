@@ -24,8 +24,8 @@ export default function SingleProduct(props){
             <h3>Uploaded by: {productPage.uploader}</h3>
             <h1>{productPage.name}</h1>
             <img src={productPage.photoUrl} alt={productPage.name} />
-            <h3>Starting Price: ${productPage.startingPrice}</h3>
             <h3>Purchase Price: ${productPage.purchasePrice}</h3>
+            <h3>Starting Price: ${productPage.startingPrice}</h3>
             <h3>Description</h3>
             <p>{productPage.description}</p>
         </div>
