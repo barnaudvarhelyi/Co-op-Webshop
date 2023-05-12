@@ -347,6 +347,19 @@ nav {
             padding: 0.5em;
         }
 
+        .edit-btn {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: #696969;
+            background-color: transparent;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0.5em;
+        }
+
         .product-img {
             position: relative;
             width: 100%;
@@ -418,6 +431,10 @@ nav {
 
                 button {
                     width: 100%;
+                }
+
+                #editItem {
+                    display: none;
                 }
             }
 

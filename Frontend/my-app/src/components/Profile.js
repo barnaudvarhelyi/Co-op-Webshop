@@ -84,6 +84,7 @@ export default function Profile(props){
                 </div>
                 </Link>
                 <button className="delete-btn" onClick={() => deleteProduct(item.id)}><i className="fa-solid fa-xmark"></i></button>
+                <button className="edit-btn" onClick={() => editProduct(item.id)}><i className="fa-solid fa-gear"></i></button>
             </div>
         })
 
@@ -107,11 +108,62 @@ export default function Profile(props){
         .catch(err => console.log("Error: " + err))
     }
 
-    function deleteButton(){
+    let editItemId
+
+    async function editProduct(id){
+        const res = await fetch(`http://localhost:8080/products/${id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            })
+            const data = await res.json()
+            displayForm()
+            document.getElementById('addProductForm').scrollIntoView({
+                behavior: "smooth"
+            })
+            document.getElementById("title").value = data.name
+            document.getElementById("description").value = data.description
+            document.getElementById("photoUrl").value = data.photoUrl
+            document.getElementById("purchasePrice").value = data.purchasePrice
+            document.getElementById("startingPrice").value = data.startingPrice
+            document.getElementById("addItem").style.display = "none"
+            document.getElementById("editItem").style.display = "block"
+            editItemId = id
+            console.log(editItemId);
+    }
+
+    function editButton(){
         const deleteBtn = document.querySelectorAll('.delete-btn')
+        const editBtn = document.querySelectorAll('.edit-btn')
         deleteBtn.forEach(item => {
             item.style.display = item.style.display == 'block' ? 'none' : 'block'
         });
+        editBtn.forEach(item => {
+            item.style.display = item.style.display == 'block' ? 'none' : 'block'
+        });
+    }
+
+    async function editItem(){
+        console.log(editItemId);
+        let inputValues = {
+            name: document.getElementById("title").value,
+            description: document.getElementById("description").value,
+            photoUrl: document.getElementById("photoUrl").value,
+            startingPrice: document.getElementById("startingPrice").value,
+            purchasePrice: document.getElementById("purchasePrice").value,
+        }
+        console.log(inputValues);
+        const res = await fetch(`http://localhost:8080/products/${editItemId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify(inputValues)
+            })
+            const data = await res.json()
     }
 
     function addFunds(){
@@ -123,14 +175,14 @@ export default function Profile(props){
         addItem.style.display = addItem.style.display == 'none' ? 'flex' : 'none'
     }
 
-    async function uploadFunds(e){
+    async function uploadFunds(fund){
         const res = await fetch('http://localhost:8080/balance', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem("token")}`
         },
-        body: JSON.stringify({balance: e})
+        body: JSON.stringify({balance: fund})
         })
         const data = await res.json()
         props.displayProfileInformations()
@@ -151,26 +203,27 @@ export default function Profile(props){
                 </div>
             </div>
             <div className="add-funds">
-                <div value="10" onClick={() => uploadFunds(10)}>$10</div>
-                <div value="50" onClick={() => uploadFunds(50)}>$50</div>
-                <div value="100" onClick={() => uploadFunds(100)}>$100</div>
+                <div onClick={() => uploadFunds(10)}>$10</div>
+                <div onClick={() => uploadFunds(50)}>$50</div>
+                <div onClick={() => uploadFunds(100)}>$100</div>
             </div>
             <h4 className="cancel-fund" onClick={addFunds}>Cancel</h4>
             <form onSubmit={addProduct} autoComplete="off" id="addProductForm">
                 <h4 className="error-message" style={uploadMessage ? {display: 'block'} : {display: 'none'}}>{uploadMessage}</h4>
-                <input type="text" name="name" onChange={handleItem} placeholder="Title"/>
-                <input type="text" name="description" onChange={handleItem} placeholder="Description"/>
-                <input type="text" name="photoUrl" onChange={handleItem} placeholder="Photo"/>
-                <input type="number" name="purchasePrice" onChange={handleItem} placeholder="Purchase Price" step=".01"/>
-                <input type="number" name="startingPrice" onChange={handleItem} placeholder="Starting Price" step=".01"/>
+                <input type="text" name="name" onChange={handleItem} placeholder="Title" id="title"/>
+                <input type="text" name="description" onChange={handleItem} placeholder="Description" id="description"/>
+                <input type="text" name="photoUrl" onChange={handleItem} placeholder="Photo" id="photoUrl"/>
+                <input type="number" name="purchasePrice" onChange={handleItem} placeholder="Purchase Price" step=".01" id="purchasePrice"/>
+                <input type="number" name="startingPrice" onChange={handleItem} placeholder="Starting Price" step=".01" id="startingPrice"/>
                 <div className="button-container">
                     <button type="button" onClick={cancelItem}>Cancel</button>
-                    <button type="submit">Add Item</button>
+                    <button type="submit" id="addItem">Add Item</button>
+                    <button type="button" id="editItem" onClick={editItem}>Edit Item</button>
                 </div>
             </form>
             <div className="profile-text">
                 <h1>Your Items ({uploadedProductsCount})</h1>
-                <button onClick={deleteButton}><i className="fa-solid fa-gear"></i>Edit</button>
+                <button onClick={editButton}><i className="fa-solid fa-gear"></i>Edit</button>
             </div>
             <div className="products">
                 {uploadedProducts}
