@@ -27,7 +27,7 @@ public class ProductsController {
     this.productService = productService;
   }
 
-  @RequestMapping(value = "/products", method = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.GET}, params = "id")
+  @RequestMapping(value = "/products", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, params = "id")
   public ResponseEntity<?> createOrUpdateProduct(@RequestParam("id") Long id, @RequestBody ProductCreateDto productCreateDto, HttpServletRequest request) {
     ResponseEntity<?> response;
     String method = request.getMethod();
