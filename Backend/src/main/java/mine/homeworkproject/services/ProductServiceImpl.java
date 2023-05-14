@@ -4,9 +4,11 @@ package mine.homeworkproject.services;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import mine.homeworkproject.dtos.ProductAPIDto;
 import mine.homeworkproject.dtos.ProductByIdResponsDto;
@@ -70,7 +72,6 @@ public class ProductServiceImpl implements ProductService {
       return ResponseEntity.status(e.getStatus()).body(responseDto);
     }
   }
-
   @Override
   public ResponseEntity getProductById(Long id) {
     Optional<Product> product = productRepository.findById(id);
@@ -86,29 +87,28 @@ public class ProductServiceImpl implements ProductService {
       user = userService.findUserById(product.get().getUser()).getUsername();
     }
 
-    ProductByIdResponsDto respons = new ProductByIdResponsDto(product.get(), user);
-    return ResponseEntity.status(200).body(respons);
+    ProductByIdResponsDto response = new ProductByIdResponsDto(product.get(), user);
+    return ResponseEntity.status(200).body(response);
   }
-
   @Override
   public ResponseEntity deleteProductById(Long id, HttpServletRequest request) {
     Object[] response = getUserProductAndAccess(id, request);
     if (response[0] != null) {
       return (ResponseEntity) response[0];
     }
-    Product product = (Product)response[2];
+    Product product = (Product) response[2];
     productRepository.delete(product);
     return ResponseEntity.status(200).body(new ResponseDto("Resource deleted successfully!"));
   }
-
   @Override
-  public ResponseEntity editProductById(Long id, ProductCreateDto productCreateDto, HttpServletRequest request) {
+  public ResponseEntity editProductById(Long id, ProductCreateDto productCreateDto,
+      HttpServletRequest request) {
     Object[] response = getUserProductAndAccess(id, request);
     if (response[0] != null) {
       return (ResponseEntity) response[0];
     }
-    User user = (User)response[1];
-    Product product = (Product)response[2];
+    User user = (User) response[1];
+    Product product = (Product) response[2];
 
     product.setUser(user);
     product.setName(productCreateDto.getName());
@@ -120,8 +120,32 @@ public class ProductServiceImpl implements ProductService {
     return ResponseEntity.status(200).body(productRepository.save(product));
   }
   @Override
+  public ResponseEntity searchItemByStr(String searchItem) {
+    return ResponseEntity
+        .status(200)
+        .body(productRepository.findAll().stream()
+            .filter(p -> p.getName().toLowerCase().contains(searchItem.toLowerCase()) || p.getDescription().toLowerCase().contains(searchItem.toLowerCase()))
+            .collect(Collectors.toList()));
+  }
+  @Override
+  public ResponseEntity sortProducts(String direction) {
+    ResponseEntity response;
+    if (direction.equals("asc")){
+      response = ResponseEntity.status(200).body(productRepository.findAll().stream()
+          .sorted(Comparator.comparingDouble(Product::getPurchasePrice))
+          .collect(Collectors.toList()));
+    } else if (direction.equals("desc")) {
+      response = ResponseEntity.status(200).body(productRepository.findAll().stream()
+          .sorted(Comparator.comparingDouble(Product::getPurchasePrice).reversed())
+          .collect(Collectors.toList()));
+    } else {
+       response = ResponseEntity.status(400).body(new ResponseDto("Bad request!"));
+    }
+    return response;
+  }
+  @Override
   public void getRandomProductsFromAPI() {
-    for (ProductAPIDto p : parseRespons(getDataFromAPI())) {
+    for (ProductAPIDto p : parseResponse(getDataFromAPI())) {
       Product product = new Product(p.getTitle(), p.getDescription(), p.getImage(), p.getPrice(),
           p.getPrice() * 0.8);
       product.setUser(userService.findUserById(1L));
@@ -132,18 +156,17 @@ public class ProductServiceImpl implements ProductService {
   private Object[] getUserProductAndAccess(Long id, HttpServletRequest request) {
     Optional<Product> product = productRepository.findById(id);
     Optional<User> user = userService.getUserByToken(request);
-    ResponseDto responseDto;
 
     if (!user.isPresent()) {
-      return new Object[] {ResponseEntity.status(404).body(new ResponseDto("User not found!"))};
+      return new Object[]{ResponseEntity.status(404).body(new ResponseDto("User not found!"))};
     }
     if (!product.isPresent()) {
-      return new Object[] {ResponseEntity.status(404).body(new ResponseDto("Product not found!"))};
+      return new Object[]{ResponseEntity.status(404).body(new ResponseDto("Product not found!"))};
     }
     if (!product.get().getUser().equals(user.get().getId())) {
-      return new Object[] {ResponseEntity.status(403).body(new ResponseDto("Access denied!"))};
+      return new Object[]{ResponseEntity.status(403).body(new ResponseDto("Access denied!"))};
     }
-    return new Object[] {null, user.get(), product.get()};
+    return new Object[]{null, user.get(), product.get()};
   }
   private String getDataFromAPI() {
     String apiUrl = "https://fakestoreapi.com/products";
@@ -174,7 +197,7 @@ public class ProductServiceImpl implements ProductService {
     }
     return response.toString();
   }
-  private List<ProductAPIDto> parseRespons(String data) {
+  private List<ProductAPIDto> parseResponse(String data) {
     Gson gson = new Gson();
     Type productListType = new TypeToken<List<ProductAPIDto>>() {
     }.getType();

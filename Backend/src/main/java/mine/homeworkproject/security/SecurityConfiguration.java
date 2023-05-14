@@ -55,8 +55,9 @@ public class SecurityConfiguration {
         .antMatchers(
             "/login*",
             "/register*",
-            "/api*").permitAll()
-        .antMatchers("/products**", "/logout").authenticated()
+            "/api*",
+            "/products**").permitAll()
+        .antMatchers("/logout").authenticated()
         .antMatchers("/profile", "/balance").fullyAuthenticated()
         .and()
         .csrf().disable()
