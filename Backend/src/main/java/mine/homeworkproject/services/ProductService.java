@@ -19,4 +19,8 @@ public interface ProductService {
   ResponseEntity deleteProductById(Long id, HttpServletRequest request);
 
   ResponseEntity editProductById(Long id, ProductCreateDto product, HttpServletRequest request);
+
+  ResponseEntity searchItemByStr(String seachItem);
+
+  ResponseEntity sortProducts(String direction);
 }

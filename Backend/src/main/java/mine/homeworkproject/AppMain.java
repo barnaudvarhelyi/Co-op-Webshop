@@ -36,11 +36,14 @@ public class AppMain implements CommandLineRunner {
   public void run(String... args) throws Exception {
     UserBalance balance1 = new UserBalance(100.0, 0.0);
     UserBalance balance2 = new UserBalance(100.0, 0.0);
+    UserBalance balance3 = new UserBalance(100.0, 0.0);
     balanceRepository.save(balance1);
     balanceRepository.save(balance2);
+    balanceRepository.save(balance3);
 
     userRepository.save(new User("Admin", "admin@gmail.com", passwordEncoder.encode("Admin"), "Admin", balance1));
     userRepository.save(new User("User", "user@gmail.com", passwordEncoder.encode("User"), "User", balance2));
+    userRepository.save(new User("User2", "user2@gmail.com", passwordEncoder.encode("User2"), "User", balance3));
 
     productService.getRandomProductsFromAPI();
 
