@@ -64,6 +64,10 @@ export default function Profile(props){
         const addProduct = document.querySelector('.add-item-animation')
         productForm.style.display = 'none'
         addProduct.style.display = 'flex'
+        document.getElementById("addItem").style.display = "block"
+        document.getElementById("editItem").style.display = "none"
+        const url = new URL(window.location.href)
+        window.history.replaceState({}, "", url.origin + url.pathname)
         productForm.reset()
     }
 
@@ -108,8 +112,6 @@ export default function Profile(props){
         .catch(err => console.log("Error: " + err))
     }
 
-    let editItemId
-
     async function editProduct(id){
         const res = await fetch(`http://localhost:8080/products/${id}`, {
             method: 'GET',
@@ -130,8 +132,10 @@ export default function Profile(props){
             document.getElementById("startingPrice").value = data.startingPrice
             document.getElementById("addItem").style.display = "none"
             document.getElementById("editItem").style.display = "block"
-            editItemId = id
-            console.log(editItemId);
+            let url = new URL(window.location.href)
+            url.searchParams.set("id", id)
+            window.history.replaceState({}, "", url.toString())
+            console.log(url);
     }
 
     function editButton(){
@@ -146,7 +150,8 @@ export default function Profile(props){
     }
 
     async function editItem(){
-        console.log(editItemId);
+        const url = new URL(window.location.href)
+        const id = url.searchParams.get('id')
         let inputValues = {
             name: document.getElementById("title").value,
             description: document.getElementById("description").value,
@@ -154,8 +159,7 @@ export default function Profile(props){
             startingPrice: document.getElementById("startingPrice").value,
             purchasePrice: document.getElementById("purchasePrice").value,
         }
-        console.log(inputValues);
-        const res = await fetch(`http://localhost:8080/products/${editItemId}`, {
+        const res = await fetch(`http://localhost:8080/products/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -164,6 +168,9 @@ export default function Profile(props){
             body: JSON.stringify(inputValues)
             })
             const data = await res.json()
+            navigate(`/products/${id}`)
+            document.getElementById("addItem").style.display = "block"
+            document.getElementById("editItem").style.display = "none"
     }
 
     function addFunds(){
@@ -191,7 +198,7 @@ export default function Profile(props){
     return(
         <section className="profile">
             <div className="container">
-            {balance}
+            <h3>Balance: {balance}</h3>
             <div className="add-item-animation btn-grad">
                 <div onClick={displayForm} className="btn-grad">
                     <h1>Create new item</h1>

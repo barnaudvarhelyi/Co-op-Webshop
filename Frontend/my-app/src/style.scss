@@ -60,6 +60,10 @@ nav {
     }
 }
 
+#editItem {
+    display: none;
+}
+
 .profile {
 
     .container {
@@ -184,6 +188,9 @@ nav {
             border: none;
             font-size: 2em;
         }
+
+
+        
     }
 
     .add-funds {
@@ -431,10 +438,6 @@ nav {
 
                 button {
                     width: 100%;
-                }
-
-                #editItem {
-                    display: none;
                 }
             }
 

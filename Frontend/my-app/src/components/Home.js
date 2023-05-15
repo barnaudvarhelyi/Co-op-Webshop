@@ -1,28 +1,25 @@
 import { Link, json } from "react-router-dom"
-import Product from './Product';
 import { useState, useEffect } from "react"
 
 export default function Home(props) {
 
-    let displayItems = ""
+    useEffect(() => {
+        props.displayAllItems()
+      }, [])
 
-    if(props.products){
-        displayItems = props.products.map(function(product){
-            return <div key={product.id}>
-            <Product description={product.description} 
-            title={product.name} 
-            image={product.photoUrl} 
-            purchasePrice={product.purchasePrice} 
-            startingPrice={product.startingPrice} />
-            <Link to={`/products/${product.id}`}>More information</Link>
-            </div>
-        })
+    function sortItems(sorting){
+        let url = new URL(window.location.href)
+        url.searchParams.set("sort", sorting)
+        window.history.replaceState({}, "", url.toString())
+        props.displayAllProducts()
     }
     
     return (
         <div>
+            <button type="button" onClick={() => sortItems('desc')}>Sort by descending</button>
+            <button type="button" onClick={() => sortItems('asc')}>Sort by ascending</button>
             <div className="products">
-                {displayItems}
+                {props.displayItems}
             </div>
         </div>
     )
