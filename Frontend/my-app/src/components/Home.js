@@ -1,11 +1,38 @@
 import { Link, json } from "react-router-dom"
 import { useState, useEffect } from "react"
+import Product from './Product';
 
 export default function Home(props) {
 
     useEffect(() => {
-        props.displayAllItems()
+        props.displayAllProducts()
       }, [])
+
+    let displayItems = ""
+
+    if(props.searchResult){
+        displayItems = props.searchResult.map(function(searchResult){
+            return <div key={searchResult.id}>
+            <Product description={searchResult.description} 
+            title={searchResult.name} 
+            image={searchResult.photoUrl} 
+            purchasePrice={searchResult.purchasePrice} 
+            startingPrice={searchResult.startingPrice} />
+            <Link to={`/products/${searchResult.id}`}>More information</Link>
+            </div>
+        })
+    } else if(props.products){
+        displayItems = props.products.map(function(product){
+            return <div key={product.id}>
+            <Product description={product.description} 
+            title={product.name} 
+            image={product.photoUrl} 
+            purchasePrice={product.purchasePrice} 
+            startingPrice={product.startingPrice} />
+            <Link to={`/products/${product.id}`}>More information</Link>
+            </div>
+        })
+    }
 
     function sortItems(sorting){
         let url = new URL(window.location.href)
@@ -16,10 +43,13 @@ export default function Home(props) {
     
     return (
         <div>
-            <button type="button" onClick={() => sortItems('desc')}>Sort by descending</button>
-            <button type="button" onClick={() => sortItems('asc')}>Sort by ascending</button>
+            <ul className="sorting-menu">
+                <li onClick={() => sortItems()}>Sort by default</li>
+                <li onClick={() => sortItems('desc')}>Sort by ascending</li>
+                <li onClick={() => sortItems('asc')}>Sort by descending</li>
+            </ul>
             <div className="products">
-                {props.displayItems}
+                {displayItems}
             </div>
         </div>
     )

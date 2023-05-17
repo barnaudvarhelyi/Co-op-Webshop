@@ -9,8 +9,6 @@ import Home from './components/Home';
 import Login from './components/Login';
 import Profile from './components/Profile';
 import SingleProduct from './components/SingleProduct';
-import Product from './components/Product';
-import { Link } from 'react-router-dom'
 
 function App() {
 
@@ -31,6 +29,21 @@ function App() {
       })
   }
 
+  const [registerData, setRegisterData] = useState({
+      username: '',
+      password: ''
+  })
+
+  function handleRegister(e){
+      const name = e.target.name;
+      const value = e.target.value;
+
+      setRegisterData({
+          ...registerData,
+          [name]: value
+      })
+  }
+
   function submitForm(e){
       e.preventDefault()
 
@@ -46,6 +59,18 @@ function App() {
       .catch(err => console.log("Error: " + err))
   }
 
+  async function register(e){
+    e.preventDefault()
+    const res = await fetch('http://localhost:8080/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(registerData)
+    })
+    const data = res.json()
+  }
+
   const [products, setProducts] = useState([])
 
   async function displayAllProducts(){
@@ -59,15 +84,12 @@ function App() {
       fetchUrl = 'http://localhost:8080/products/sort/asc'
     } else {
       fetchUrl = 'http://localhost:8080/api/products/all'
+      window.history.replaceState({}, "", url.origin + url.pathname)
     }
     const res = await fetch(fetchUrl)
     const data = await res.json()
     setProducts(data)
   }
-
-  useEffect(() => {
-    displayAllProducts()
-  }, [])
 
   const [userProfile, setUserProfile] = useState()
 
@@ -81,30 +103,34 @@ function App() {
     .then(data => setUserProfile(data))
   }
 
-  let displayItems = ""
+  async function uploadFunds(fund){
+    const res = await fetch('http://localhost:8080/balance', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem("token")}`
+    },
+    body: JSON.stringify({balance: fund})
+    })
+    const data = await res.json()
+    displayProfileInformations()
+}
 
-  function displayAllItems(){
-      if(products){
-          displayItems = products.map(function(product){
-              return <div key={product.id}>
-              <Product description={product.description} 
-              title={product.name} 
-              image={product.photoUrl} 
-              purchasePrice={product.purchasePrice} 
-              startingPrice={product.startingPrice} />
-              <Link to={`/products/${product.id}`}>More information</Link>
-              </div>
-          })
-      }
+  const [searchResult, setSearchResult] = useState()
+
+  async function searchBar(result){
+    const res = await fetch(`http://localhost:8080/products/search?search=${result}`)
+    const data = await res.json()
+    setSearchResult(data)
   }
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navbar userProfile={userProfile}/>}>
-          <Route index element={<Home products={products} displayAllItems={displayAllItems} displayItems={displayItems}/>} />
-          <Route path="login" element={<Login loginData={loginData} submitForm={submitForm} handleChange={handleChange} formData={formData} />} />
-          <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts} userProfile={userProfile} displayProfileInformations={displayProfileInformations} />} />
+        <Route path="/" element={<Navbar userProfile={userProfile} searchBar={searchBar} />}>
+          <Route index element={<Home products={products} displayAllProducts={displayAllProducts} searchResult={searchResult} displayProfileInformations={displayProfileInformations}/>} />
+          <Route path="login" element={<Login loginData={loginData} submitForm={submitForm} handleChange={handleChange} formData={formData} register={register} registerData={registerData} handleRegister={handleRegister}/>} />
+          <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts} userProfile={userProfile} displayProfileInformations={displayProfileInformations} uploadFunds={uploadFunds}/>} />
           <Route path="products/:productId" element={<SingleProduct products={products} />}/>
         </Route>
       </Routes>

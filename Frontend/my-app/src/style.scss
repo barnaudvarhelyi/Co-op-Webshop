@@ -58,6 +58,13 @@ nav {
         margin-right: 1em;
         font-weight: 100;
     }
+
+    .search-bar {
+        padding: 0.5em;
+        border: none;
+        border-radius: 1em;
+        width: 40%;
+    }
 }
 
 #editItem {
@@ -324,6 +331,10 @@ nav {
         width: 70%;
         background-image: url('https://img.freepik.com/free-vector/computer-login-concept-illustration_114360-7962.jpg?w=2000');
         background-size: cover;
+    }
+
+    #registerForm {
+        display: none;
     }
 
 }

@@ -52,6 +52,12 @@ nav h5 {
   margin-right: 1em;
   font-weight: 100;
 }
+nav .search-bar {
+  padding: 0.5em;
+  border: none;
+  border-radius: 1em;
+  width: 40%;
+}
 
 #editItem {
   display: none;
@@ -275,6 +281,9 @@ nav h5 {
   width: 70%;
   background-image: url("https://img.freepik.com/free-vector/computer-login-concept-illustration_114360-7962.jpg?w=2000");
   background-size: cover;
+}
+.login #registerForm {
+  display: none;
 }
 
 .products {

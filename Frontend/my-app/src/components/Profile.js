@@ -182,19 +182,6 @@ export default function Profile(props){
         addItem.style.display = addItem.style.display == 'none' ? 'flex' : 'none'
     }
 
-    async function uploadFunds(fund){
-        const res = await fetch('http://localhost:8080/balance', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem("token")}`
-        },
-        body: JSON.stringify({balance: fund})
-        })
-        const data = await res.json()
-        props.displayProfileInformations()
-    }
-
     return(
         <section className="profile">
             <div className="container">
@@ -210,9 +197,9 @@ export default function Profile(props){
                 </div>
             </div>
             <div className="add-funds">
-                <div onClick={() => uploadFunds(10)}>$10</div>
-                <div onClick={() => uploadFunds(50)}>$50</div>
-                <div onClick={() => uploadFunds(100)}>$100</div>
+                <div onClick={() => props.uploadFunds(10)}>$10</div>
+                <div onClick={() => props.uploadFunds(50)}>$50</div>
+                <div onClick={() => props.uploadFunds(100)}>$100</div>
             </div>
             <h4 className="cancel-fund" onClick={addFunds}>Cancel</h4>
             <form onSubmit={addProduct} autoComplete="off" id="addProductForm">
