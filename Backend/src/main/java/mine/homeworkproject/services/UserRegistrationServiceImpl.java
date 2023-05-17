@@ -3,6 +3,7 @@ package mine.homeworkproject.services;
 import mine.homeworkproject.dtos.BalanceDto;
 import mine.homeworkproject.dtos.RegistrationErrorDto;
 import mine.homeworkproject.dtos.RegistrationResponseDto;
+import mine.homeworkproject.dtos.ResponseDto;
 import mine.homeworkproject.dtos.UserRegistrationDto;
 import mine.homeworkproject.models.User;
 import mine.homeworkproject.models.UserBalance;
@@ -29,6 +30,13 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
   @Override
   public ResponseEntity registerUser(UserRegistrationDto userRegistrationDto) {
+    if (userRegistrationDto.getUsername().equals("") || userRegistrationDto.getUsername() == null
+        || userRegistrationDto.getEmail().equals("") || userRegistrationDto.getEmail() == null
+        || userRegistrationDto.getPassword().equals("") || userRegistrationDto.getPassword() == null
+    ) {
+      return ResponseEntity.status(400).body(new ResponseDto("Please provide valid inputs!"));
+    }
+    
     Boolean usernameExists = checkIfUsernameExists(userRegistrationDto.getUsername());
     Boolean emailExists = checkIfEmailExists(userRegistrationDto.getEmail());
 
