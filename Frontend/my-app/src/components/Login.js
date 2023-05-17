@@ -26,7 +26,7 @@ export default function Login(props) {
         const registerForm = document.querySelector('#registerForm')
         loginForm.style.display = 'flex'
         registerForm.style.display = 'none'
-        loginForm.reset()
+        registerForm.reset()
     }
 
     return (
