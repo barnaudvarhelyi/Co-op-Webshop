@@ -277,6 +277,9 @@ nav .search-bar {
   cursor: pointer;
   font-size: 1em;
 }
+.login .login-form form span {
+  cursor: pointer;
+}
 .login .login-header {
   width: 70%;
   background-image: url("https://img.freepik.com/free-vector/computer-login-concept-illustration_114360-7962.jpg?w=2000");

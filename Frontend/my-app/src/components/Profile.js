@@ -135,7 +135,6 @@ export default function Profile(props){
             let url = new URL(window.location.href)
             url.searchParams.set("id", id)
             window.history.replaceState({}, "", url.toString())
-            console.log(url);
     }
 
     function editButton(){

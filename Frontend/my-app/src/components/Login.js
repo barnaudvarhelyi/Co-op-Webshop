@@ -18,6 +18,7 @@ export default function Login(props) {
         const registerForm = document.querySelector('#registerForm')
         loginForm.style.display = 'none'
         registerForm.style.display = 'flex'
+        loginForm.reset()
     }
 
     function displayLogin(){
@@ -25,6 +26,7 @@ export default function Login(props) {
         const registerForm = document.querySelector('#registerForm')
         loginForm.style.display = 'flex'
         registerForm.style.display = 'none'
+        loginForm.reset()
     }
 
     return (
@@ -41,7 +43,8 @@ export default function Login(props) {
                 <button type="submit">Login</button>
                 <small>Are you new here? <span onClick={displayRegister}>Create an account</span></small>
             </form>
-            <form onSubmit={props.register} id="registerForm">
+            <form onSubmit={props.register} id="registerForm" autoComplete="off">
+                <input name="email" type="text" placeholder="Email Address" onChange={props.handleRegister} value={props.registerData.name}/>
                 <input name="username" type="text" placeholder="Username" onChange={props.handleRegister} value={props.registerData.name}/>
                 <input name="password" type="password" placeholder="Password" onChange={props.handleRegister} value={props.registerData.name}/>
                 <button type="submit">Sign Up</button>

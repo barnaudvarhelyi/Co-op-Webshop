@@ -1,10 +1,19 @@
-import { Outlet, Link } from "react-router-dom"
-import { useState } from "react"
+import { Outlet, Link, useLocation } from "react-router-dom"
+import { useState, useEffect } from "react"
 
 export default function Navbar(props){
 
     let loggedIn = localStorage.getItem("username")
+    const location = useLocation()
 
+    useEffect(() => {
+        if(location.pathname != '/'){
+            document.querySelector('.search-bar').style.display = 'none'
+        } else {
+            document.querySelector('.search-bar').style.display = 'block'
+        }
+    }, [location])
+ 
     return (
         <section className="navbar">
         <nav>

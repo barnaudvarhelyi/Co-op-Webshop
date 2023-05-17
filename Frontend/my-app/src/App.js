@@ -31,6 +31,7 @@ function App() {
 
   const [registerData, setRegisterData] = useState({
       username: '',
+      email: '',
       password: ''
   })
 
@@ -69,6 +70,7 @@ function App() {
       body: JSON.stringify(registerData)
     })
     const data = res.json()
+    console.log(res, data, registerData);
   }
 
   const [products, setProducts] = useState([])
