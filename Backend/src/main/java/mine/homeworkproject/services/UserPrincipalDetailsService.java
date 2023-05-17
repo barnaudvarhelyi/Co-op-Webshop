@@ -1,7 +1,6 @@
 package mine.homeworkproject.services;
 
-import com.models.UserPrincipal;
-import com.services.UserService;
+import mine.homeworkproject.models.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
