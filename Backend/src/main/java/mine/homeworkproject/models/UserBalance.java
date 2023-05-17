@@ -27,9 +27,9 @@ public class UserBalance {
     this.balance = 0.00;
     this.onLicit = 0.00;
   }
-  public UserBalance(Double balance, Double onLicit) {
+  public UserBalance(Double balance) {
     this.balance = balance;
-    this.onLicit = onLicit;
+    this.onLicit = 0.00;
   }
 
   public Long getId() {

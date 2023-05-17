@@ -8,15 +8,17 @@ public class RegistrationResponseDto {
 
   private Long id;
   private String username;
+  private BalanceDto balanceDto;
 
   @JsonInclude(Include.NON_EMPTY)
   private String confirmationToken;
 
   public RegistrationResponseDto() {}
 
-  public RegistrationResponseDto(Long id, String username) {
+  public RegistrationResponseDto(Long id, String username, BalanceDto balanceDto) {
     this.id = id;
     this.username = username;
+    this.balanceDto = balanceDto;
   }
 
   public RegistrationResponseDto(Long id, String username, String confirmationToken) {

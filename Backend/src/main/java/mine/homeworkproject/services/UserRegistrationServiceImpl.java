@@ -1,9 +1,12 @@
 package mine.homeworkproject.services;
 
+import mine.homeworkproject.dtos.BalanceDto;
 import mine.homeworkproject.dtos.RegistrationErrorDto;
 import mine.homeworkproject.dtos.RegistrationResponseDto;
 import mine.homeworkproject.dtos.UserRegistrationDto;
 import mine.homeworkproject.models.User;
+import mine.homeworkproject.models.UserBalance;
+import mine.homeworkproject.repositories.BalanceRepository;
 import mine.homeworkproject.repositories.UserRepository;
 import mine.homeworkproject.security.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +17,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserRegistrationServiceImpl implements UserRegistrationService {
   private final UserRepository userRepository;
+  private final BalanceRepository balanceRepository;
   private BCryptPasswordEncoder passwordEncoder;
 
   @Autowired
-  public UserRegistrationServiceImpl(UserRepository userRepository) {
+  public UserRegistrationServiceImpl(UserRepository userRepository,
+      BalanceRepository balanceRepository) {
     this.userRepository = userRepository;
+    this.balanceRepository = balanceRepository;
   }
 
   @Override
@@ -37,25 +43,21 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
       if (emailExists) {
         registrationErrorDto.setEmailError("Email already exists!");
       }
-
       return ResponseEntity.status(400).body(registrationErrorDto);
-
     } else {
-      User user = new User();
+      UserBalance newBalance = new UserBalance(0.00);
+      balanceRepository.save(newBalance);
       passwordEncoder = new BCryptPasswordEncoder();
 
-      user.setUsername(userRegistrationDto.getUsername());
-      user.setEmail(userRegistrationDto.getEmail());
-      user.setPassword(passwordEncoder.encode(userRegistrationDto.getPassword()));
-
-      if (checkIfDBIsEmpty()) {
-        user.setRole(String.valueOf(UserRole.Admin));
-      } else {
-        user.setRole(String.valueOf(UserRole.User));
-      }
+      User user = new User(
+          userRegistrationDto.getUsername(),
+          userRegistrationDto.getEmail(),
+          passwordEncoder.encode(userRegistrationDto.getPassword()),
+          checkIfDBIsEmpty() ? String.valueOf(UserRole.Admin) : String.valueOf(UserRole.User),
+          newBalance);
 
       userRepository.save(user);
-      return ResponseEntity.status(200).body(new RegistrationResponseDto(user.getId(), user.getUsername()));
+      return ResponseEntity.status(200).body(new RegistrationResponseDto(user.getId(), user.getUsername(), new BalanceDto(newBalance)));
     }
   }
 
