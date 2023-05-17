@@ -36,14 +36,14 @@ public class ProductsController {
   }
 
   @RequestMapping(value = "/products", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, params = "id")
-  public ResponseEntity<?> createOrUpdateProduct(@RequestParam("id") Long id, @RequestBody ProductCreateDto productCreateDto, HttpServletRequest request) {
+  public ResponseEntity<?> handleProduct(@RequestParam("id") Long id, @RequestBody ProductCreateDto productCreateDto, HttpServletRequest request) {
     ResponseEntity<?> response;
     String method = request.getMethod();
 
     if (RequestMethod.GET.name().equals(method)) {
       response = getProductById(id);
     } else if (RequestMethod.POST.name().equals(method)) {
-      response = createNewProduct(productCreateDto, request);
+      response = createProduct(productCreateDto, request);
     } else if (RequestMethod.PUT.name().equals(method)) {
       response = updateProduct(id, productCreateDto, request);
     } else if (RequestMethod.DELETE.name().equals(method)) {
@@ -59,7 +59,7 @@ public class ProductsController {
     return productService.getProductById(id);
   }
   @PostMapping("/products")
-  public ResponseEntity createNewProduct(@RequestBody ProductCreateDto product, HttpServletRequest request) {
+  public ResponseEntity createProduct(@RequestBody ProductCreateDto product, HttpServletRequest request) {
     return productService.createProduct(product, request);
   }
   @PutMapping("/products/{id}")

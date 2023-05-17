@@ -25,7 +25,6 @@ public class UserController {
   public ResponseEntity userProfile(HttpServletRequest request) {
     return userService.getUserProfile(request);
   }
-
   @PostMapping("/balance")
   public ResponseEntity addBalance(@RequestBody HashMap<String, String> balance, HttpServletRequest request) {
     return userService.addBalance(balance, request);
