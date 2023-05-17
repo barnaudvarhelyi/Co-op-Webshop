@@ -34,9 +34,9 @@ public class AppMain implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    UserBalance balance1 = new UserBalance(100.0, 0.0);
-    UserBalance balance2 = new UserBalance(100.0, 0.0);
-    UserBalance balance3 = new UserBalance(100.0, 0.0);
+    UserBalance balance1 = new UserBalance(100.0);
+    UserBalance balance2 = new UserBalance(100.0);
+    UserBalance balance3 = new UserBalance(100.0);
     balanceRepository.save(balance1);
     balanceRepository.save(balance2);
     balanceRepository.save(balance3);

@@ -93,6 +93,7 @@ public class User {
   public void setBalance(Double balance) {
     this.balance.setBalance(this.balance.getBalance() + balance);
   }
+  public void setBalance(UserBalance balance) {this.setBalance(balance);}
   public List<Bid> getBids() {
     return bids;
   }
