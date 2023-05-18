@@ -102,10 +102,9 @@ public class UserServiceImpl implements UserService {
     userRepository.save(user.get());
     return ResponseEntity.status(200).body(new ResponseDto("Balance added successfully!"));
   }
-
   @Override
-  public ResponseEntity getUserProfileById(Long id) {
-    User user = findUserById(id);
+  public ResponseEntity getUserProfileById(String username) {
+    User user = findUserByUsername(username);
     if (user == null) {
       return ResponseEntity.status(404).body(new ResponseDto("User not found!"));
     }

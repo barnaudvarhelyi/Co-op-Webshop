@@ -27,9 +27,9 @@ public class UserController {
     return userService.getUserProfile(request);
   }
 
-  @GetMapping("/user-profile/{id}")
-  public ResponseEntity userProfileById(@PathVariable Long id) {
-    return userService.getUserProfileById(id);
+  @GetMapping("/user-profile/{username}")
+  public ResponseEntity userProfileById(@PathVariable String username) {
+    return userService.getUserProfileById(username);
   }
   @PostMapping("/balance")
   public ResponseEntity addBalance(@RequestBody HashMap<String, String> balance, HttpServletRequest request) {
