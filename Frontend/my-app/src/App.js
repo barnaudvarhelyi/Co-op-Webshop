@@ -70,7 +70,6 @@ function App() {
       body: JSON.stringify(registerData)
     })
     const data = res.json()
-    console.log(res, data);
     if(res.status === 200){
       const loginForm = document.querySelector('#loginForm')
       const registerForm = document.querySelector('#registerForm')
