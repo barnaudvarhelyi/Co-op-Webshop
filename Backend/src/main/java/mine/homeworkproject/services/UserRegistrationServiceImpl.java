@@ -36,7 +36,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     ) {
       return ResponseEntity.status(400).body(new ResponseDto("Please provide valid inputs!"));
     }
-    
+
     Boolean usernameExists = checkIfUsernameExists(userRegistrationDto.getUsername());
     Boolean emailExists = checkIfEmailExists(userRegistrationDto.getEmail());
 
