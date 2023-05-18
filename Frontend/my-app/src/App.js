@@ -78,6 +78,7 @@ function App() {
       loginForm.reset()
       registerForm.reset()
     }
+    console.log(data);
   }
 
   const [products, setProducts] = useState([])
