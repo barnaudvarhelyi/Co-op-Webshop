@@ -41,17 +41,15 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     Boolean emailExists = checkIfEmailExists(userRegistrationDto.getEmail());
 
     if (usernameExists || emailExists) {
-      RegistrationErrorDto registrationErrorDto = new RegistrationErrorDto();
+      String message = "";
       if (usernameExists && emailExists) {
-        registrationErrorDto.setUsernameError("Username already exists!");
+        message += "Username and Email already exists!";
+      } else if (usernameExists) {
+        message += "Username already exists!";
+      } else {
+        message += "Email already exists!";
       }
-      if (usernameExists) {
-        registrationErrorDto.setUsernameError("Username already exists!");
-      }
-      if (emailExists) {
-        registrationErrorDto.setEmailError("Email already exists!");
-      }
-      return ResponseEntity.status(400).body(registrationErrorDto);
+      return ResponseEntity.status(400).body(new ResponseDto(message));
     } else {
       UserBalance newBalance = new UserBalance(0.00);
       balanceRepository.save(newBalance);
