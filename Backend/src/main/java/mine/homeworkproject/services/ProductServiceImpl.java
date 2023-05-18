@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import mine.homeworkproject.dtos.ProductAPIDto;
-import mine.homeworkproject.dtos.ProductByIdResponsDto;
+import mine.homeworkproject.dtos.ProductByIdResponseDto;
 import mine.homeworkproject.dtos.ProductCreateDto;
 import mine.homeworkproject.dtos.ProductDto;
 import mine.homeworkproject.dtos.ResponseDto;
@@ -44,7 +44,6 @@ public class ProductServiceImpl implements ProductService {
   public List<Product> getAllProducts() {
     return productRepository.findAll();
   }
-
   @Override
   public ResponseEntity createProduct(ProductCreateDto productCreateDto,
       HttpServletRequest request) {
@@ -81,13 +80,17 @@ public class ProductServiceImpl implements ProductService {
       return ResponseEntity.status(404).body(responseDto);
     }
     String user;
+    Long userId;
     if (product.get().getUser() == null) {
       user = "Not given!";
+      userId = 1L;
     } else {
-      user = userService.findUserById(product.get().getUser()).getUsername();
+      User u = userService.findUserById(product.get().getUser());
+      user = u.getUsername();
+      userId = u.getId();
     }
 
-    ProductByIdResponsDto response = new ProductByIdResponsDto(product.get(), user);
+    ProductByIdResponseDto response = new ProductByIdResponseDto(product.get(), user, userId);
     return ResponseEntity.status(200).body(response);
   }
   @Override

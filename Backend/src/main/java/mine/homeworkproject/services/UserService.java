@@ -20,4 +20,6 @@ public interface UserService {
   ResponseEntity getUserProfile(HttpServletRequest request);
 
   ResponseEntity addBalance(HashMap<String, String> balance, HttpServletRequest request);
+
+  ResponseEntity getUserProfileById(Long id);
 }
