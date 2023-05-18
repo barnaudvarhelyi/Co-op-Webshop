@@ -6,8 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
+import mine.homeworkproject.dtos.ProductDto;
 import mine.homeworkproject.dtos.ResponseDto;
+import mine.homeworkproject.dtos.UserByIdResponseDto;
+import mine.homeworkproject.dtos.UserDto;
 import mine.homeworkproject.dtos.UserProfileResponsDto;
 import mine.homeworkproject.models.Product;
 import mine.homeworkproject.models.User;
@@ -97,5 +101,18 @@ public class UserServiceImpl implements UserService {
     user.get().setBalance(balanceDb);
     userRepository.save(user.get());
     return ResponseEntity.status(200).body(new ResponseDto("Balance added successfully!"));
+  }
+
+  @Override
+  public ResponseEntity getUserProfileById(Long id) {
+    User user = findUserById(id);
+    if (user == null) {
+      return ResponseEntity.status(404).body(new ResponseDto("User not found!"));
+    }
+    List<ProductDto> productsDto = productRepository.findAllByUser(user)
+        .stream()
+        .map(ProductDto::new)
+        .collect(Collectors.toList());
+    return ResponseEntity.ok(new UserByIdResponseDto(user, productsDto));
   }
 }
