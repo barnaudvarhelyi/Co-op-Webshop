@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import mine.homeworkproject.dtos.ProductCreateDto;
 import mine.homeworkproject.dtos.ResponseDto;
 import mine.homeworkproject.models.Product;
+import mine.homeworkproject.models.User;
 import mine.homeworkproject.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

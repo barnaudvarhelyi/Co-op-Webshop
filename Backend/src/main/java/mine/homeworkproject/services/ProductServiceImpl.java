@@ -4,6 +4,7 @@ package mine.homeworkproject.services;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -13,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import mine.homeworkproject.dtos.ProductAPIDto;
 import mine.homeworkproject.dtos.ProductByIdResponseDto;
 import mine.homeworkproject.dtos.ProductCreateDto;
-import mine.homeworkproject.dtos.ProductDto;
+import mine.homeworkproject.dtos.ProductResponseDto;
 import mine.homeworkproject.dtos.ResponseDto;
 import mine.homeworkproject.models.Product;
 import mine.homeworkproject.models.User;
@@ -60,12 +61,39 @@ public class ProductServiceImpl implements ProductService {
       if (response != null) {
         return response;
       }
-      Product product = new Product(productCreateDto.getName(), productCreateDto.getDescription(),
-          productCreateDto.getPhotoUrl(), productCreateDto.getPurchasePrice(),
-          productCreateDto.getStartingPrice());
+      LocalDateTime expiresAt;
+      Double startingPrice;
+
+      if (productCreateDto.getForBid()) {
+        String expires = productCreateDto.getExpiresAt();
+        startingPrice = productCreateDto.getStartingPrice();
+
+        switch (expires) {
+          case "five_minutes": { expiresAt = LocalDateTime.now().plusMinutes(5); break; }
+          case "one_day": { expiresAt = LocalDateTime.now().plusDays(1); break; }
+          case "three_days": { expiresAt = LocalDateTime.now().plusDays(3); break; }
+          case "one_week": { expiresAt = LocalDateTime.now().plusWeeks(1); break; }
+          case "two_weeks": { expiresAt = LocalDateTime.now().plusWeeks(2); break; }
+          case "one_month": { expiresAt = LocalDateTime.now().plusMonths(1); break; }
+          default: { return ResponseEntity.status(400).body(new ResponseDto("Please provide a valid expiration time!")); }
+        }
+      }
+      else {
+        startingPrice = null;
+        expiresAt = null;
+      }
+      Product product = new Product
+          (productCreateDto.getName(),
+          productCreateDto.getDescription(),
+          productCreateDto.getPhotoUrl(),
+          productCreateDto.getPurchasePrice(),
+          startingPrice,
+          expiresAt);
+
       product.setUser(user.get());
       productRepository.save(product);
-      return ResponseEntity.status(201).body(new ProductDto(product));
+      return ResponseEntity.status(201).body(new ProductResponseDto(product));
+
     } catch (ResponseStatusException e) {
       responseDto = new ResponseDto("Product creation error!");
       return ResponseEntity.status(e.getStatus()).body(responseDto);
@@ -150,12 +178,11 @@ public class ProductServiceImpl implements ProductService {
   public void getRandomProductsFromAPI() {
     for (ProductAPIDto p : parseResponse(getDataFromAPI())) {
       Product product = new Product(p.getTitle(), p.getDescription(), p.getImage(), p.getPrice(),
-          p.getPrice() * 0.8);
+          p.getPrice() * 0.7, null);
       product.setUser(userService.findUserById(1L));
       productRepository.save(product);
     }
   }
-
   private Object[] getUserProductAndAccess(Long id, HttpServletRequest request) {
     Optional<Product> product = productRepository.findById(id);
     Optional<User> user = userService.getUserByToken(request);
@@ -212,13 +239,19 @@ public class ProductServiceImpl implements ProductService {
     if (p.getDescription().equals("") || p.getDescription() == null
         || p.getPhotoUrl().equals("") || p.getPhotoUrl() == null
         || p.getName().equals("") || p.getName() == null
-        || Objects.isNull(p.getStartingPrice())
         || Objects.isNull(p.getPurchasePrice())
+        || p.getForBid() && Objects.isNull(p.getStartingPrice())
     ) {
       responseDto = new ResponseDto("Please provide valid inputs!");
       return ResponseEntity.status(400).body(responseDto);
     }
-    if (p.getPurchasePrice() <= 0 || p.getStartingPrice() <= 0) {
+    if (p.getForBid()) {
+      if (p.getStartingPrice() <= 0) {
+        responseDto = new ResponseDto("Please provide valid numbers!");
+        return ResponseEntity.status(400).body(responseDto);
+      }
+    }
+    if (p.getPurchasePrice() <= 0) {
       responseDto = new ResponseDto("Please provide valid numbers!");
       return ResponseEntity.status(400).body(responseDto);
     }
