@@ -9,6 +9,7 @@ import Home from './components/Home';
 import Login from './components/Login';
 import Profile from './components/Profile';
 import SingleProduct from './components/SingleProduct';
+import UploaderProfile from './components/UploaderProfile';
 
 function App() {
 
@@ -134,12 +135,6 @@ function App() {
     setSearchResult(data)
   }
 
-  async function displayUploader(uploader){
-    const res = await fetch(`http://localhost:8080/user-profile/${uploader}`)
-    const data = await res.json()
-    console.log(uploader);
-  }
-
   return (
     <BrowserRouter>
       <Routes>
@@ -147,7 +142,8 @@ function App() {
           <Route index element={<Home products={products} displayAllProducts={displayAllProducts} searchResult={searchResult} displayProfileInformations={displayProfileInformations}/>} />
           <Route path="login" element={<Login loginData={loginData} submitForm={submitForm} handleChange={handleChange} formData={formData} register={register} registerData={registerData} handleRegister={handleRegister}/>} />
           <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts} userProfile={userProfile} displayProfileInformations={displayProfileInformations} uploadFunds={uploadFunds}/>} />
-          <Route path="products/:productId" element={<SingleProduct products={products} displayUploader={displayUploader}/>}/>
+          <Route path="products/:productId" element={<SingleProduct products={products} />}/>
+          <Route path="user/:username" element={<UploaderProfile />}/>
         </Route>
       </Routes>
     </BrowserRouter>

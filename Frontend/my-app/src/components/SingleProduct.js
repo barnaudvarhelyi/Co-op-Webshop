@@ -21,7 +21,7 @@ export default function SingleProduct(props){
     return (
         <div className="single-product">
             <Link to="/">Back to Home Page</Link>
-            <h3 onClick={() => props.displayUploader(productPage.uploader)}>Uploaded by: {productPage.uploader}</h3>
+            <Link to={`/user/${productPage.uploader}`}>Uploaded by: {productPage.uploader}</Link>
             <h1>{productPage.name}</h1>
             <img src={productPage.photoUrl} alt={productPage.name} />
             <h3>Purchase Price: ${productPage.purchasePrice}</h3>
