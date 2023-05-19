@@ -69,7 +69,8 @@ public class ProductServiceImpl implements ProductService {
         startingPrice = productCreateDto.getStartingPrice();
 
         switch (expires) {
-          case "five_minutes": { expiresAt = LocalDateTime.now().plusMinutes(5); break; }
+          case "two_minutes": {expiresAt = LocalDateTime.now().plusMinutes(2); break; }
+          case "five_minutes": {expiresAt = LocalDateTime.now().plusMinutes(5); break; }
           case "one_day": { expiresAt = LocalDateTime.now().plusDays(1); break; }
           case "three_days": { expiresAt = LocalDateTime.now().plusDays(3); break; }
           case "one_week": { expiresAt = LocalDateTime.now().plusWeeks(1); break; }
@@ -122,6 +123,10 @@ public class ProductServiceImpl implements ProductService {
     return ResponseEntity.status(200).body(response);
   }
   @Override
+  public Product findProductById(Long id) {
+    return productRepository.findById(id).orElse(null);
+  }
+  @Override
   public ResponseEntity deleteProductById(Long id, HttpServletRequest request) {
     Object[] response = getUserProductAndAccess(id, request);
     if (response[0] != null) {
@@ -141,13 +146,16 @@ public class ProductServiceImpl implements ProductService {
     User user = (User) response[1];
     Product product = (Product) response[2];
 
+    //TODO when bids are available test this
+    if (product.getExpiresAt() != null && product.getBids().size() > 0) {
+      return ResponseEntity.status(400).body(new ResponseDto("Product cannot be edited after someone has bid on it"));
+    }
     product.setUser(user);
     product.setName(productCreateDto.getName());
     product.setDescription(productCreateDto.getDescription());
     product.setPhotoUrl(productCreateDto.getPhotoUrl());
     product.setPurchasePrice(productCreateDto.getPurchasePrice());
     product.setStartingPrice(productCreateDto.getStartingPrice());
-
     return ResponseEntity.status(200).body(productRepository.save(product));
   }
   @Override

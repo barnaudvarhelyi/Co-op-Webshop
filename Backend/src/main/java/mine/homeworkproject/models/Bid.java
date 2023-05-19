@@ -24,7 +24,11 @@ public class Bid {
   @JoinColumn(name = "product_id")
   private Product product;
 
-  public Bid() {
+  public Bid() {}
+  public Bid(Double amount, User user, Product product) {
+    this.amount = amount;
+    this.user = user;
+    this.product = product;
   }
 
   public Long getId() {

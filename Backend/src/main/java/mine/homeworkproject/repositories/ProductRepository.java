@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface ProductRepository extends JpaRepository<Product, Long> {
   Optional<Product> findById(Long id);
   List<Product> findAllByUser(User user);
+  List<Product> findByExpiresAtNotNull();
 }

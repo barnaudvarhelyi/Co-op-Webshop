@@ -90,8 +90,11 @@ public class User {
   public BalanceDto getBalance() {
     return new BalanceDto(this.balance);
   }
-  public void setBalance(Double balance) {
-    this.balance.setBalance(this.balance.getBalance() + balance);
+  public void setPlusBalance(Double balance) {
+    this.balance.setBalance(this.getBalance().getBalance() + balance);
+  }
+  public void setMinusBalance(Double balance) {
+    this.balance.setBalance(this.getBalance().getBalance() - balance);
   }
   public void setBalance(UserBalance balance) {this.setBalance(balance);}
   public List<Bid> getBids() {
@@ -100,9 +103,11 @@ public class User {
   public void setBids(Bid bid) {
     this.bids.add(bid);
   }
-  public void setOnLicit(Double onLicit) {
-    this.balance.setBalance(this.balance.getBalance() - onLicit);
+  public void setPlusOnLicit(Double onLicit) {
     this.balance.setOnLicit(this.balance.getOnLicit() + onLicit);
+  }
+  public void setMinusOnLicit(Double onLicit) {
+    this.balance.setOnLicit(this.balance.getOnLicit() - onLicit);
   }
   public List<String> getRoleList() {
     if (this.role.length() > 0) {

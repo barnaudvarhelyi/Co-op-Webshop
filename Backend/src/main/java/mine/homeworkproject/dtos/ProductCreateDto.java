@@ -13,8 +13,6 @@ public class ProductCreateDto {
   private String name;
   private String description;
   private String photoUrl;
-  //TODO change
-//  private LocalDateTime createdAt;
   private Double purchasePrice;
   private Boolean forBid;
   @Nullable
@@ -45,27 +43,21 @@ public class ProductCreateDto {
   public String getName() {
     return name;
   }
-
   public void setName(String name) {
     this.name = name;
   }
-
   public String getDescription() {
     return description;
   }
-
   public void setDescription(String description) {
     this.description = description;
   }
-
   public String getPhotoUrl() {
     return photoUrl;
   }
-
   public void setPhotoUrl(String photoUrl) {
     this.photoUrl = photoUrl;
   }
-
   public Double getStartingPrice() {
     return startingPrice;
   }

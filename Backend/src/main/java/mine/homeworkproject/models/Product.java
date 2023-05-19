@@ -61,7 +61,8 @@ public class Product {
     this.startingPrice = startingPrice == null ? null : Math.round(startingPrice*100.0)/100.0;
   }
   private LocalDateTime getFormattedCurrentTime(LocalDateTime datetime) {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    //TODO maybe change for only HH
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     return LocalDateTime.parse(datetime.format(formatter), formatter);
   }
   public Long getId() {

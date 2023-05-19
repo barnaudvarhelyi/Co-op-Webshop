@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
       ResponseDto response = new ResponseDto("Please provide valid amount!");
       return ResponseEntity.status(404).body(response);
     }
-    user.get().setBalance(balanceDb);
+    user.get().setPlusBalance(balanceDb);
     userRepository.save(user.get());
     return ResponseEntity.status(200).body(new ResponseDto("Balance added successfully!"));
   }
@@ -111,5 +111,9 @@ public class UserServiceImpl implements UserService {
         .map(ProductResponseDto::new)
         .collect(Collectors.toList());
     return ResponseEntity.ok(new UserByIdResponseDto(user, productsDto));
+  }
+  @Override
+  public void save(User user) {
+    userRepository.save(user);
   }
 }
