@@ -4,14 +4,12 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
-import mine.homeworkproject.dtos.ProductDto;
+import mine.homeworkproject.dtos.ProductResponseDto;
 import mine.homeworkproject.dtos.ResponseDto;
 import mine.homeworkproject.dtos.UserByIdResponseDto;
-import mine.homeworkproject.dtos.UserDto;
 import mine.homeworkproject.dtos.UserProfileResponsDto;
 import mine.homeworkproject.models.Product;
 import mine.homeworkproject.models.User;
@@ -108,9 +106,9 @@ public class UserServiceImpl implements UserService {
     if (user == null) {
       return ResponseEntity.status(404).body(new ResponseDto("User not found!"));
     }
-    List<ProductDto> productsDto = productRepository.findAllByUser(user)
+    List<ProductResponseDto> productsDto = productRepository.findAllByUser(user)
         .stream()
-        .map(ProductDto::new)
+        .map(ProductResponseDto::new)
         .collect(Collectors.toList());
     return ResponseEntity.ok(new UserByIdResponseDto(user, productsDto));
   }

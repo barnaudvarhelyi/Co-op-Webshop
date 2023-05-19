@@ -1,7 +1,6 @@
 package mine.homeworkproject.services;
 
 import mine.homeworkproject.dtos.BalanceDto;
-import mine.homeworkproject.dtos.RegistrationErrorDto;
 import mine.homeworkproject.dtos.RegistrationResponseDto;
 import mine.homeworkproject.dtos.ResponseDto;
 import mine.homeworkproject.dtos.UserRegistrationDto;
@@ -9,7 +8,7 @@ import mine.homeworkproject.models.User;
 import mine.homeworkproject.models.UserBalance;
 import mine.homeworkproject.repositories.BalanceRepository;
 import mine.homeworkproject.repositories.UserRepository;
-import mine.homeworkproject.security.UserRole;
+import mine.homeworkproject.enums.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

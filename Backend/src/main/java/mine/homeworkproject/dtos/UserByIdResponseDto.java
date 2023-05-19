@@ -1,8 +1,6 @@
 package mine.homeworkproject.dtos;
 
-import java.util.ArrayList;
 import java.util.List;
-import mine.homeworkproject.models.Product;
 import mine.homeworkproject.models.User;
 
 public class UserByIdResponseDto {
@@ -10,9 +8,9 @@ public class UserByIdResponseDto {
   private String username;
   private String email;
   private Integer productsCount;
-  private List<ProductDto> products;
+  private List<ProductResponseDto> products;
 
-  public UserByIdResponseDto(User user, List<ProductDto> products) {
+  public UserByIdResponseDto(User user, List<ProductResponseDto> products) {
     this.username = user.getUsername();
     this.email = user.getEmail();
     this.productsCount = products.size();
@@ -37,10 +35,10 @@ public class UserByIdResponseDto {
   public void setProductsCount(Integer productsCount) {
     this.productsCount = productsCount;
   }
-  public List<ProductDto> getProducts() {
+  public List<ProductResponseDto> getProducts() {
     return products;
   }
-  public void setProducts(List<ProductDto> products) {
+  public void setProducts(List<ProductResponseDto> products) {
     this.products = products;
   }
 }

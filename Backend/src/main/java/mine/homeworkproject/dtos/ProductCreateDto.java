@@ -1,6 +1,11 @@
 package mine.homeworkproject.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.istack.Nullable;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Objects;
 import mine.homeworkproject.models.Product;
 
@@ -8,17 +13,33 @@ public class ProductCreateDto {
   private String name;
   private String description;
   private String photoUrl;
-  private Double startingPrice;
+  //TODO change
+//  private LocalDateTime createdAt;
   private Double purchasePrice;
+  private Boolean forBid;
+  @Nullable
+  private Double startingPrice;
+  @Nullable
+  private String expiresAt;
 
   public ProductCreateDto() {}
 
-  public ProductCreateDto(String name, String description, String photoUrl, Double purchasePrice, Double startingPrice){
+  public ProductCreateDto(
+      String name,
+      String description,
+      String photoUrl,
+      Double purchasePrice,
+      Boolean forBid,
+      Double startingPrice,
+      String expiresAt
+  ){
     this.name = name;
     this.description = description;
     this.photoUrl = photoUrl;
-    this.startingPrice = Math.round(startingPrice*100.0)/100.0;
     this.purchasePrice = Math.round(purchasePrice*100.0)/100.0;
+    this.forBid = forBid;
+    this.startingPrice = forBid ? Math.round(startingPrice*100.0)/100.0 : null;
+    this.expiresAt = forBid ? expiresAt : null;
   }
 
   public String getName() {
@@ -48,17 +69,26 @@ public class ProductCreateDto {
   public Double getStartingPrice() {
     return startingPrice;
   }
-
   public void setStartingPrice(Double startingPrice) {
     this.startingPrice = startingPrice;
   }
-
   public Double getPurchasePrice() {
     return purchasePrice;
   }
-
   public void setPurchasePrice(Double purchasePrice) {
     this.purchasePrice = purchasePrice;
+  }
+  public String getExpiresAt() {
+    return expiresAt;
+  }
+  public void setExpiresAt(String expiresAt) {
+    this.expiresAt = expiresAt;
+  }
+  public Boolean getForBid() {
+    return forBid;
+  }
+  public void setForBid(Boolean forBid) {
+    this.forBid = forBid;
   }
 
   @Override

@@ -1,6 +1,11 @@
 package mine.homeworkproject.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.istack.Nullable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,8 +29,12 @@ public class Product {
   private String name;
   private String description;
   private String photoUrl;
-  private Double startingPrice;
   private Double purchasePrice;
+  private LocalDateTime createdAt;
+  @Nullable
+  private Double startingPrice;
+  @Nullable
+  private LocalDateTime expiresAt;
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
   private User user;
@@ -35,14 +44,26 @@ public class Product {
   public Product() {
   }
 
-  public Product(String name, String description, String photoUrl, Double purchasePrice, Double startingPrice) {
+  public Product(
+      String name,
+      String description,
+      String photoUrl,
+      Double purchasePrice,
+      Double startingPrice,
+      LocalDateTime expiresAt
+  ) {
     this.name = name;
     this.description = description;
     this.photoUrl = photoUrl;
-    this.startingPrice = Math.round(startingPrice*100.0)/100.0;
+    this.createdAt = getFormattedCurrentTime(LocalDateTime.now());
     this.purchasePrice = Math.round(purchasePrice*100.0)/100.0;
+    this.expiresAt = expiresAt == null || expiresAt.equals("") ? null : getFormattedCurrentTime(expiresAt);
+    this.startingPrice = startingPrice == null ? null : Math.round(startingPrice*100.0)/100.0;
   }
-
+  private LocalDateTime getFormattedCurrentTime(LocalDateTime datetime) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    return LocalDateTime.parse(datetime.format(formatter), formatter);
+  }
   public Long getId() {
     return id;
   }
@@ -95,6 +116,18 @@ public class Product {
   public void setBid(Bid bid) {
     this.bids.add(bid);
   }
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
+  public LocalDateTime getExpiresAt() {
+    return expiresAt;
+  }
+  public void setExpiresAt(LocalDateTime expiresAt) {
+    this.expiresAt = expiresAt;
+  }
 
   @Override
   public boolean equals(Object o) {
@@ -107,13 +140,16 @@ public class Product {
     Product product = (Product) o;
     return Objects.equals(id, product.id) && Objects.equals(name, product.name)
         && Objects.equals(description, product.description) && Objects.equals(
-        photoUrl, product.photoUrl) && Objects.equals(startingPrice, product.startingPrice)
-        && Objects.equals(purchasePrice, product.purchasePrice) && Objects.equals(
-        user, product.user);
+        photoUrl, product.photoUrl) && Objects.equals(purchasePrice, product.purchasePrice)
+        && Objects.equals(createdAt, product.createdAt) && Objects.equals(
+        startingPrice, product.startingPrice) && Objects.equals(expiresAt,
+        product.expiresAt) && Objects.equals(user, product.user)
+        && Objects.equals(bids, product.bids);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, description, photoUrl, startingPrice, purchasePrice, user);
+    return Objects.hash(id, name, description, photoUrl, purchasePrice, createdAt, startingPrice,
+        expiresAt, user, bids);
   }
 }

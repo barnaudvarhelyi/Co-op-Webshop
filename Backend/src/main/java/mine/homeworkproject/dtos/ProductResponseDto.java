@@ -1,26 +1,31 @@
 package mine.homeworkproject.dtos;
 
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import java.time.LocalDateTime;
 import mine.homeworkproject.models.Product;
-import mine.homeworkproject.models.User;
 
-public class ProductDto {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ProductResponseDto {
   private Long productId;
   private Long userId;
   private String name;
   private String description;
   private String photoUrl;
-  private Double startingPrice;
   private Double purchasePrice;
-  public ProductDto() {}
-  public ProductDto(Product product) {
+  private LocalDateTime creaatedAt;
+  private Double startingPrice;
+  private LocalDateTime expiresAt;
+  public ProductResponseDto() {}
+  public ProductResponseDto(Product product) {
     this.productId = product.getId();
     this.name = product.getName();
     this.description = product.getDescription();
     this.photoUrl = product.getPhotoUrl();
-    this.startingPrice = product.getStartingPrice();
     this.purchasePrice = product.getPurchasePrice();
     this.userId = product.getUser();
+    this.creaatedAt = product.getCreatedAt();
+    this.expiresAt = product.getExpiresAt();
+    this.startingPrice = product.getStartingPrice();
   }
 
   public Long getProductId() {
@@ -77,5 +82,21 @@ public class ProductDto {
 
   public void setPurchasePrice(Double purchasePrice) {
     this.purchasePrice = purchasePrice;
+  }
+
+  public LocalDateTime getCreaatedAt() {
+    return creaatedAt;
+  }
+
+  public void setCreaatedAt(LocalDateTime creaatedAt) {
+    this.creaatedAt = creaatedAt;
+  }
+
+  public LocalDateTime getExpiresAt() {
+    return expiresAt;
+  }
+
+  public void setExpiresAt(LocalDateTime expiresAt) {
+    this.expiresAt = expiresAt;
   }
 }
