@@ -43,11 +43,13 @@ export default function Home(props) {
     
     return (
         <div>
-            <ul className="sorting-menu">
-                <li onClick={() => sortItems()}>Sort by default</li>
-                <li onClick={() => sortItems('desc')}>Sort by ascending</li>
-                <li onClick={() => sortItems('asc')}>Sort by descending</li>
-            </ul>
+            <div className="sort-items">
+            <select onChange={(e) => sortItems(e.target.value)}>
+                <option value="">Sort by default</option>
+                <option value="asc">Sort by ascending</option>
+                <option value="desc">Sort by descending</option>
+            </select>
+            </div>
             <div className="products">
                 {displayItems}
             </div>

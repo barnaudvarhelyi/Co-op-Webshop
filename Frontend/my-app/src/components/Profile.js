@@ -14,13 +14,16 @@ export default function Profile(props){
             description: "",
             photoUrl: "",
             purchasePrice: "",
-            startingPrice: ""
+            startingPrice: "",
+            forBid: false,
+            expiresAt: ""
         }
     )
 
     function handleItem(e){
         const name = e.target.name
         const value = e.target.value
+        const checked = e.target.checked
 
         setProductData({
             ...productData,
@@ -50,6 +53,7 @@ export default function Profile(props){
             cancelItem()
             navigate(`/products/${data.productId}`)
         }
+        console.log(data);
     }
 
     function displayForm(){
@@ -181,6 +185,12 @@ export default function Profile(props){
         addItem.style.display = addItem.style.display == 'none' ? 'flex' : 'none'
     }
 
+    function toggleBidding(e){
+        const checkbox = document.querySelector('#checkboxBidding')
+        const startingPrice = document.querySelector('#startingPrice')
+        startingPrice.style.display = checkbox.checked ? 'block' : 'none'
+    }
+
     return(
         <section className="profile">
             <div className="container">
@@ -207,7 +217,17 @@ export default function Profile(props){
                 <input type="text" name="description" onChange={handleItem} placeholder="Description" id="description"/>
                 <input type="text" name="photoUrl" onChange={handleItem} placeholder="Photo" id="photoUrl"/>
                 <input type="number" name="purchasePrice" onChange={handleItem} placeholder="Purchase Price" step=".01" id="purchasePrice"/>
-                <input type="number" name="startingPrice" onChange={handleItem} placeholder="Starting Price" step=".01" id="startingPrice"/>
+                <label htmlFor="enableBidding">Bidding</label>
+                <input type="checkbox" name="forBid" onClick={toggleBidding} id="checkboxBidding" />
+                <input type="number" name="startingPrice" onChange={handleItem} placeholder="Starting Price" step=".01" id="startingPrice" />
+                <select>
+                    <option>Five Minutes</option>
+                    <option>1 Day</option>
+                    <option>3 Days</option>
+                    <option>1 Week</option>
+                    <option>2 Weeks</option>
+                    <option>1 Month</option>
+                </select>
                 <div className="button-container">
                     <button type="button" onClick={cancelItem}>Cancel</button>
                     <button type="submit" id="addItem">Add Item</button>

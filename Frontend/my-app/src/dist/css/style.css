@@ -134,6 +134,9 @@ nav .search-bar {
   margin-top: 0em;
   margin-bottom: 1em;
 }
+.profile form #startingPrice {
+  display: none;
+}
 .profile .add-item-animation {
   height: 200px;
   display: flex;
@@ -287,6 +290,17 @@ nav .search-bar {
 }
 .login #registerForm {
   display: none;
+}
+
+.sort-items {
+  max-width: 1100px;
+  margin: auto;
+  padding: 1em;
+}
+.sort-items select {
+  padding: 0.5em;
+  cursor: pointer;
+  border-color: #343434;
 }
 
 .products {
