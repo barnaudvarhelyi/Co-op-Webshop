@@ -29,36 +29,23 @@ public class BidServiceImpl implements BidService{
 
   @Override
   public ResponseEntity addBidToProductById(Long productId, HashMap<String, Double> amount, HttpServletRequest request) {
-    Optional<User> user = userService.getUserByToken(request);
-    if (!user.isPresent()) {
-      return ResponseEntity.status(404).body(new ResponseDto("User not found!"));
+    Object[] response = getUserByTokenAndProductById(productId, request);
+    if (response[0] != null) {
+      return (ResponseEntity) response[0];
     }
+    User u = (User) response[1];
+    Product product = (Product) response[2];
 
-    Product product = productService.findProductById(productId);
-    if (product == null || productId == null) {
-      return ResponseEntity.status(404).body(new ResponseDto("Product not found!"));
-    }
-    //TODO commented just for tests
-//    if (product.getExpiresAt() == null) {
-//      return ResponseEntity.status(400).body(new ResponseDto("This product is for purchase only!"));
-//    }
+    if (product.getExpiresAt() == null) { return ResponseEntity.status(400).body(new ResponseDto("This product is for purchase only!")); }
+    if (u.getUploadedProducts().contains(product.getId())) { return ResponseEntity.status(400).body(new ResponseDto("You can not bid your own product!")); }
+    if (Objects.isNull(amount.get("amount")) || amount.get("amount") <= 0) { return ResponseEntity.status(400).body(new ResponseDto("Please provide valid input!")); }
 
-    User u = user.get();
-
-    if (u.getProducts().contains(product.getId())) {
-      return ResponseEntity.status(400).body(new ResponseDto("You can not bid for your own product!"));
-    }
-
-    if (Objects.isNull(amount.get("amount")) || amount.get("amount") <= 0) {
-      return ResponseEntity.status(400).body(new ResponseDto("Please provide valid input!"));
-    }
     Double amountDb = amount.get("amount");
 
     try {
       if (amountDb < product.getStartingPrice()) {
         return ResponseEntity.status(400).body(new ResponseDto("The bid amount must start from the Starting Price"));
       }
-
       List<Bid> usersBidsOnProduct = bidRepository.findAllByUser(u);
       if (usersBidsOnProduct.size() > 0) {
         for (Bid bid : usersBidsOnProduct) {
@@ -81,5 +68,40 @@ public class BidServiceImpl implements BidService{
     } catch (ResponseStatusException e) {
       return ResponseEntity.status(e.getStatus()).body(new ResponseDto("Bid error!"));
     }
+  }
+
+  @Override
+  public ResponseEntity purchaseProductById(Long productId, HttpServletRequest request) {
+    Object[] response = getUserByTokenAndProductById(productId, request);
+    if (response[0] != null) {
+      return (ResponseEntity) response[0];
+    }
+    User u = (User) response[1];
+    Product product = (Product) response[2];
+
+    //TODO
+    try {
+      if (u.getBalance().getBalance() < product.getStartingPrice()) { return ResponseEntity.status(400).body(new ResponseDto("Not enough balance!")); }
+      return null;
+
+    } catch (ResponseStatusException e) {
+      return ResponseEntity.status(e.getStatus()).body(new ResponseDto("Purchase error!"));
+    }
+  }
+//TODO
+//  @Override
+//  public ResponseEntity setSoldProduct(Product product, User user) {
+//    return null;
+//  }
+  private Object[] getUserByTokenAndProductById(Long productId, HttpServletRequest request) {
+    Optional<User> user = userService.getUserByToken(request);
+    if (!user.isPresent()) {
+      return new Object[] {ResponseEntity.status(404).body(new ResponseDto("User not found!"))};
+    }
+    Product product = productService.findProductById(productId);
+    if (product == null || productId == null) {
+      return new Object[] {ResponseEntity.status(404).body(new ResponseDto("Product not found!"))};
+    }
+    return new Object[] {null, user.get(), product};
   }
 }

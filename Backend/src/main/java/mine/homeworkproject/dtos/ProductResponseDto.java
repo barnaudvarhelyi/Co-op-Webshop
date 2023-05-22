@@ -12,7 +12,7 @@ public class ProductResponseDto {
   private String description;
   private String photoUrl;
   private Double purchasePrice;
-  private LocalDateTime creaatedAt;
+  private LocalDateTime createdAt;
   private Double startingPrice;
   private LocalDateTime expiresAt;
   public ProductResponseDto() {}
@@ -22,8 +22,8 @@ public class ProductResponseDto {
     this.description = product.getDescription();
     this.photoUrl = product.getPhotoUrl();
     this.purchasePrice = product.getPurchasePrice();
-    this.userId = product.getUser();
-    this.creaatedAt = product.getCreatedAt();
+    this.userId = product.getUploader();
+    this.createdAt = product.getCreatedAt();
     this.expiresAt = product.getExpiresAt();
     this.startingPrice = product.getStartingPrice();
   }
@@ -84,12 +84,12 @@ public class ProductResponseDto {
     this.purchasePrice = purchasePrice;
   }
 
-  public LocalDateTime getCreaatedAt() {
-    return creaatedAt;
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
   }
 
-  public void setCreaatedAt(LocalDateTime creaatedAt) {
-    this.creaatedAt = creaatedAt;
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
   }
 
   public LocalDateTime getExpiresAt() {

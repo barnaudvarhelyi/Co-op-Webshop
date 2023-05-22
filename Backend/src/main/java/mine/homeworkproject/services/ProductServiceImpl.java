@@ -91,7 +91,8 @@ public class ProductServiceImpl implements ProductService {
           startingPrice,
           expiresAt);
 
-      product.setUser(user.get());
+      product.setUploader(user.get());
+      product.setOwner(user.get());
       productRepository.save(product);
       return ResponseEntity.status(201).body(new ProductResponseDto(product));
 
@@ -110,11 +111,11 @@ public class ProductServiceImpl implements ProductService {
     }
     String user;
     Long userId;
-    if (product.get().getUser() == null) {
+    if (product.get().getUploader() == null) {
       user = "Not given!";
       userId = 1L;
     } else {
-      User u = userService.findUserById(product.get().getUser());
+      User u = userService.findUserById(product.get().getUploader());
       user = u.getUsername();
       userId = u.getId();
     }
@@ -150,7 +151,7 @@ public class ProductServiceImpl implements ProductService {
     if (product.getExpiresAt() != null && product.getBids().size() > 0) {
       return ResponseEntity.status(400).body(new ResponseDto("Product cannot be edited after someone has bid on it"));
     }
-    product.setUser(user);
+    product.setUploader(user);
     product.setName(productCreateDto.getName());
     product.setDescription(productCreateDto.getDescription());
     product.setPhotoUrl(productCreateDto.getPhotoUrl());
@@ -184,11 +185,16 @@ public class ProductServiceImpl implements ProductService {
   }
   @Override
   public void getRandomProductsFromAPI() {
+    int i = 0;
     for (ProductAPIDto p : parseResponse(getDataFromAPI())) {
       Product product = new Product(p.getTitle(), p.getDescription(), p.getImage(), p.getPrice(),
           p.getPrice() * 0.7, null);
-      product.setUser(userService.findUserById(1L));
+      User u = userService.findUserById(1L);
+      product.setUploader(u);
+      product.setOwner(u);
+      if (i % 2 == 0) { product.setExpiresAt(product.getCreatedAt().plusDays(1)); }
       productRepository.save(product);
+      i++;
     }
   }
   private Object[] getUserProductAndAccess(Long id, HttpServletRequest request) {
@@ -201,7 +207,7 @@ public class ProductServiceImpl implements ProductService {
     if (!product.isPresent()) {
       return new Object[]{ResponseEntity.status(404).body(new ResponseDto("Product not found!"))};
     }
-    if (!product.get().getUser().equals(user.get().getId())) {
+    if (!product.get().getUploader().equals(user.get().getId())) {
       return new Object[]{ResponseEntity.status(403).body(new ResponseDto("Access denied!"))};
     }
     return new Object[]{null, user.get(), product.get()};
