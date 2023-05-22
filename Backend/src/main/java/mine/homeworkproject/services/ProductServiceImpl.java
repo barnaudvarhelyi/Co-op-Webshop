@@ -187,12 +187,12 @@ public class ProductServiceImpl implements ProductService {
   public void getRandomProductsFromAPI() {
     int i = 0;
     for (ProductAPIDto p : parseResponse(getDataFromAPI())) {
-      Product product = new Product(p.getTitle(), p.getDescription(), p.getImage(), p.getPrice(),
-          p.getPrice() * 0.7, null);
+      Product product = new Product(p.getTitle(), p.getDescription(), p.getImage(), p.getPrice(), p.getPrice() * 0.7, null);
       User u = userService.findUserById(1L);
       product.setUploader(u);
       product.setOwner(u);
       if (i % 2 == 0) { product.setExpiresAt(product.getCreatedAt().plusDays(1)); }
+      else { product.setStartingPrice(null); }
       productRepository.save(product);
       i++;
     }
