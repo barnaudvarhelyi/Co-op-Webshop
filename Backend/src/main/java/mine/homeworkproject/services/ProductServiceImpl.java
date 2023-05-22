@@ -69,7 +69,8 @@ public class ProductServiceImpl implements ProductService {
         startingPrice = productCreateDto.getStartingPrice();
 
         switch (expires) {
-          case "five_minutes": { expiresAt = LocalDateTime.now().plusMinutes(5); break; }
+          case "two_minutes": {expiresAt = LocalDateTime.now().plusMinutes(2); break; }
+          case "five_minutes": {expiresAt = LocalDateTime.now().plusMinutes(5); break; }
           case "one_day": { expiresAt = LocalDateTime.now().plusDays(1); break; }
           case "three_days": { expiresAt = LocalDateTime.now().plusDays(3); break; }
           case "one_week": { expiresAt = LocalDateTime.now().plusWeeks(1); break; }
@@ -90,7 +91,8 @@ public class ProductServiceImpl implements ProductService {
           startingPrice,
           expiresAt);
 
-      product.setUser(user.get());
+      product.setUploader(user.get());
+      product.setOwner(user.get());
       productRepository.save(product);
       return ResponseEntity.status(201).body(new ProductResponseDto(product));
 
@@ -109,17 +111,21 @@ public class ProductServiceImpl implements ProductService {
     }
     String user;
     Long userId;
-    if (product.get().getUser() == null) {
+    if (product.get().getUploader() == null) {
       user = "Not given!";
       userId = 1L;
     } else {
-      User u = userService.findUserById(product.get().getUser());
+      User u = userService.findUserById(product.get().getUploader());
       user = u.getUsername();
       userId = u.getId();
     }
 
     ProductByIdResponseDto response = new ProductByIdResponseDto(product.get(), user, userId);
     return ResponseEntity.status(200).body(response);
+  }
+  @Override
+  public Product findProductById(Long id) {
+    return productRepository.findById(id).orElse(null);
   }
   @Override
   public ResponseEntity deleteProductById(Long id, HttpServletRequest request) {
@@ -141,13 +147,16 @@ public class ProductServiceImpl implements ProductService {
     User user = (User) response[1];
     Product product = (Product) response[2];
 
-    product.setUser(user);
+    //TODO when bids are available test this
+    if (product.getExpiresAt() != null && product.getBids().size() > 0) {
+      return ResponseEntity.status(400).body(new ResponseDto("Product cannot be edited after someone has bid on it"));
+    }
+    product.setUploader(user);
     product.setName(productCreateDto.getName());
     product.setDescription(productCreateDto.getDescription());
     product.setPhotoUrl(productCreateDto.getPhotoUrl());
     product.setPurchasePrice(productCreateDto.getPurchasePrice());
     product.setStartingPrice(productCreateDto.getStartingPrice());
-
     return ResponseEntity.status(200).body(productRepository.save(product));
   }
   @Override
@@ -176,11 +185,16 @@ public class ProductServiceImpl implements ProductService {
   }
   @Override
   public void getRandomProductsFromAPI() {
+    int i = 0;
     for (ProductAPIDto p : parseResponse(getDataFromAPI())) {
       Product product = new Product(p.getTitle(), p.getDescription(), p.getImage(), p.getPrice(),
           p.getPrice() * 0.7, null);
-      product.setUser(userService.findUserById(1L));
+      User u = userService.findUserById(1L);
+      product.setUploader(u);
+      product.setOwner(u);
+      if (i % 2 == 0) { product.setExpiresAt(product.getCreatedAt().plusDays(1)); }
       productRepository.save(product);
+      i++;
     }
   }
   private Object[] getUserProductAndAccess(Long id, HttpServletRequest request) {
@@ -193,7 +207,7 @@ public class ProductServiceImpl implements ProductService {
     if (!product.isPresent()) {
       return new Object[]{ResponseEntity.status(404).body(new ResponseDto("Product not found!"))};
     }
-    if (!product.get().getUser().equals(user.get().getId())) {
+    if (!product.get().getUploader().equals(user.get().getId())) {
       return new Object[]{ResponseEntity.status(403).body(new ResponseDto("Access denied!"))};
     }
     return new Object[]{null, user.get(), product.get()};

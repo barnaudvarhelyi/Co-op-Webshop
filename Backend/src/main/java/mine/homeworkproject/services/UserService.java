@@ -22,4 +22,6 @@ public interface UserService {
   ResponseEntity addBalance(HashMap<String, String> balance, HttpServletRequest request);
 
   ResponseEntity getUserProfileById(String username);
+
+  void save(User user);
 }

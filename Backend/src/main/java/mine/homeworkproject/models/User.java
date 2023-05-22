@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -28,17 +27,17 @@ public class User {
   private String email;
   private String password;
   private String role;
-  @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH)
-  private List<Product> products;
+  @OneToMany(mappedBy = "uploader", cascade = CascadeType.REFRESH)
+  private List<Product> uploadedProducts;
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "balance_id")
   private UserBalance balance;
-
   @OneToMany(mappedBy = "user")
   private List<Bid> bids;
+  @OneToMany(mappedBy = "owner")
+  private List<Product> ownedProducts;
 
-  public User() {
-  }
+  public User() {}
 
   public User(String username, String email, String password, String role, UserBalance balance) {
     this.username = username;
@@ -47,6 +46,7 @@ public class User {
     this.role = role;
     this.balance = balance;
     this.bids = new ArrayList<>();
+    this.ownedProducts = new ArrayList<>();
   }
 
   public User(Long id, String username) {
@@ -87,39 +87,45 @@ public class User {
   public void setRole(String role) {
     this.role = role;
   }
+  public void setBalance(UserBalance balance) {this.setBalance(balance);}
   public BalanceDto getBalance() {
     return new BalanceDto(this.balance);
   }
-  public void setBalance(Double balance) {
-    this.balance.setBalance(this.balance.getBalance() + balance);
-  }
-  public void setBalance(UserBalance balance) {this.setBalance(balance);}
+  public void setPlusBalance(Double balance) { this.balance.setBalance(this.getBalance().getBalance() + balance); }
+  public void setMinusBalance(Double balance) { this.balance.setBalance(this.getBalance().getBalance() - balance); }
   public List<Bid> getBids() {
     return bids;
   }
   public void setBids(Bid bid) {
     this.bids.add(bid);
   }
-  public void setOnLicit(Double onLicit) {
-    this.balance.setBalance(this.balance.getBalance() - onLicit);
-    this.balance.setOnLicit(this.balance.getOnLicit() + onLicit);
-  }
+  public void setPlusOnLicit(Double onLicit) { this.balance.setOnLicit(this.balance.getOnLicit() + onLicit); }
+  public void setMinusOnLicit(Double onLicit) { this.balance.setOnLicit(this.balance.getOnLicit() - onLicit); }
   public List<String> getRoleList() {
     if (this.role.length() > 0) {
       return Arrays.asList(this.role.split(","));
     }
     return new ArrayList<>();
   }
-  public List<Long> getProducts() {
-
+  public List<Long> getUploadedProducts() {
     List<Long> longs = new ArrayList<>();
-    for (Product i : products) {
+    for (Product i : uploadedProducts) {
       longs.add(i.getId());
     }
     return longs;
   }
-  public void setProducts(List<Product> products) {
-    this.products = products;
+  public void setUploadedProducts(List<Product> uploadedProducts) {
+    this.uploadedProducts = uploadedProducts;
+  }
+  public List<Long> getOwnedProducts() {
+    List<Long> longs = new ArrayList<>();
+    for (Product i : ownedProducts) {
+      longs.add(i.getId());
+    }
+    return longs;
+  }
+  public void setOwnedProducts(List<Product> ownedProducts) {
+    this.ownedProducts = ownedProducts;
   }
 
   @Override
@@ -134,11 +140,11 @@ public class User {
     return Objects.equals(id, user.id) && Objects.equals(username, user.username)
         && Objects.equals(email, user.email) && Objects.equals(password,
         user.password) && Objects.equals(role, user.role) && Objects.equals(
-        products, user.products);
+        uploadedProducts, user.uploadedProducts);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, username, email, password, role, products);
+    return Objects.hash(id, username, email, password, role, uploadedProducts);
   }
 }

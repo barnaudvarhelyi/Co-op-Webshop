@@ -1,9 +1,7 @@
 package mine.homeworkproject.models;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.Nullable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -18,7 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import mine.homeworkproject.dtos.ProductCreateDto;
 
 @Entity
 @Table(name = "products")
@@ -36,10 +33,13 @@ public class Product {
   @Nullable
   private LocalDateTime expiresAt;
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
-  private User user;
+  @JoinColumn(name = "uploader_id")
+  private User uploader;
   @OneToMany(mappedBy = "product")
-  private List<Bid> bids = new ArrayList<>();
+  private List<Bid> bids;
+  @ManyToOne
+  @JoinColumn(name = "owner_id")
+  private User owner;
 
   public Product() {
   }
@@ -59,27 +59,25 @@ public class Product {
     this.purchasePrice = Math.round(purchasePrice*100.0)/100.0;
     this.expiresAt = expiresAt == null || expiresAt.equals("") ? null : getFormattedCurrentTime(expiresAt);
     this.startingPrice = startingPrice == null ? null : Math.round(startingPrice*100.0)/100.0;
+    this.bids = new ArrayList<>();
   }
   private LocalDateTime getFormattedCurrentTime(LocalDateTime datetime) {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    //TODO maybe change for only HH
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     return LocalDateTime.parse(datetime.format(formatter), formatter);
   }
   public Long getId() {
     return id;
   }
-
   public void setId(Long id) {
     this.id = id;
   }
-
-  public Long getUser() {
-    return user == null ? 1 : user.getId();
+  public Long getUploader() {
+    return uploader == null ? 1 : uploader.getId();
   }
-
-  public void setUser(User user) {
-    this.user = user;
+  public void setUploader(User user) {
+    this.uploader = user;
   }
-
   public String getName() {
     return name;
   }
@@ -128,6 +126,12 @@ public class Product {
   public void setExpiresAt(LocalDateTime expiresAt) {
     this.expiresAt = expiresAt;
   }
+  public Long getOwner() {
+    return owner == null ? 1 : owner.getId();
+  }
+  public void setOwner(User owner) {
+    this.owner = owner;
+  }
 
   @Override
   public boolean equals(Object o) {
@@ -143,13 +147,13 @@ public class Product {
         photoUrl, product.photoUrl) && Objects.equals(purchasePrice, product.purchasePrice)
         && Objects.equals(createdAt, product.createdAt) && Objects.equals(
         startingPrice, product.startingPrice) && Objects.equals(expiresAt,
-        product.expiresAt) && Objects.equals(user, product.user)
+        product.expiresAt) && Objects.equals(uploader, product.uploader)
         && Objects.equals(bids, product.bids);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(id, name, description, photoUrl, purchasePrice, createdAt, startingPrice,
-        expiresAt, user, bids);
+        expiresAt, uploader, bids);
   }
 }
