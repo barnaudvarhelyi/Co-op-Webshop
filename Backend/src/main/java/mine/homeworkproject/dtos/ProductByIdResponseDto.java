@@ -1,7 +1,9 @@
 package mine.homeworkproject.dtos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import java.time.LocalDateTime;
 import mine.homeworkproject.models.Product;
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductByIdResponseDto {
   private String uploader;
   private Long uploaderId;
@@ -10,8 +12,11 @@ public class ProductByIdResponseDto {
   private String description;
   private String photoUrl;
   private Double purchasePrice;
+  private LocalDateTime createdAt;
   private Double startingPrice;
+  private LocalDateTime expiresAt;
 
+  public ProductByIdResponseDto() {}
   public ProductByIdResponseDto(Product p, String username, Long userId) {
     this.id = p.getId();
     this.name = p.getName();
@@ -21,6 +26,8 @@ public class ProductByIdResponseDto {
     this.startingPrice = p.getStartingPrice();
     this.uploader = username;
     this.uploaderId = userId;
+    this.expiresAt = p.getExpiresAt();
+    this.createdAt = p.getCreatedAt();
   }
 
   public Long getId() {
@@ -70,5 +77,17 @@ public class ProductByIdResponseDto {
   }
   public void setUploaderId(Long uploaderId) {
     this.uploaderId = uploaderId;
+  }
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
+  public LocalDateTime getExpiresAt() {
+    return expiresAt;
+  }
+  public void setExpiresAt(LocalDateTime expiresAt) {
+    this.expiresAt = expiresAt;
   }
 }
