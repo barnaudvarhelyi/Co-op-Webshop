@@ -10,6 +10,7 @@ export default function SingleProduct(props){
         const res = await fetch(`http://localhost:8080/products/${productId}`)
         const data = await res.json()
         setProductPage(data)
+        console.log(data);
     }
     
     useEffect(() => {
@@ -28,6 +29,7 @@ export default function SingleProduct(props){
             <h3>Starting Price: ${productPage.startingPrice}</h3>
             <h3>Description</h3>
             <p>{productPage.description}</p>
+            <h1>Expires at: {productPage.expiresAt}</h1>
         </div>
     )
     }

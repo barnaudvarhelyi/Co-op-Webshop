@@ -16,7 +16,10 @@ export default function Profile(props){
             purchasePrice: "",
             startingPrice: "",
             forBid: false,
-            expiresAt: ""
+            expiresAt: "",
+            createdAt: "",
+            owner: "",
+            uploader: ""
         }
     )
 
@@ -220,13 +223,13 @@ export default function Profile(props){
                 <label htmlFor="enableBidding">Bidding</label>
                 <input type="checkbox" name="forBid" onClick={toggleBidding} id="checkboxBidding" />
                 <input type="number" name="startingPrice" onChange={handleItem} placeholder="Starting Price" step=".01" id="startingPrice" />
-                <select>
-                    <option>Five Minutes</option>
-                    <option>1 Day</option>
-                    <option>3 Days</option>
-                    <option>1 Week</option>
-                    <option>2 Weeks</option>
-                    <option>1 Month</option>
+                <select onChange={(e) => setProductData(e.target.value)}>
+                    <option name="expiresAt" value="two_minutes">Two Minutes</option>
+                    <option name="expiresAt" value="one_day">1 Day</option>
+                    <option name="expiresAt" value="three_days">3 Days</option>
+                    <option name="expiresAt" value="one_week">1 Week</option>
+                    <option name="expiresAt" value="two_tweeks">2 Weeks</option>
+                    <option name="expiresAt" value="one_month">1 Month</option>
                 </select>
                 <div className="button-container">
                     <button type="button" onClick={cancelItem}>Cancel</button>

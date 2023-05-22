@@ -79,10 +79,9 @@ function App() {
       loginForm.reset()
       registerForm.reset()
     }
-    console.log(data);
   }
 
-  const [products, setProducts] = useState([])
+  const [products, setProducts] = useState()
 
   async function displayAllProducts(){
     let url = new URL(window.location.href)
@@ -101,6 +100,8 @@ function App() {
     const data = await res.json()
     setProducts(data)
   }
+
+  console.log(products);
 
   const [userProfile, setUserProfile] = useState()
 
