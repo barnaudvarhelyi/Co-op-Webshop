@@ -1,18 +1,17 @@
-import logo from './logo.svg';
-import './App.css';
-import './style.scss';
 import React from 'react'
 import { useState, useEffect } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import Navbar from './components/Navbar';
+import './style.scss';
 import Home from './components/Home';
 import Login from './components/Login';
+import Navbar from './components/Navbar';
 import Profile from './components/Profile';
-import SingleProduct from './components/SingleProduct';
+import SinglePageProduct from './components/SinglePageProduct';
 import UploaderProfile from './components/UploaderProfile';
 
 function App() {
 
+  /* Login section */
   const [loginData, setLoginData] = useState([])
 
   const [formData, setFormData] = useState({
@@ -30,6 +29,22 @@ function App() {
       })
   }
 
+  function login(e){
+    e.preventDefault()
+
+    fetch('http://localhost:8080/login', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+    })
+    .then(res => res.json())
+    .then(data => setLoginData(data))
+    .catch(err => console.log("Error: " + err))
+}
+
+  /* Register section */
   const [registerData, setRegisterData] = useState({
       username: '',
       email: '',
@@ -44,21 +59,6 @@ function App() {
           ...registerData,
           [name]: value
       })
-  }
-
-  function submitForm(e){
-      e.preventDefault()
-
-      fetch('http://localhost:8080/login', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-      })
-      .then(res => res.json())
-      .then(data => setLoginData(data))
-      .catch(err => console.log("Error: " + err))
   }
 
   async function register(e){
@@ -81,6 +81,7 @@ function App() {
     }
   }
 
+  /* Displaying products section */
   const [products, setProducts] = useState()
 
   async function displayAllProducts(){
@@ -101,8 +102,15 @@ function App() {
     setProducts(data)
   }
 
-  console.log(products);
+  const [searchResult, setSearchResult] = useState()
 
+  async function searchBar(result){
+    const res = await fetch(`http://localhost:8080/products/search?search=${result}`)
+    const data = await res.json()
+    setSearchResult(data)
+  }
+
+  /* User's profile section */
   const [userProfile, setUserProfile] = useState()
 
   function displayProfileInformations(){
@@ -115,6 +123,7 @@ function App() {
     .then(data => setUserProfile(data))
   }
 
+  /* Updating balance section */
   async function uploadFunds(fund){
     const res = await fetch('http://localhost:8080/balance', {
     method: 'POST',
@@ -128,22 +137,14 @@ function App() {
     displayProfileInformations()
 }
 
-  const [searchResult, setSearchResult] = useState()
-
-  async function searchBar(result){
-    const res = await fetch(`http://localhost:8080/products/search?search=${result}`)
-    const data = await res.json()
-    setSearchResult(data)
-  }
-
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navbar userProfile={userProfile} searchBar={searchBar} />}>
           <Route index element={<Home products={products} displayAllProducts={displayAllProducts} searchResult={searchResult} displayProfileInformations={displayProfileInformations}/>} />
-          <Route path="login" element={<Login loginData={loginData} submitForm={submitForm} handleChange={handleChange} formData={formData} register={register} registerData={registerData} handleRegister={handleRegister}/>} />
+          <Route path="login" element={<Login login={login} loginData={loginData} handleChange={handleChange} formData={formData} register={register} handleRegister={handleRegister} registerData={registerData}/>} />
           <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts} userProfile={userProfile} displayProfileInformations={displayProfileInformations} uploadFunds={uploadFunds}/>} />
-          <Route path="products/:productId" element={<SingleProduct products={products} />}/>
+          <Route path="products/:productId" element={<SinglePageProduct products={products} />}/>
           <Route path="user/:username" element={<UploaderProfile />}/>
         </Route>
       </Routes>
