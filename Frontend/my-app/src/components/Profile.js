@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import Product from "./Product"
 
 export default function Profile(props){
 
     useEffect(() => {
-        props.displayProfileInformations()
+        props.displayProfileInformation()
     }, [])
 
     const [productData, setProductData] = useState(
@@ -61,7 +60,7 @@ export default function Profile(props){
         })
         const data = await res.json()
         props.displayAllProducts()
-        props.displayProfileInformations()
+        props.displayProfileInformation()
         setUploadErrorMessage(data.message)
         if(res.status === 201){
             resetUploadForm()
@@ -143,7 +142,7 @@ export default function Profile(props){
         .then(res => res.json())
         .then(data => {
             props.displayAllProducts()
-            props.displayProfileInformations()
+            props.displayProfileInformation()
         })
         .catch(err => console.log("Error: " + err))
     }

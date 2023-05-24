@@ -374,23 +374,43 @@ nav .search-bar {
   max-width: 1100px;
   margin: auto;
   padding: 1em;
+  display: flex;
+  gap: 1em;
+}
+.single-product div {
+  width: 50%;
+}
+.single-product .single-product-informations {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .single-product h1 {
   margin: 0.5em 0em;
 }
 .single-product h3 {
-  margin: 0.5em 0em;
+  margin-bottom: 0.5em;
 }
 .single-product img {
+  height: 500px;
   width: 100%;
-  max-width: 500px;
-  height: auto;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 .single-product .user-link {
   display: block;
   font-size: 0.8rem;
   font-weight: bold;
-  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+.single-product .purchase-btn {
+  color: #FAF9F6;
+  background-color: #2E8B57;
+  border: none;
+  border-radius: 1em;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  width: 10em;
 }
 
 @media (max-width: 500px) {
@@ -418,5 +438,20 @@ nav .search-bar {
   .profile .add-funds {
     height: 500px;
     flex-direction: column;
+  }
+  /* Single Page Product section */
+  .single-product {
+    flex-direction: column;
+  }
+  .single-product div {
+    width: 100%;
+  }
+  .single-product img {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+  }
+  .single-product .purchase-btn {
+    align-self: center;
   }
 }/*# sourceMappingURL=style.css.map */
