@@ -18,6 +18,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
   Optional<Product> findById(Long id);
   List<Product> findAllByUploader(User user);
+  List<Product> findAllByOwner(User user);
   List<Product> findByExpiresAtNotNull();
-
 }
