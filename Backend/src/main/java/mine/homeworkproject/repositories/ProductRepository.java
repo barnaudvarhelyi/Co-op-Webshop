@@ -12,8 +12,11 @@ import org.springframework.stereotype.Repository;
 public interface ProductRepository extends JpaRepository<Product, Long> {
   @Query("SELECT p FROM Product p WHERE p.uploader = p.owner")
   List<Product> findAllByUploaderNotEqualsOwner();
+  @Query("SELECT p FROM Product p ORDER BY RAND() LIMIT 5")
+  List<Product> findRandomProducts();
 
   Optional<Product> findById(Long id);
   List<Product> findAllByUploader(User user);
   List<Product> findByExpiresAtNotNull();
+
 }

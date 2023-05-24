@@ -30,7 +30,7 @@ public class User {
   private List<Product> uploadedProducts;
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "balance_id")
-  private UserBalance balance;
+  private Balance balance;
   @OneToMany(mappedBy = "user")
   private List<Bid> bids;
   @OneToMany(mappedBy = "owner")
@@ -38,7 +38,7 @@ public class User {
 
   public User() {}
 
-  public User(String username, String email, String password, String role, UserBalance balance) {
+  public User(String username, String email, String password, String role, Balance balance) {
     this.username = username;
     this.email = email;
     this.password = password;
@@ -86,7 +86,7 @@ public class User {
   public void setRole(String role) {
     this.role = role;
   }
-  public void setBalance(UserBalance balance) {this.setBalance(balance);}
+  public void setBalance(Balance balance) {this.setBalance(balance);}
   public BalanceDto getBalance() {
     return new BalanceDto(this.balance);
   }
@@ -123,8 +123,8 @@ public class User {
     }
     return longs;
   }
-  public void setOwnedProducts(List<Product> ownedProducts) {
-    this.ownedProducts = ownedProducts;
+  public void setOwnedProducts(Product product) {
+    this.ownedProducts.add(product);
   }
 
   @Override

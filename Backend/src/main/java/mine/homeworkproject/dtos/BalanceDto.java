@@ -1,6 +1,6 @@
 package mine.homeworkproject.dtos;
 
-import mine.homeworkproject.models.UserBalance;
+import mine.homeworkproject.models.Balance;
 
 public class BalanceDto {
 
@@ -10,7 +10,7 @@ public class BalanceDto {
 
   public BalanceDto() {
   }
-  public BalanceDto(UserBalance balance) {
+  public BalanceDto(Balance balance) {
     this.id = balance.getId();
     this.balance = balance.getBalance();
     this.onLicit = balance.getOnLicit();

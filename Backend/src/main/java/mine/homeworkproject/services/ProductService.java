@@ -24,4 +24,6 @@ public interface ProductService {
   ResponseEntity searchItemByStr(String seachItem);
 
   ResponseEntity sortProducts(String direction);
+
+  void saveProduct(Product product);
 }
