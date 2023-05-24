@@ -140,7 +140,7 @@ function App() {
     displayProfileInformation()
 }
 
-  // /* Purchase item */
+  /* Purchase item */
   async function purchase(productId){
     const res = await fetch(`http://localhost:8080/purchase?productId=${productId}`, {
       method: 'POST',
