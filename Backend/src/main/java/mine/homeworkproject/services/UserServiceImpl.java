@@ -78,9 +78,10 @@ public class UserServiceImpl implements UserService {
       ResponseDto response = new ResponseDto("User not found!");
       return ResponseEntity.status(404).body(response);
     }
-    List<Product> products = productRepository.findAllByUploader(user.get());
+    List<Product> uploadedProducts = productRepository.findAllByUploader(user.get());
+    List<Product> ownedProducts = productRepository.findAllByOwner(user.get());
     return ResponseEntity.status(200).body(new UserProfileResponsDto(user.get().getUsername(),
-        products.size(), products, user.get().getBalance()));
+        uploadedProducts.size(), uploadedProducts, user.get().getBalance(), ownedProducts));
   }
   @Override
   public ResponseEntity addBalance(HashMap<String, String> balance, HttpServletRequest request) {
