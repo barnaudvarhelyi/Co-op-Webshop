@@ -100,8 +100,10 @@ function App() {
     const res = await fetch(fetchUrl)
     const data = await res.json()
     setProducts(data)
+    document.title = 'Greenbay'
   }
 
+  /* Searchbar */
   const [searchResult, setSearchResult] = useState()
 
   async function searchBar(result){
@@ -113,14 +115,15 @@ function App() {
   /* User's profile section */
   const [userProfile, setUserProfile] = useState()
 
-  function displayProfileInformations(){
-    fetch('http://localhost:8080/profile', {
+  async function displayProfileInformations(){
+    const res = await fetch('http://localhost:8080/profile', {
       headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`
       }
     })
-    .then(res => res.json())
-    .then(data => setUserProfile(data))
+    const data = await res.json()
+    setUserProfile(data)
+    document.title = `${data.username} | Greenbay`
   }
 
   /* Updating balance section */

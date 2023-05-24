@@ -56,7 +56,7 @@ export default function Home(props) {
 
             {/* Sorting items section */}
             <div className="sort-items">
-            <select onChange={(e) => sortItems(e.target.value)}>
+            <select id="sort-options" onChange={(e) => sortItems(e.target.value)}>
                 <option value="">Sort by default</option>
                 <option value="asc">Sort by ascending</option>
                 <option value="desc">Sort by descending</option>
