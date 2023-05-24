@@ -94,4 +94,10 @@ public class ProductByIdResponseDto {
   public void setExpiresAt(LocalDateTime expiresAt) {
     this.expiresAt = expiresAt;
   }
+  public List<Product> getRandomProducts() {
+    return randomProducts;
+  }
+  public void setRandomProducts(List<Product> randomProducts) {
+    this.randomProducts = randomProducts;
+  }
 }
