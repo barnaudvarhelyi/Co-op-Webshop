@@ -115,7 +115,7 @@ function App() {
   /* User's profile section */
   const [userProfile, setUserProfile] = useState()
 
-  async function displayProfileInformations(){
+  async function displayProfileInformation(){
     const res = await fetch('http://localhost:8080/profile', {
       headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`
@@ -137,17 +137,29 @@ function App() {
     body: JSON.stringify({balance: fund})
     })
     const data = await res.json()
-    displayProfileInformations()
+    displayProfileInformation()
 }
+
+  // /* Purchase item */
+  async function purchase(productId){
+    const res = await fetch(`http://localhost:8080/purchase?productId=${productId}`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+    const data = await res.json()
+  }
 
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navbar userProfile={userProfile} searchBar={searchBar} />}>
-          <Route index element={<Home products={products} displayAllProducts={displayAllProducts} searchResult={searchResult} displayProfileInformations={displayProfileInformations}/>} />
+          <Route index element={<Home products={products} displayAllProducts={displayAllProducts} searchResult={searchResult} displayProfileInformation={displayProfileInformation}/>} />
           <Route path="login" element={<Login login={login} loginData={loginData} handleChange={handleChange} formData={formData} register={register} handleRegister={handleRegister} registerData={registerData}/>} />
-          <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts} userProfile={userProfile} displayProfileInformations={displayProfileInformations} uploadFunds={uploadFunds}/>} />
-          <Route path="products/:productId" element={<SinglePageProduct products={products} />}/>
+          <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts} userProfile={userProfile} displayProfileInformation={displayProfileInformation} uploadFunds={uploadFunds}/>} />
+          <Route path="products/:productId" element={<SinglePageProduct products={products} purchase={purchase} />}/>
           <Route path="user/:username" element={<UploaderProfile />}/>
         </Route>
       </Routes>

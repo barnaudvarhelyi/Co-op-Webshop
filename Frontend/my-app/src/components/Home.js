@@ -1,5 +1,5 @@
-import { Link, json } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
+import { useEffect } from "react"
 import Product from './Product';
 
 export default function Home(props) {
@@ -48,7 +48,7 @@ export default function Home(props) {
         let url = new URL(window.location.href)
         url.searchParams.set("sort", sorting)
         window.history.replaceState({}, "", url.toString())
-        props.displayAllProducts()
+        props.displayProfileInformation()
     }
     
     return (

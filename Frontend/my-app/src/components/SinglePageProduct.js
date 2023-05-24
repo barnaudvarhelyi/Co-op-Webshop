@@ -41,7 +41,7 @@ export default function SingleProduct(props){
             <p>{productPage.description}</p>
             <h3>{productPage.expiresAt && "Auction ends at: " + productPage.expiresAt}</h3>
             
-            <button className="purchase-btn">Purchase</button>
+            <button className="purchase-btn" onClick={() => props.purchase(productId)}>Purchase</button>
             </div>
 
         </div>
