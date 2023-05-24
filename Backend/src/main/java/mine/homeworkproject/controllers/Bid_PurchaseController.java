@@ -2,7 +2,7 @@ package mine.homeworkproject.controllers;
 
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
-import mine.homeworkproject.services.BidService;
+import mine.homeworkproject.services.BidOrPurchaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,22 +12,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class Bid_PurchaseController {
-  private final BidService bidService;
+  private final BidOrPurchaseService bidOrPurchaseService;
   @Autowired
-  public Bid_PurchaseController(BidService bidService) {
-    this.bidService = bidService;
+  public Bid_PurchaseController(BidOrPurchaseService bidOrPurchaseService) {
+    this.bidOrPurchaseService = bidOrPurchaseService;
   }
 
   @PostMapping("/purchase")
   public ResponseEntity purchaseProductById(@RequestParam(required = false) Long productId, HttpServletRequest request) {
-    return bidService.purchaseProductById(productId, request);
+    return bidOrPurchaseService.purchaseProductById(productId, request);
   }
   @PostMapping("/bid")
   public ResponseEntity addBidToProductById(@RequestParam(required = false) Long productId, @RequestBody HashMap<String, Double> amount, HttpServletRequest request) {
-    return bidService.addBidToProductById(productId, amount, request);
+    return bidOrPurchaseService.addBidToProductById(productId, amount, request);
   }
 
-  //TODO
+  //TODO finish
   @PostMapping("/bid/cancel")
   public ResponseEntity cancelBidOnProductById(@RequestParam(required = false) Long productId, HttpServletRequest request) {
     return null;

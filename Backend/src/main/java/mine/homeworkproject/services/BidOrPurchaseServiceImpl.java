@@ -15,18 +15,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
-public class BidServiceImpl implements BidService{
-
+public class BidOrPurchaseServiceImpl implements BidOrPurchaseService {
   private final UserService userService;
   private final ProductService productService;
   private final BidRepository bidRepository;
+  private final BalanceService balanceService;
 
-  public BidServiceImpl(UserService userService, ProductService productService, BidRepository bidRepository) {
+  public BidOrPurchaseServiceImpl(UserService userService, ProductService productService, BidRepository bidRepository,
+      BalanceService balanceService) {
     this.userService = userService;
     this.productService = productService;
     this.bidRepository = bidRepository;
+    this.balanceService = balanceService;
   }
-
   @Override
   public ResponseEntity addBidToProductById(Long productId, HashMap<String, Double> amount, HttpServletRequest request) {
     Object[] response = getUserByTokenAndProductById(productId, request);
@@ -69,7 +70,6 @@ public class BidServiceImpl implements BidService{
       return ResponseEntity.status(e.getStatus()).body(new ResponseDto("Bid error!"));
     }
   }
-
   @Override
   public ResponseEntity purchaseProductById(Long productId, HttpServletRequest request) {
     Object[] response = getUserByTokenAndProductById(productId, request);
@@ -78,21 +78,44 @@ public class BidServiceImpl implements BidService{
     }
     User u = (User) response[1];
     Product product = (Product) response[2];
-
-    //TODO
+    if (u.getUploadedProducts().contains(product.getId()) || u.getOwnedProducts().contains(product.getId())) {
+      return ResponseEntity.status(400).body(new ResponseDto("You cannot purchase your own item!"));
+    }
+    if (product.getPurchasePrice() == 0.00 || product.getStartingPrice() == 0.00) {
+      return ResponseEntity.status(400).body(new ResponseDto("This item is not for sale!"));
+    }
     try {
-      if (u.getBalance().getBalance() < product.getStartingPrice()) { return ResponseEntity.status(400).body(new ResponseDto("Not enough balance!")); }
-      return null;
-
+      if (u.getBalance().getBalance() < product.getPurchasePrice()) { return ResponseEntity.status(400).body(new ResponseDto("Not enough balance!")); }
+      setSoldProduct(product, u);
+      return ResponseEntity.status(200).body(new ResponseDto("You successfully purchased this item!"));
     } catch (ResponseStatusException e) {
       return ResponseEntity.status(e.getStatus()).body(new ResponseDto("Purchase error!"));
     }
   }
-//TODO
-//  @Override
-//  public ResponseEntity setSoldProduct(Product product, User user) {
-//    return null;
-//  }
+  @Override
+  public void setSoldProduct(Product product, User customer) {
+    if (product.getBids().size() > 0) {
+      for (Bid bid : product.getBids()) {
+        bid.getUser().setMinusOnLicit(bid.getAmount());
+        bid.getUser().setPlusBalance(bid.getAmount());
+        userService.save(bid.getUser());
+        bidRepository.save(bid);
+      }
+    }
+
+    User owner = userService.findUserById(product.getOwner());
+    owner.setPlusBalance(product.getPurchasePrice());
+    userService.save(owner);
+
+    customer.setMinusBalance(product.getPurchasePrice());
+    customer.setOwnedProducts(product);
+    userService.save(customer);
+
+    product.setOwner(customer);
+    product.setPurchasePrice(0.00);
+    product.setStartingPrice(0.00);
+    productService.saveProduct(product);
+  }
   private Object[] getUserByTokenAndProductById(Long productId, HttpServletRequest request) {
     Optional<User> user = userService.getUserByToken(request);
     if (!user.isPresent()) {

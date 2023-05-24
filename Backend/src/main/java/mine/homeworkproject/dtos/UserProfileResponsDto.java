@@ -2,8 +2,6 @@ package mine.homeworkproject.dtos;
 
 import java.util.List;
 import mine.homeworkproject.models.Product;
-import mine.homeworkproject.models.User;
-import mine.homeworkproject.models.UserBalance;
 
 public class UserProfileResponsDto {
   private String username;

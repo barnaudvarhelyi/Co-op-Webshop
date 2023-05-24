@@ -2,6 +2,7 @@ package mine.homeworkproject.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
+import java.util.List;
 import mine.homeworkproject.models.Product;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductByIdResponseDto {
@@ -15,9 +16,11 @@ public class ProductByIdResponseDto {
   private LocalDateTime createdAt;
   private Double startingPrice;
   private LocalDateTime expiresAt;
+  private List<Product> randomProducts;
 
   public ProductByIdResponseDto() {}
-  public ProductByIdResponseDto(Product p, String username, Long userId) {
+  public ProductByIdResponseDto(Product p, String username, Long userId,
+      List<Product> randomProducts) {
     this.id = p.getId();
     this.name = p.getName();
     this.description = p.getDescription();
@@ -28,6 +31,7 @@ public class ProductByIdResponseDto {
     this.uploaderId = userId;
     this.expiresAt = p.getExpiresAt();
     this.createdAt = p.getCreatedAt();
+    this.randomProducts = randomProducts;
   }
 
   public Long getId() {

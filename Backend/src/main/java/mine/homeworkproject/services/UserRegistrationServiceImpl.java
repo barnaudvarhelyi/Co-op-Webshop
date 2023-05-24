@@ -5,7 +5,7 @@ import mine.homeworkproject.dtos.RegistrationResponseDto;
 import mine.homeworkproject.dtos.ResponseDto;
 import mine.homeworkproject.dtos.UserRegistrationDto;
 import mine.homeworkproject.models.User;
-import mine.homeworkproject.models.UserBalance;
+import mine.homeworkproject.models.Balance;
 import mine.homeworkproject.repositories.BalanceRepository;
 import mine.homeworkproject.repositories.UserRepository;
 import mine.homeworkproject.enums.UserRole;
@@ -50,7 +50,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
       }
       return ResponseEntity.status(400).body(new ResponseDto(message));
     } else {
-      UserBalance newBalance = new UserBalance(0.00);
+      Balance newBalance = new Balance(0.00);
       balanceRepository.save(newBalance);
       passwordEncoder = new BCryptPasswordEncoder();
 

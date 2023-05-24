@@ -119,8 +119,7 @@ public class ProductServiceImpl implements ProductService {
       user = u.getUsername();
       userId = u.getId();
     }
-
-    ProductByIdResponseDto response = new ProductByIdResponseDto(product.get(), user, userId);
+    ProductByIdResponseDto response = new ProductByIdResponseDto(product.get(), user, userId, productRepository.findRandomProducts());
     return ResponseEntity.status(200).body(response);
   }
   @Override
@@ -182,6 +181,10 @@ public class ProductServiceImpl implements ProductService {
        response = ResponseEntity.status(400).body(new ResponseDto("Bad request!"));
     }
     return response;
+  }
+  @Override
+  public void saveProduct(Product product) {
+    productRepository.save(product);
   }
   @Override
   public void getRandomProductsFromAPI() {
