@@ -19,7 +19,6 @@ import mine.homeworkproject.dtos.BalanceDto;
 @Entity
 @Table(name = "users")
 public class User {
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -140,11 +139,29 @@ public class User {
     return Objects.equals(id, user.id) && Objects.equals(username, user.username)
         && Objects.equals(email, user.email) && Objects.equals(password,
         user.password) && Objects.equals(role, user.role) && Objects.equals(
-        uploadedProducts, user.uploadedProducts);
+        uploadedProducts, user.uploadedProducts) && Objects.equals(balance, user.balance)
+        && Objects.equals(bids, user.bids) && Objects.equals(ownedProducts,
+        user.ownedProducts);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, username, email, password, role, uploadedProducts);
+    return Objects.hash(id, username, email, password, role, uploadedProducts, balance, bids,
+        ownedProducts);
+  }
+
+  @Override
+  public String toString() {
+    return "User{" +
+        "id=" + id +
+        ", username='" + username + '\'' +
+        ", email='" + email + '\'' +
+        ", password='" + password + '\'' +
+        ", role='" + role + '\'' +
+        ", uploadedProducts=" + uploadedProducts +
+        ", balance=" + balance +
+        ", bids=" + bids +
+        ", ownedProducts=" + ownedProducts +
+        '}';
   }
 }

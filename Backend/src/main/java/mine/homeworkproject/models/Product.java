@@ -37,6 +37,7 @@ public class Product {
   private User uploader;
   @OneToMany(mappedBy = "product")
   private List<Bid> bids;
+
   @ManyToOne
   @JoinColumn(name = "owner_id")
   private User owner;

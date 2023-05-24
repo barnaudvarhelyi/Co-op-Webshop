@@ -43,7 +43,7 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public List<Product> getAllProducts() {
-    return productRepository.findAll();
+    return productRepository.findAllByUploaderNotEqualsOwner();
   }
   @Override
   public ResponseEntity createProduct(ProductCreateDto productCreateDto,
