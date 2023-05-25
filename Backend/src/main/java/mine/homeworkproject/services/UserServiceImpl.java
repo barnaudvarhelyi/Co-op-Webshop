@@ -78,8 +78,9 @@ public class UserServiceImpl implements UserService {
       ResponseDto response = new ResponseDto("User not found!");
       return ResponseEntity.status(404).body(response);
     }
-    List<Product> uploadedProducts = productRepository.findAllByUploader(user.get());
+    List<Product> uploadedProducts = productRepository.findAllByUploaderNotEqualsOwner(user.get());
     List<Product> ownedProducts = productRepository.findAllByOwner(user.get());
+    //TODO ne jelenjen meg a már megvásárolt1
     return ResponseEntity.status(200).body(new UserProfileResponsDto(user.get().getUsername(),
         uploadedProducts.size(), uploadedProducts, user.get().getBalance(), ownedProducts));
   }
@@ -107,10 +108,11 @@ public class UserServiceImpl implements UserService {
     if (user == null) {
       return ResponseEntity.status(404).body(new ResponseDto("User not found!"));
     }
-    List<ProductResponseDto> productsDto = productRepository.findAllByUploader(user)
+    List<ProductResponseDto> productsDto = productRepository.findAllByUploaderNotEqualsOwner(user)
         .stream()
         .map(ProductResponseDto::new)
         .collect(Collectors.toList());
+    //TODO ne jelenjen meg a már megvásárolt2
     return ResponseEntity.ok(new UserByIdResponseDto(user, productsDto));
   }
   @Override
