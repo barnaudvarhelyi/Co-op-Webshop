@@ -115,6 +115,7 @@ public class Product {
   public void setBid(Bid bid) {
     this.bids.add(bid);
   }
+  public void resetBids() {this.bids = new ArrayList<>(); }
   public LocalDateTime getCreatedAt() {
     return createdAt;
   }
@@ -133,6 +134,7 @@ public class Product {
   public void setOwner(User owner) {
     this.owner = owner;
   }
+  public void removeBid(Bid bid) { this.bids.remove(bid); }
 
   @Override
   public boolean equals(Object o) {

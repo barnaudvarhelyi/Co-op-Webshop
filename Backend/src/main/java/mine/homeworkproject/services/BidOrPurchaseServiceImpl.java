@@ -1,5 +1,6 @@
 package mine.homeworkproject.services;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -19,14 +20,11 @@ public class BidOrPurchaseServiceImpl implements BidOrPurchaseService {
   private final UserService userService;
   private final ProductService productService;
   private final BidRepository bidRepository;
-  private final BalanceService balanceService;
 
-  public BidOrPurchaseServiceImpl(UserService userService, ProductService productService, BidRepository bidRepository,
-      BalanceService balanceService) {
+  public BidOrPurchaseServiceImpl(UserService userService, ProductService productService, BidRepository bidRepository) {
     this.userService = userService;
     this.productService = productService;
     this.bidRepository = bidRepository;
-    this.balanceService = balanceService;
   }
   @Override
   public ResponseEntity addBidToProductById(Long productId, HashMap<String, Double> amount, HttpServletRequest request) {
@@ -38,6 +36,7 @@ public class BidOrPurchaseServiceImpl implements BidOrPurchaseService {
     Product product = (Product) response[2];
 
     if (product.getExpiresAt() == null) { return ResponseEntity.status(400).body(new ResponseDto("This product is for purchase only!")); }
+    if (product.getUploader() != product.getOwner()) { return ResponseEntity.status(400).body(new ResponseDto("This item is not for sale!")); }
     if (u.getUploadedProducts().contains(product.getId())) { return ResponseEntity.status(400).body(new ResponseDto("You can not bid your own product!")); }
     if (Objects.isNull(amount.get("amount")) || amount.get("amount") <= 0) { return ResponseEntity.status(400).body(new ResponseDto("Please provide valid input!")); }
 
@@ -47,17 +46,17 @@ public class BidOrPurchaseServiceImpl implements BidOrPurchaseService {
       if (amountDb < product.getStartingPrice()) {
         return ResponseEntity.status(400).body(new ResponseDto("The bid amount must start from the Starting Price"));
       }
-      List<Bid> usersBidsOnProduct = bidRepository.findAllByUser(u);
-      if (usersBidsOnProduct.size() > 0) {
-        for (Bid bid : usersBidsOnProduct) {
-          u.setPlusBalance(bid.getAmount());
-          u.setMinusOnLicit(bid.getAmount());
-          bidRepository.delete(bid);
-        }
-      }
       if (u.getBalance().getBalance() - amountDb < 0 || u.getBalance().getBalance() < product.getStartingPrice()) {
         return ResponseEntity.status(403).body(new ResponseDto("Not enough balance!"));
       } else {
+        List<Bid> usersBidsOnProduct = bidRepository.findAllByUser(u);
+        if (usersBidsOnProduct.size() > 0) {
+          for (Bid bid : usersBidsOnProduct) {
+            u.setPlusBalance(bid.getAmount());
+            u.setMinusOnLicit(bid.getAmount());
+            bidRepository.delete(bid);
+          }
+        }
         u.setMinusBalance(amountDb);
         u.setPlusOnLicit(amountDb);
         Bid newBidOnProduct = new Bid(amountDb, u, product);
@@ -81,7 +80,7 @@ public class BidOrPurchaseServiceImpl implements BidOrPurchaseService {
     if (u.getUploadedProducts().contains(product.getId()) || u.getOwnedProducts().contains(product.getId())) {
       return ResponseEntity.status(400).body(new ResponseDto("You cannot purchase your own item!"));
     }
-    if (product.getPurchasePrice() == 0.00 || product.getStartingPrice() == 0.00) {
+    if (product.getOwner() != product.getUploader()) {
       return ResponseEntity.status(400).body(new ResponseDto("This item is not for sale!"));
     }
     try {
@@ -94,15 +93,6 @@ public class BidOrPurchaseServiceImpl implements BidOrPurchaseService {
   }
   @Override
   public void setSoldProduct(Product product, User customer) {
-    if (product.getBids().size() > 0) {
-      for (Bid bid : product.getBids()) {
-        bid.getUser().setMinusOnLicit(bid.getAmount());
-        bid.getUser().setPlusBalance(bid.getAmount());
-        userService.save(bid.getUser());
-        bidRepository.save(bid);
-      }
-    }
-
     User owner = userService.findUserById(product.getOwner());
     owner.setPlusBalance(product.getPurchasePrice());
     userService.save(owner);
@@ -111,9 +101,18 @@ public class BidOrPurchaseServiceImpl implements BidOrPurchaseService {
     customer.setOwnedProducts(product);
     userService.save(customer);
 
+    if (product.getBids().size() > 0) {
+      for (Bid bid : product.getBids()) {
+        bid.getUser().setMinusOnLicit(bid.getAmount());
+        bid.getUser().setPlusBalance(bid.getAmount());
+        bidRepository.delete(bid);
+      }
+    }
+
     product.setOwner(customer);
     product.setPurchasePrice(0.00);
     product.setStartingPrice(0.00);
+    product.resetBids();
     productService.saveProduct(product);
   }
   private Object[] getUserByTokenAndProductById(Long productId, HttpServletRequest request) {
