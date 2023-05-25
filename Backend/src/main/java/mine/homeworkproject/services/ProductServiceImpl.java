@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +26,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -46,7 +44,7 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public List<Product> getAllProducts() {
-    return productRepository.findAllByUploaderNotEqualsOwner();
+    return productRepository.findAllByUploaderAndAvailable();
   }
   @Override
   public ResponseEntity createProduct(ProductCreateDto productCreateDto,
@@ -175,11 +173,11 @@ public class ProductServiceImpl implements ProductService {
   public ResponseEntity sortProducts(String direction) {
     ResponseEntity response;
     if (direction.equals("asc")){
-      response = ResponseEntity.status(200).body(productRepository.findAll().stream()
+      response = ResponseEntity.status(200).body(productRepository.findAllByForSale(true).stream()
           .sorted(Comparator.comparingDouble(Product::getPurchasePrice))
           .collect(Collectors.toList()));
     } else if (direction.equals("desc")) {
-      response = ResponseEntity.status(200).body(productRepository.findAll().stream()
+      response = ResponseEntity.status(200).body(productRepository.findAllByForSale(true).stream()
           .sorted(Comparator.comparingDouble(Product::getPurchasePrice).reversed())
           .collect(Collectors.toList()));
     } else {

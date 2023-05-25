@@ -113,6 +113,7 @@ public class BidOrPurchaseServiceImpl implements BidOrPurchaseService {
     product.setPurchasePrice(0.00);
     product.setStartingPrice(0.00);
     product.resetBids();
+    product.setForSale(false);
     productService.saveProduct(product);
   }
   private Object[] getUserByTokenAndProductById(Long productId, HttpServletRequest request) {

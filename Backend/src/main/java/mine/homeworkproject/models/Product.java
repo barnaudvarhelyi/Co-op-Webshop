@@ -1,6 +1,7 @@
 package mine.homeworkproject.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.Nullable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,6 +29,8 @@ public class Product {
   private String photoUrl;
   private Double purchasePrice;
   private LocalDateTime createdAt;
+  @JsonIgnore
+  private Boolean forSale;
   @Nullable
   private Double startingPrice;
   @Nullable
@@ -61,6 +64,7 @@ public class Product {
     this.expiresAt = expiresAt == null || expiresAt.equals("") ? null : getFormattedCurrentTime(expiresAt);
     this.startingPrice = startingPrice == null ? null : Math.round(startingPrice*100.0)/100.0;
     this.bids = new ArrayList<>();
+    this.forSale = true;
   }
   private LocalDateTime getFormattedCurrentTime(LocalDateTime datetime) {
     //TODO maybe change for only HH
@@ -135,6 +139,12 @@ public class Product {
     this.owner = owner;
   }
   public void removeBid(Bid bid) { this.bids.remove(bid); }
+  public Boolean getForSale() {
+    return forSale;
+  }
+  public void setForSale(Boolean forSale) {
+    this.forSale = forSale;
+  }
 
   @Override
   public boolean equals(Object o) {

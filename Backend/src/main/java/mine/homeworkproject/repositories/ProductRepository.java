@@ -12,12 +12,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-  @Query("SELECT p FROM Product p WHERE p.uploader = p.owner")
-  List<Product> findAllByUploaderNotEqualsOwner();
-  @Query("SELECT p FROM Product p WHERE p.owner.id = p.uploader.id ORDER BY function('RAND')")
+  @Query("SELECT p FROM Product p WHERE p.forSale = TRUE")
+  List<Product> findAllByUploaderAndAvailable();
+  @Query("SELECT p FROM Product p WHERE p.forSale = TRUE ORDER BY function('RAND')")
   List<Product> findRandomProducts(Pageable pageable);
-  @Query("SELECT p FROM Product p WHERE p.uploader = :uploader AND p.owner.id = p.uploader.id")
-  List<Product> findAllByUploaderNotEqualsOwner(@Param("uploader") User uploader);
+  @Query("SELECT p FROM Product p WHERE p.uploader = :uploader AND p.forSale = TRUE")
+  List<Product> findAllByUploaderAndAvailable(@Param("uploader") User uploader);
+  List<Product> findAllByForSale(Boolean forSale);
 
   Optional<Product> findById(Long id);
   List<Product> findAllByOwner(User user);
