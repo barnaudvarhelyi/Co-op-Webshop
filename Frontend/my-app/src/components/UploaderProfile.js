@@ -13,6 +13,7 @@ export default function UploaderProfile(props){
     const res = await fetch(`http://localhost:8080/user-profile/${username}`)
     const data = await res.json()
     setUploaderProfile(data)
+    console.log(data);
   }
 
   useEffect(() => {

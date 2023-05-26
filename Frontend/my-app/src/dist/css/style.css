@@ -374,16 +374,19 @@ nav .search-bar {
   max-width: 1100px;
   margin: auto;
   padding: 1em;
+}
+.single-product .product-informations {
   display: flex;
   gap: 1em;
 }
-.single-product div {
+.single-product .product-img {
   width: 50%;
 }
 .single-product .single-product-informations {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 50%;
 }
 .single-product h1 {
   margin: 0.5em 0em;
@@ -411,6 +414,27 @@ nav .search-bar {
   padding: 0.5em 1em;
   cursor: pointer;
   width: 10em;
+}
+.single-product .more-items {
+  display: flex;
+  gap: 1em;
+}
+.single-product .more-items div {
+  width: 100%;
+  text-align: center;
+  min-width: 0;
+}
+.single-product .more-items img {
+  height: 200px;
+  width: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.single-product .more-items h3 {
+  margin: 0.5em 0em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (max-width: 500px) {
