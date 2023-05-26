@@ -11,7 +11,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
+import mine.homeworkproject.dtos.BidDto;
 import mine.homeworkproject.dtos.ProductAPIDto;
+import mine.homeworkproject.dtos.ProductAllDto;
 import mine.homeworkproject.dtos.ProductByIdResponseDto;
 import mine.homeworkproject.dtos.ProductCreateDto;
 import mine.homeworkproject.dtos.ProductResponseDto;
@@ -44,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public List<Product> getAllAvailableProducts() {
-    return productRepository.findAllByUploaderAndAvailable();
+    return productRepository.findAllByForSale(true);
   }
   @Override
   public ResponseEntity createProduct(ProductCreateDto productCreateDto,

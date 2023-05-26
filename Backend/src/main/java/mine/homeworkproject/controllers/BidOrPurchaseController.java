@@ -17,25 +17,14 @@ public class BidOrPurchaseController {
   public BidOrPurchaseController(BidOrPurchaseService bidOrPurchaseService) {
     this.bidOrPurchaseService = bidOrPurchaseService;
   }
-
   @PostMapping("/purchase")
   public ResponseEntity purchaseProductById(@RequestParam(required = false) Long productId, HttpServletRequest request) {
     return bidOrPurchaseService.purchaseProductById(productId, request);
   }
+
+  //TODO highest bid, licit lépcső a minimum összeg
   @PostMapping("/bid")
   public ResponseEntity addBidToProductById(@RequestParam(required = false) Long productId, @RequestBody HashMap<String, Double> amount, HttpServletRequest request) {
     return bidOrPurchaseService.addBidToProductById(productId, amount, request);
   }
-
-  //TODO finish
-  @PostMapping("/bid/cancel")
-  public ResponseEntity cancelBidOnProductById(@RequestParam(required = false) Long productId, HttpServletRequest request) {
-    return null;
-  }
-  @PostMapping("/bid/cancel/all")
-  public ResponseEntity cancelAllBids(HttpServletRequest request) {
-    return null;
-  }
-
-
 }
