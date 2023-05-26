@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +26,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -45,8 +43,8 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public List<Product> getAllProducts() {
-    return productRepository.findAllByUploaderNotEqualsOwner();
+  public List<Product> getAllAvailableProducts() {
+    return productRepository.findAllByUploaderAndAvailable();
   }
   @Override
   public ResponseEntity createProduct(ProductCreateDto productCreateDto,
@@ -124,7 +122,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     List<Product> randomProducts = productRepository.findRandomProducts(PageRequest.of(0, 5));
-    System.out.println(randomProducts);
     ProductByIdResponseDto response = new ProductByIdResponseDto(product.get(), user, userId, randomProducts);
     return ResponseEntity.status(200).body(response);
   }
@@ -152,10 +149,10 @@ public class ProductServiceImpl implements ProductService {
     User user = (User) response[1];
     Product product = (Product) response[2];
 
-    //TODO when bids are available test this
     if (product.getExpiresAt() != null && product.getBids().size() > 0) {
       return ResponseEntity.status(400).body(new ResponseDto("Product cannot be edited after someone has bid on it"));
     }
+
     product.setUploader(user);
     product.setName(productCreateDto.getName());
     product.setDescription(productCreateDto.getDescription());
@@ -168,7 +165,7 @@ public class ProductServiceImpl implements ProductService {
   public ResponseEntity searchItemByStr(String searchItem) {
     return ResponseEntity
         .status(200)
-        .body(productRepository.findAll().stream()
+        .body(productRepository.findAllByForSale(true).stream()
             .filter(p -> p.getName().toLowerCase().contains(searchItem.toLowerCase()) || p.getDescription().toLowerCase().contains(searchItem.toLowerCase()))
             .collect(Collectors.toList()));
   }
@@ -176,11 +173,11 @@ public class ProductServiceImpl implements ProductService {
   public ResponseEntity sortProducts(String direction) {
     ResponseEntity response;
     if (direction.equals("asc")){
-      response = ResponseEntity.status(200).body(productRepository.findAll().stream()
+      response = ResponseEntity.status(200).body(productRepository.findAllByForSale(true).stream()
           .sorted(Comparator.comparingDouble(Product::getPurchasePrice))
           .collect(Collectors.toList()));
     } else if (direction.equals("desc")) {
-      response = ResponseEntity.status(200).body(productRepository.findAll().stream()
+      response = ResponseEntity.status(200).body(productRepository.findAllByForSale(true).stream()
           .sorted(Comparator.comparingDouble(Product::getPurchasePrice).reversed())
           .collect(Collectors.toList()));
     } else {
