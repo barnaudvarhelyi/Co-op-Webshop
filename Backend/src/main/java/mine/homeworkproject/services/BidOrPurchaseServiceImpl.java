@@ -36,7 +36,7 @@ public class BidOrPurchaseServiceImpl implements BidOrPurchaseService {
     Product product = (Product) response[2];
 
     if (product.getExpiresAt() == null) { return ResponseEntity.status(400).body(new ResponseDto("This product is for purchase only!")); }
-    if (product.getUploader() != product.getOwner()) { return ResponseEntity.status(400).body(new ResponseDto("This item is not for sale!")); }
+    if (!product.getForSale()) { return ResponseEntity.status(400).body(new ResponseDto("This item is not for sale!")); }
     if (u.getUploadedProducts().contains(product.getId())) { return ResponseEntity.status(400).body(new ResponseDto("You can not bid your own product!")); }
     if (Objects.isNull(amount.get("amount")) || amount.get("amount") <= 0) { return ResponseEntity.status(400).body(new ResponseDto("Please provide valid input!")); }
 
@@ -80,7 +80,7 @@ public class BidOrPurchaseServiceImpl implements BidOrPurchaseService {
     if (u.getUploadedProducts().contains(product.getId()) || u.getOwnedProducts().contains(product.getId())) {
       return ResponseEntity.status(400).body(new ResponseDto("You cannot purchase your own item!"));
     }
-    if (product.getOwner() != product.getUploader()) {
+    if (!product.getForSale()) {
       return ResponseEntity.status(400).body(new ResponseDto("This item is not for sale!"));
     }
     try {

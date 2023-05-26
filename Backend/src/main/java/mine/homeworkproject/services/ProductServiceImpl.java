@@ -43,7 +43,7 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public List<Product> getAllProducts() {
+  public List<Product> getAllAvailableProducts() {
     return productRepository.findAllByUploaderAndAvailable();
   }
   @Override
@@ -149,10 +149,10 @@ public class ProductServiceImpl implements ProductService {
     User user = (User) response[1];
     Product product = (Product) response[2];
 
-    //TODO when bids are available test this
     if (product.getExpiresAt() != null && product.getBids().size() > 0) {
       return ResponseEntity.status(400).body(new ResponseDto("Product cannot be edited after someone has bid on it"));
     }
+
     product.setUploader(user);
     product.setName(productCreateDto.getName());
     product.setDescription(productCreateDto.getDescription());
@@ -165,7 +165,7 @@ public class ProductServiceImpl implements ProductService {
   public ResponseEntity searchItemByStr(String searchItem) {
     return ResponseEntity
         .status(200)
-        .body(productRepository.findAll().stream()
+        .body(productRepository.findAllByForSale(true).stream()
             .filter(p -> p.getName().toLowerCase().contains(searchItem.toLowerCase()) || p.getDescription().toLowerCase().contains(searchItem.toLowerCase()))
             .collect(Collectors.toList()));
   }

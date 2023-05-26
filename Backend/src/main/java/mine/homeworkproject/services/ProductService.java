@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 public interface ProductService {
   void getRandomProductsFromAPI();
 
-  List<Product> getAllProducts();
+  List<Product> getAllAvailableProducts();
 
   ResponseEntity createProduct(ProductCreateDto product, HttpServletRequest request);
 
