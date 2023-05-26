@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import mine.homeworkproject.dtos.ProductResponseDto;
 import mine.homeworkproject.dtos.ResponseDto;
 import mine.homeworkproject.dtos.UserByIdResponseDto;
-import mine.homeworkproject.dtos.UserProfileResponsDto;
+import mine.homeworkproject.dtos.UserProfileResponseDto;
 import mine.homeworkproject.models.Product;
 import mine.homeworkproject.models.User;
 import mine.homeworkproject.repositories.ProductRepository;
@@ -79,10 +79,10 @@ public class UserServiceImpl implements UserService {
       return ResponseEntity.status(404).body(response);
     }
     List<Product> uploadedProducts = productRepository.findAllByUploaderAndAvailable(user.get());
-    List<Product> ownedProducts = productRepository.findAllByOwner(user.get());
-    //TODO ne jelenjen meg a már megvásárolt1
-    return ResponseEntity.status(200).body(new UserProfileResponsDto(user.get().getUsername(),
-        uploadedProducts.size(), uploadedProducts, user.get().getBalance(), ownedProducts));
+    List<Product> ownedProducts = productRepository.findAllByOwnerNotEqualsUploader(user.get());
+
+    return ResponseEntity.status(200).body(new UserProfileResponseDto(user.get().getUsername(),
+        uploadedProducts.size(), uploadedProducts, user.get().getBalance(), ownedProducts, ownedProducts.size()));
   }
   @Override
   public ResponseEntity addBalance(HashMap<String, String> balance, HttpServletRequest request) {

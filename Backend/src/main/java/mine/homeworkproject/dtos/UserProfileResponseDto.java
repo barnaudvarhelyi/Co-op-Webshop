@@ -3,17 +3,19 @@ package mine.homeworkproject.dtos;
 import java.util.List;
 import mine.homeworkproject.models.Product;
 
-public class UserProfileResponsDto {
+public class UserProfileResponseDto {
   private String username;
   private Integer uploadedProductsCount;
   private List<Product> uploadedProducts;
   private BalanceDto balance;
   private List<Product> ownedProducts;
+  private Integer ownedProductsCount;
 
-  public UserProfileResponsDto(String username, Integer uploadedProductsCount,
-      List<Product> uploadedProducts, BalanceDto balance, List<Product> ownedProducts) {
+  public UserProfileResponseDto(String username, Integer uploadedProductsCount,
+      List<Product> uploadedProducts, BalanceDto balance, List<Product> ownedProducts, Integer ownedProductsCount) {
     this.username = username;
     this.uploadedProductsCount = uploadedProductsCount;
+    this.ownedProductsCount = ownedProductsCount;
     this.uploadedProducts = uploadedProducts;
     this.balance = balance;
     this.ownedProducts = ownedProducts;
@@ -48,5 +50,11 @@ public class UserProfileResponsDto {
   }
   public void setOwnedProducts(List<Product> ownedProducts) {
     this.ownedProducts = ownedProducts;
+  }
+  public Integer getOwnedProductsCount() {
+    return ownedProductsCount;
+  }
+  public void setOwnedProductsCount(Integer ownedProductsCount) {
+    this.ownedProductsCount = ownedProductsCount;
   }
 }

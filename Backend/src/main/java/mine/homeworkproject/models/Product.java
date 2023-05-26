@@ -6,6 +6,8 @@ import com.sun.istack.Nullable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -38,9 +40,9 @@ public class Product {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "uploader_id")
   private User uploader;
+  @JsonIgnore
   @OneToMany(mappedBy = "product")
   private List<Bid> bids;
-
   @ManyToOne
   @JoinColumn(name = "owner_id")
   private User owner;
@@ -113,9 +115,6 @@ public class Product {
   public void setPurchasePrice(Double purchasePrice) {
     this.purchasePrice = purchasePrice;
   }
-  public List<Bid> getBids() {
-    return bids;
-  }
   public void setBid(Bid bid) {
     this.bids.add(bid);
   }
@@ -138,12 +137,17 @@ public class Product {
   public void setOwner(User owner) {
     this.owner = owner;
   }
-  public void removeBid(Bid bid) { this.bids.remove(bid); }
   public Boolean getForSale() {
     return forSale;
   }
   public void setForSale(Boolean forSale) {
     this.forSale = forSale;
+  }
+  public List<Bid> getBids() {
+    return bids;
+  }
+  public void setBids(List<Bid> bids) {
+    this.bids = bids;
   }
 
   @Override

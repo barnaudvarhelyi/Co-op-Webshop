@@ -18,9 +18,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
   List<Product> findRandomProducts(Pageable pageable);
   @Query("SELECT p FROM Product p WHERE p.uploader = :uploader AND p.forSale = TRUE")
   List<Product> findAllByUploaderAndAvailable(@Param("uploader") User uploader);
+  @Query("SELECT p FROM Product p WHERE p.owner = :owner AND p.owner != p.uploader")
+  List<Product> findAllByOwnerNotEqualsUploader(@Param("owner") User owner);
   List<Product> findAllByForSale(Boolean forSale);
 
   Optional<Product> findById(Long id);
-  List<Product> findAllByOwner(User user);
   List<Product> findByExpiresAtNotNull();
 }
