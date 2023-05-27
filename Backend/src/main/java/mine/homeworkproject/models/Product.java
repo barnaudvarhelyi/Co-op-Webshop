@@ -69,7 +69,6 @@ public class Product {
     this.forSale = true;
   }
   private LocalDateTime getFormattedCurrentTime(LocalDateTime datetime) {
-    //TODO maybe change for only HH
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     return LocalDateTime.parse(datetime.format(formatter), formatter);
   }

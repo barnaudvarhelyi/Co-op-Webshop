@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -199,7 +200,7 @@ public class ProductServiceImpl implements ProductService {
       User u = userService.findUserById(1L);
       product.setUploader(u);
       product.setOwner(u);
-      if (i % 2 == 0) { product.setExpiresAt(product.getCreatedAt().plusDays(1)); }
+      if (i % 2 == 0) { product.setExpiresAt(product.getExpiresAt().plusDays(1)); }
       else { product.setStartingPrice(null); }
       productRepository.save(product);
       i++;
