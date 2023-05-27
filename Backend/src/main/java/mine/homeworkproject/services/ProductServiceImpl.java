@@ -5,19 +5,17 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
-import mine.homeworkproject.dtos.BidDto;
 import mine.homeworkproject.dtos.ProductAPIDto;
 import mine.homeworkproject.dtos.ProductAllDto;
 import mine.homeworkproject.dtos.ProductByIdResponseDto;
 import mine.homeworkproject.dtos.ProductCreateDto;
-import mine.homeworkproject.dtos.ProductResponseDto;
+import mine.homeworkproject.dtos.ProductDto;
 import mine.homeworkproject.dtos.ResponseDto;
 import mine.homeworkproject.models.Product;
 import mine.homeworkproject.models.User;
@@ -101,7 +99,7 @@ public class ProductServiceImpl implements ProductService {
       product.setUploader(user.get());
       product.setOwner(user.get());
       productRepository.save(product);
-      return ResponseEntity.status(201).body(new ProductResponseDto(product));
+      return ResponseEntity.status(201).body(new ProductDto(product));
 
     } catch (ResponseStatusException e) {
       responseDto = new ResponseDto("Product creation error!");

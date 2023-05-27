@@ -1,12 +1,11 @@
 package mine.homeworkproject.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import mine.homeworkproject.models.Product;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProductResponseDto {
+public class ProductDto {
   private Long productId;
   private Long userId;
   private String name;
@@ -16,8 +15,8 @@ public class ProductResponseDto {
   private String createdAt;
   private Double startingPrice;
   private String expiresAt;
-  public ProductResponseDto() {}
-  public ProductResponseDto(Product product) {
+  public ProductDto() {}
+  public ProductDto(Product product) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     this.productId = product.getId();
     this.name = product.getName();
@@ -26,7 +25,7 @@ public class ProductResponseDto {
     this.purchasePrice = product.getPurchasePrice();
     this.userId = product.getUploader();
     this.createdAt = product.getCreatedAt().format(formatter);
-    this.expiresAt = product.getExpiresAt().format(formatter);
+    this.expiresAt = product.getExpiresAt() == null ? null : product.getExpiresAt().format(formatter);
     this.startingPrice = product.getStartingPrice();
   }
 

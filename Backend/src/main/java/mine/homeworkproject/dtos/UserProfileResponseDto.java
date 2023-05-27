@@ -1,24 +1,35 @@
 package mine.homeworkproject.dtos;
 
 import java.util.List;
-import mine.homeworkproject.models.Product;
 
 public class UserProfileResponseDto {
   private String username;
-  private Integer uploadedProductsCount;
-  private List<Product> uploadedProducts;
   private BalanceDto balance;
-  private List<Product> ownedProducts;
+  private Integer uploadedProductsCount;
   private Integer ownedProductsCount;
+  private Integer soldProductsCount;
+  private List<ProductDto> uploadedProducts;
+  private List<ProductDto> ownedProducts;
+  private List<ProductDto> soldProducts;
 
-  public UserProfileResponseDto(String username, Integer uploadedProductsCount,
-      List<Product> uploadedProducts, BalanceDto balance, List<Product> ownedProducts, Integer ownedProductsCount) {
+  public UserProfileResponseDto(
+      String username,
+      Integer uploadedProductsCount,
+      List<ProductDto> uploadedProducts,
+      BalanceDto balance,
+      List<ProductDto> ownedProducts,
+      Integer ownedProductsCount,
+      List<ProductDto> soldProducts,
+      Integer soldProductsCount
+  ) {
     this.username = username;
     this.uploadedProductsCount = uploadedProductsCount;
     this.ownedProductsCount = ownedProductsCount;
     this.uploadedProducts = uploadedProducts;
     this.balance = balance;
     this.ownedProducts = ownedProducts;
+    this.soldProducts = soldProducts;
+    this.soldProductsCount = soldProductsCount;
   }
 
   public String getUsername() {
@@ -33,10 +44,10 @@ public class UserProfileResponseDto {
   public void setUploadedProductsCount(Integer uploadedProductsCount) {
     this.uploadedProductsCount = uploadedProductsCount;
   }
-  public List<Product> getUploadedProducts() {
+  public List<ProductDto> getUploadedProducts() {
     return uploadedProducts;
   }
-  public void setUploadedProducts(List<Product> uploadedProducts) {
+  public void setUploadedProducts(List<ProductDto> uploadedProducts) {
     this.uploadedProducts = uploadedProducts;
   }
   public BalanceDto getBalance() {
@@ -45,10 +56,10 @@ public class UserProfileResponseDto {
   public void setBalance(BalanceDto balance) {
     this.balance = balance;
   }
-  public List<Product> getOwnedProducts() {
+  public List<ProductDto> getOwnedProducts() {
     return ownedProducts;
   }
-  public void setOwnedProducts(List<Product> ownedProducts) {
+  public void setOwnedProducts(List<ProductDto> ownedProducts) {
     this.ownedProducts = ownedProducts;
   }
   public Integer getOwnedProductsCount() {
@@ -56,5 +67,17 @@ public class UserProfileResponseDto {
   }
   public void setOwnedProductsCount(Integer ownedProductsCount) {
     this.ownedProductsCount = ownedProductsCount;
+  }
+  public List<ProductDto> getSoldProducts() {
+    return soldProducts;
+  }
+  public void setSoldProducts(List<ProductDto> soldProducts) {
+    this.soldProducts = soldProducts;
+  }
+  public Integer getSoldProductsCount() {
+    return soldProductsCount;
+  }
+  public void setSoldProductsCount(Integer soldProductsCount) {
+    this.soldProductsCount = soldProductsCount;
   }
 }
