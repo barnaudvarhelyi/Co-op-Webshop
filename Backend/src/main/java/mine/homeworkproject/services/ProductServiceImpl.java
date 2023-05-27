@@ -46,8 +46,11 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public List<Product> getAllAvailableProducts() {
-    return productRepository.findAllByForSale(true);
+  public List<ProductAllDto> getAllAvailableProducts() {
+    return productRepository.findAllByForSale(true)
+        .stream()
+        .map(ProductAllDto::new)
+        .collect(Collectors.toList());
   }
   @Override
   public ResponseEntity createProduct(ProductCreateDto productCreateDto,
@@ -200,7 +203,7 @@ public class ProductServiceImpl implements ProductService {
       User u = userService.findUserById(1L);
       product.setUploader(u);
       product.setOwner(u);
-      if (i % 2 == 0) { product.setExpiresAt(product.getExpiresAt().plusDays(1)); }
+      if (i % 2 == 0) { product.setExpiresAt(product.getCreatedAt().plusDays(1)); }
       else { product.setStartingPrice(null); }
       productRepository.save(product);
       i++;

@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 public interface ProductService {
   void getRandomProductsFromAPI();
 
-  List<Product> getAllAvailableProducts();
+  List<ProductAllDto> getAllAvailableProducts();
 
   ResponseEntity createProduct(ProductCreateDto product, HttpServletRequest request);
 

@@ -30,7 +30,7 @@ public class ProductsController {
     this.productService = productService;
   }
   @GetMapping("/products/all")
-  public List<Product> getAllProducts() {
+  public List<ProductAllDto> getAllProducts() {
     return productService.getAllAvailableProducts();
   }
   @GetMapping("/products/search")

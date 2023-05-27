@@ -34,7 +34,7 @@ public class ProductAllDto {
     this.photoUrl = product.getPhotoUrl();
     this.createdAt = product.getCreatedAt().format(formatter);
     this.purchasePrice = product.getPurchasePrice();
-    this.expiresAt = product.getExpiresAt().format(formatter);
+    this.expiresAt = product.getExpiresAt() == null ? null : product.getExpiresAt().format(formatter);
     this.startingPrice = product.getStartingPrice();
   }
 

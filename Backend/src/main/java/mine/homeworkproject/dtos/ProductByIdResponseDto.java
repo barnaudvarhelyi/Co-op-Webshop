@@ -31,8 +31,8 @@ public class ProductByIdResponseDto {
     this.startingPrice = p.getStartingPrice();
     this.uploader = username;
     this.uploaderId = userId;
-    this.expiresAt = p.getExpiresAt().format(formatter);
     this.createdAt = p.getCreatedAt().format(formatter);
+    this.expiresAt = p.getExpiresAt() == null ? null : p.getExpiresAt().format(formatter);
     this.randomProducts = randomProducts;
   }
 
