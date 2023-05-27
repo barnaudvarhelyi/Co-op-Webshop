@@ -74,10 +74,9 @@ public class ProductServiceImpl implements ProductService {
       if (productCreateDto.getForBid()) {
         String expires = productCreateDto.getExpiresAt();
         startingPrice = productCreateDto.getStartingPrice();
-
         switch (expires) {
-          case "two_minutes": {expiresAt = LocalDateTime.now().plusMinutes(2); break; }
-          case "five_minutes": {expiresAt = LocalDateTime.now().plusMinutes(5); break; }
+          case "two_minutes": { expiresAt = LocalDateTime.now().plusMinutes(2); break; }
+          case "five_minutes": { expiresAt = LocalDateTime.now().plusMinutes(5); break; }
           case "one_day": { expiresAt = LocalDateTime.now().plusDays(1); break; }
           case "three_days": { expiresAt = LocalDateTime.now().plusDays(3); break; }
           case "one_week": { expiresAt = LocalDateTime.now().plusWeeks(1); break; }
@@ -85,6 +84,7 @@ public class ProductServiceImpl implements ProductService {
           case "one_month": { expiresAt = LocalDateTime.now().plusMonths(1); break; }
           default: { return ResponseEntity.status(400).body(new ResponseDto("Please provide a valid expiration time!")); }
         }
+        expiresAt = expiresAt.plusDays(1).withHour(12).withMinute(0).withSecond(0);
       }
       else {
         startingPrice = null;
@@ -203,7 +203,7 @@ public class ProductServiceImpl implements ProductService {
       User u = userService.findUserById(1L);
       product.setUploader(u);
       product.setOwner(u);
-      if (i % 2 == 0) { product.setExpiresAt(product.getCreatedAt().plusDays(1)); }
+      if (i % 2 == 0) { product.setExpiresAt(product.getCreatedAt().plusDays(1).withHour(12).withMinute(0).withSecond(0)); }
       else { product.setStartingPrice(null); }
       productRepository.save(product);
       i++;
