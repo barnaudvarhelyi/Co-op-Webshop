@@ -101,6 +101,16 @@ export default function Profile(props){
             document.getElementById("startingPrice").value = data.startingPrice
             document.getElementById("addItem").style.display = "none"
             document.getElementById("editItem").style.display = "block"
+            document.getElementById("editItem").style.display = "block"
+            if(data.startingPrice){
+                document.getElementById("startingPrice").style.display = 'block'
+                document.querySelector(".expiresAt").style.display = 'block'
+                document.querySelector(".enable-bidding").style.display = 'none'
+            } else {
+                document.getElementById("startingPrice").style.display = 'none'
+                document.querySelector(".expiresAt").style.display = 'none'
+                document.querySelector(".enable-bidding").style.display = 'block'
+            }
             let url = new URL(window.location.href)
             url.searchParams.set("id", id)
             window.history.replaceState({}, "", url.toString())
@@ -168,8 +178,8 @@ export default function Profile(props){
     if(props.userProfile){
 
         uploadedProducts = props.userProfile.uploadedProducts.map(function(item){
-            return <div className="product" key={item.id}>
-                <Link to={`/products/${item.id}`}>
+            return <div className="product" key={item.productId}>
+                <Link to={`/products/${item.productId}`}>
                 <div className="product-img">
                     <img src={item.photoUrl} alt="" />
                 </div>
@@ -217,7 +227,7 @@ export default function Profile(props){
 
             {/* Two main buttons on Profile page */}
             <div className="container">
-            <h3>Balance: {balance}</h3>
+            <h3 className="balance">Your balance: {balance}</h3>
             <div className="add-item-animation btn-grad">
                 <div onClick={displayForm} className="btn-grad">
                     <h1>Create new item</h1>
@@ -234,23 +244,30 @@ export default function Profile(props){
 
                 <h4 className="error-message" style={uploadErrorMessage ? {display: 'block'} : {display: 'none'}}>{uploadErrorMessage}</h4>
 
-                <input type="text" name="name" onChange={handleItem} placeholder="Title" id="title"/>
-                <input type="text" name="description" onChange={handleItem} placeholder="Description" id="description"/>
-                <input type="text" name="photoUrl" onChange={handleItem} placeholder="Photo" id="photoUrl"/>
-                <input type="number" name="purchasePrice" onChange={handleItem} placeholder="Purchase Price" step=".01" id="purchasePrice"/>
-                
-                <label htmlFor="enableBidding">Do you want to list your item for auction?</label>
-                <input type="checkbox" name="forBid" onClick={(e) => toggleBidding(e)} id="checkboxBidding" />
-                <input type="number" name="startingPrice" onChange={handleItem} placeholder="Starting Price" step=".01" id="startingPrice" />
+                <div className="upload-product">
+                    <div className="input-fields">
+                    <input type="text" name="name" onChange={handleItem} placeholder="Title" id="title"/>
+                    <input type="text" name="description" onChange={handleItem} placeholder="Description" id="description"/>
+                    <input type="text" name="photoUrl" onChange={handleItem} placeholder="Photo" id="photoUrl"/>
+                    <input type="number" name="purchasePrice" onChange={handleItem} placeholder="Purchase Price" step=".01" id="purchasePrice"/>
+                    </div>
 
-                <select className="expiresAt" name="expiresAt" onChange={handleItem}>
-                    <option value="two_minutes">Two Minutes</option>
-                    <option value="one_day">1 Day</option>
-                    <option value="three_days">3 Days</option>
-                    <option value="one_week">1 Week</option>
-                    <option value="two_tweeks">2 Weeks</option>
-                    <option value="one_month">1 Month</option>
-                </select>
+                    <label htmlFor="forBid">Do you want to list your item for auction?</label>
+                    <input type="checkbox" name="forBid" onClick={(e) => toggleBidding(e)} id="checkboxBidding" />
+
+                    <div className="auction">
+                        <input type="number" name="startingPrice" onChange={handleItem} placeholder="Starting Price" step=".01" id="startingPrice" />
+
+                        <select className="expiresAt" name="expiresAt" onChange={handleItem}>
+                            <option value="two_minutes">Two Minutes</option>
+                            <option value="one_day">1 Day</option>
+                            <option value="three_days">3 Days</option>
+                            <option value="one_week">1 Week</option>
+                            <option value="two_tweeks">2 Weeks</option>
+                            <option value="one_month">1 Month</option>
+                        </select>
+                    </div>
+                </div>
 
                 <div className="button-container">
                     <button type="button" onClick={resetUploadForm}>Cancel</button>

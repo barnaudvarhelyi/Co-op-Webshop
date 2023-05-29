@@ -11,11 +11,12 @@
 }
 
 body {
+  color: #2E2E2E;
   font-family: "Montserrat";
 }
 
 a {
-  color: black;
+  color: #2E2E2E;
   text-decoration: none;
   outline: none;
 }
@@ -36,7 +37,6 @@ a {
 .sort-items select {
   padding: 0.5em;
   cursor: pointer;
-  border-color: #343434;
 }
 
 /* Login Page */
@@ -82,10 +82,10 @@ a {
   margin-bottom: 3em;
 }
 .login .login-form form input::-moz-placeholder {
-  color: #343434;
+  color: #2E2E2E;
 }
 .login .login-form form input::placeholder {
-  color: #343434;
+  color: #2E2E2E;
 }
 .login .login-form form input:last-of-type {
   margin-bottom: 1em;
@@ -97,6 +97,7 @@ a {
   border: none;
   cursor: pointer;
   font-size: 1em;
+  margin-bottom: 0.5em;
 }
 .login .login-form form span {
   cursor: pointer;
@@ -172,7 +173,7 @@ nav .search-bar {
   position: absolute;
   top: 0;
   left: 0;
-  color: #696969;
+  color: #8A8A8A;
   background-color: transparent;
   border: none;
   font-size: 20px;
@@ -208,6 +209,15 @@ nav .search-bar {
   max-width: 1100px;
   margin: auto;
 }
+.profile .balance {
+  margin: 1em;
+  padding: 0.5em 1em;
+  width: -moz-fit-content;
+  width: fit-content;
+  border-radius: 1em;
+  color: #FAF9F6;
+  background-color: #2E8B57;
+}
 .profile .profile-text {
   padding: 0em 1em;
 }
@@ -218,28 +228,41 @@ nav .search-bar {
   background-color: transparent;
   border: none;
   cursor: pointer;
-  color: #696969;
+  color: #8A8A8A;
 }
 .profile form {
-  padding: 3em;
-  display: flex;
-  flex-direction: column;
+  padding: 1em;
   display: none;
+  flex-direction: column;
+}
+.profile form .upload-product .input-fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  justify-items: center;
+  gap: 0em 1em;
+}
+.profile form .upload-product .auction {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  justify-items: center;
+  gap: 0em 1em;
 }
 .profile form input {
   font-size: 1em;
-  background-color: rgb(241, 241, 241);
   padding: 0.75em;
-  border: 2px solid #D3D3D3;
-  border-radius: 1em;
+  border: none;
+  border-bottom: 2px solid #aaaaaa;
+  border-radius: 0.75em 0.75em 0em 0em;
+  width: 100%;
+  background-color: #eeeeee;
   outline: none;
   margin-bottom: 1em;
 }
 .profile form input::-moz-placeholder {
-  color: #343434;
+  color: #2E2E2E;
 }
 .profile form input::placeholder {
-  color: #343434;
+  color: #2E2E2E;
 }
 .profile form input:last-of-type {
   margin-bottom: 1em;
@@ -270,6 +293,18 @@ nav .search-bar {
   background-image: linear-gradient(to right, #D66D75 0%, #E29587 51%, #D66D75 100%);
   background-size: 200% auto;
   transition: 0.5s;
+}
+.profile form .expiresAt {
+  font-size: 1em;
+  padding: 0.75em;
+  border: none;
+  border-bottom: 2px solid #aaaaaa;
+  border-radius: 0.75em 0.75em 0em 0em;
+  width: 100%;
+  background-color: #eeeeee;
+  outline: none;
+  margin-bottom: 1em;
+  cursor: pointer;
 }
 .profile form .error-message {
   margin-top: 0em;
@@ -374,16 +409,27 @@ nav .search-bar {
   max-width: 1100px;
   margin: auto;
   padding: 1em;
+  color: #2E2E2E;
+}
+.single-product .product-informations {
   display: flex;
   gap: 1em;
 }
-.single-product div {
-  width: 50%;
+.single-product .product-img {
+  width: 100%;
 }
-.single-product .single-product-informations {
+.single-product .product-details {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 100%;
+}
+.single-product .description {
+  border-bottom: 0.3rem solid #2E8B57;
+  width: 10rem;
+}
+.single-product p {
+  text-align: justify;
 }
 .single-product h1 {
   margin: 0.5em 0em;
@@ -412,6 +458,45 @@ nav .search-bar {
   cursor: pointer;
   width: 10em;
 }
+.single-product input {
+  padding: 0.5em;
+  border-radius: 1em;
+  margin: 1em 0em;
+}
+.single-product #bidAmount {
+  margin: 0em 0.5em 0.5em 0em;
+  border-radius: 0.5em;
+  border: 1px solid #2E2E2E;
+  background-color: #FAF9F6;
+}
+.single-product .bidding-btn {
+  color: #FAF9F6;
+  background-color: #2E8B57;
+  border: none;
+  border-radius: 0.5em;
+  padding: 0.5em 1em;
+  cursor: pointer;
+}
+.single-product .swiper {
+  margin-top: 1em;
+}
+.single-product .swiper div {
+  width: 100%;
+  text-align: center;
+  min-width: 0;
+}
+.single-product .swiper img {
+  height: 200px;
+  width: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.single-product .swiper h3 {
+  margin: 0.5em 0em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 @media (max-width: 500px) {
   /* Login section */
@@ -425,6 +510,14 @@ nav .search-bar {
     width: 100%;
   }
   /* Profile section */
+  .profile form .upload-product .input-fields {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .profile form .upload-product .auction {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
   .profile form .button-container {
     flex-direction: column;
   }
@@ -440,16 +533,16 @@ nav .search-bar {
     flex-direction: column;
   }
   /* Single Page Product section */
-  .single-product {
+  .single-product .product-informations {
     flex-direction: column;
-  }
-  .single-product div {
-    width: 100%;
   }
   .single-product img {
     width: 100%;
-    max-width: 500px;
     height: auto;
+  }
+  .single-product p {
+    text-align: justify;
+    margin-bottom: 1em;
   }
   .single-product .purchase-btn {
     align-self: center;

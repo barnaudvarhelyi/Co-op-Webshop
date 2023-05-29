@@ -13,6 +13,7 @@ export default function UploaderProfile(props){
     const res = await fetch(`http://localhost:8080/user-profile/${username}`)
     const data = await res.json()
     setUploaderProfile(data)
+    console.log(data);
   }
 
   useEffect(() => {
@@ -26,7 +27,7 @@ export default function UploaderProfile(props){
     uploaderInformations = <div>
       <h1>{uploaderProfile.username}'s Profile</h1>
       <h4>{uploaderProfile.email}</h4>
-      <h3>{uploaderProfile.username}'s uploaded products ({uploaderProfile.productsCount})</h3>
+      <h3>{uploaderProfile.username}'s active items ({uploaderProfile.productsCount})</h3>
     </div>
   }
 

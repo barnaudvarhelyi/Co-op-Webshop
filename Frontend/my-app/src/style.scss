@@ -4,6 +4,8 @@
 
 $white-color: #FAF9F6;
 $green-color: #2E8B57;
+$black-color: #2E2E2E;
+$grey-color: #8A8A8A;
 
 * {
     box-sizing: border-box;
@@ -15,11 +17,12 @@ $green-color: #2E8B57;
 }
 
 body {
+    color: $black-color;
     font-family: 'Montserrat';
 }
 
 a {
-    color: black;
+    color: $black-color;
     text-decoration: none;
     outline: none;
 }
@@ -40,7 +43,6 @@ a {
     select {
         padding: 0.5em;
         cursor: pointer;
-        border-color: #343434;
     }
 }
 
@@ -90,7 +92,7 @@ a {
                 margin-bottom: 3em;
 
                 &::placeholder {
-                    color: #343434;
+                    color: $black-color;
                 }
 
                 &:last-of-type {
@@ -105,6 +107,7 @@ a {
                 border: none;
                 cursor: pointer;
                 font-size: 1em;
+                margin-bottom: 0.5em;
             }
 
             span {
@@ -192,7 +195,7 @@ nav {
             position: absolute;
             top: 0;
             left: 0;
-            color: #696969;
+            color: $grey-color;
             background-color: transparent;
             border: none;
             font-size: 20px;
@@ -236,6 +239,15 @@ nav {
         margin: auto;
     }
 
+    .balance {
+        margin: 1em;
+        padding: 0.5em 1em;
+        width: fit-content;
+        border-radius: 1em;
+        color: $white-color;
+        background-color: $green-color;
+    }
+
     .profile-text {
         padding: 0em 1em;
 
@@ -247,27 +259,46 @@ nav {
             background-color: transparent;
             border: none;
             cursor: pointer;
-            color: #696969;
+            color: #8A8A8A;
         }
     }
 
     form {
-        padding: 3em;
-        display: flex;
-        flex-direction: column;
+        padding: 1em;
         display: none;
+        flex-direction: column;
+
+        .upload-product {
+
+            .input-fields {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                justify-items: center;
+                gap: 0em 1em;
+            }
+
+            .auction {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                justify-items: center;
+                gap: 0em 1em;
+            }
+
+        }
 
         input {
             font-size: 1em;
-            background-color: rgb(241, 241, 241);
             padding: 0.75em;
-            border: 2px solid #D3D3D3;
-            border-radius: 1em;
+            border: none;
+            border-bottom: 2px solid #aaaaaa;
+            border-radius: 0.75em 0.75em 0em 0em;
+            width: 100%;
+            background-color: #eeeeee;
             outline: none;
             margin-bottom: 1em;
 
             &::placeholder {
-                color: #343434;
+                color: $black-color;
             }
 
             &:last-of-type {
@@ -307,6 +338,19 @@ nav {
         
             }
 
+        }
+
+        .expiresAt {
+            font-size: 1em;
+            padding: 0.75em;
+            border: none;
+            border-bottom: 2px solid #aaaaaa;
+            border-radius: 0.75em 0.75em 0em 0em;
+            width: 100%;
+            background-color: #eeeeee;
+            outline: none;
+            margin-bottom: 1em;
+            cursor: pointer;
         }
 
         .error-message {
@@ -438,17 +482,32 @@ nav {
     max-width: 1100px;
     margin: auto;
     padding: 1em;
-    display: flex;
-    gap: 1em;
+    color: #2E2E2E;
 
-    div {
-        width: 50%;
+    .product-informations {
+        display: flex;
+        gap: 1em;
     }
 
-    .single-product-informations {
+    .product-img {
+        width: 100%;
+    }
+
+    .product-details {
         display: flex;
         flex-direction: column;
         justify-content: center;
+        width: 100%;
+    }
+
+    .description {
+        border-bottom: 0.3rem solid $green-color;
+        width: 10rem;
+    }
+
+    p {
+        text-align: justify;
+        margin-bottom: 0.5em;
     }
 
     h1 {
@@ -472,14 +531,74 @@ nav {
         margin-bottom: 0.5em;
     }
 
+    .bidding-section {
+        display: flex;
+        margin-bottom: 0.5em;
+
+        input {
+            width: 70%;
+        }
+
+        button {
+            width: 30%;
+        }
+    }
+
     .purchase-btn {
         color: $white-color;
         background-color: $green-color;
         border: none;
-        border-radius: 1em;
+        border-radius: 0.5em;
         padding: 0.5em 1em;
         cursor: pointer;
-        width: 10em;
+        width: 15em;
+    }
+
+    input {
+        padding: 0.5em;
+        border-radius: 1em;
+        margin: 1em 0em;
+    }
+
+    #bidAmount {
+        margin: 0em 0.5em 0.5em 0em;
+        border-radius: 0.5em;
+        border: 1px solid $black-color;
+        background-color: $white-color;
+        height: 100%;
+    }
+
+    .bidding-btn {
+        color: $white-color;
+        background-color: $green-color;
+        border: none;
+        border-radius: 0.5em;
+        padding: 0.5em 1em;
+        cursor: pointer;
+    }
+
+    .swiper {
+
+        margin-top: 1em;
+
+        div {
+            width: 100%;
+            text-align: center;
+            min-width: 0;
+        }
+
+        img {
+            height: 200px;
+            width: 100%;
+            object-fit: contain;
+        }
+
+        h3 {
+            margin: 0.5em 0em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     }
 
 }
@@ -504,6 +623,20 @@ nav {
 
         form {
 
+            .upload-product {
+
+                .input-fields {
+                    display: grid;
+                    grid-template-columns: 1fr;
+                }
+    
+                .auction {
+                    display: grid;
+                    grid-template-columns: 1fr;
+                }
+    
+            }
+
             .button-container {
                 flex-direction: column;
 
@@ -526,23 +659,24 @@ nav {
 
     }
 
+
     /* Single Page Product section */
     .single-product {
-        flex-direction: column;
 
-        div {
-            width: 100%;
+        .product-informations {
+            flex-direction: column;
         }
 
         img {
             width: 100%;
-            max-width: 500px;
             height: auto;
         }
 
-        .purchase-btn {
-            align-self: center;
+        p {
+            text-align: justify;
+            margin-bottom: 1em;
         }
+
     }
 
 }

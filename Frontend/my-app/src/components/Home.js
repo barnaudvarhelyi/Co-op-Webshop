@@ -48,7 +48,7 @@ export default function Home(props) {
         let url = new URL(window.location.href)
         url.searchParams.set("sort", sorting)
         window.history.replaceState({}, "", url.toString())
-        props.displayProfileInformation()
+        props.displayAllProducts()
     }
     
     return (

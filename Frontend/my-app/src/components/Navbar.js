@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { Outlet, Link, useLocation } from "react-router-dom"
 
 export default function Navbar(props){
@@ -9,7 +9,7 @@ export default function Navbar(props){
 
     /* Checks if the user is on the Home Page, if not, hides the navbar */
     useEffect(() => {
-        if(location.pathname != '/'){
+        if(location.pathname !== '/'){
             document.querySelector('.search-bar').style.display = 'none'
         } else {
             document.querySelector('.search-bar').style.display = 'block'
