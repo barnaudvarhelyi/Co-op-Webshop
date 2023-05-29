@@ -179,7 +179,7 @@ export default function Profile(props){
 
         uploadedProducts = props.userProfile.uploadedProducts.map(function(item){
             return <div className="product" key={item.productId}>
-                <Link to={`/products/${item.id}`}>
+                <Link to={`/products/${item.productId}`}>
                 <div className="product-img">
                     <img src={item.photoUrl} alt="" />
                 </div>

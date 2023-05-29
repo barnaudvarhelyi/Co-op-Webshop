@@ -416,17 +416,20 @@ nav .search-bar {
   gap: 1em;
 }
 .single-product .product-img {
-  width: 50%;
+  width: 100%;
 }
 .single-product .product-details {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 50%;
+  width: 100%;
 }
 .single-product .description {
   border-bottom: 0.3rem solid #2E8B57;
   width: 10rem;
+}
+.single-product p {
+  text-align: justify;
 }
 .single-product h1 {
   margin: 0.5em 0em;
@@ -460,14 +463,19 @@ nav .search-bar {
   border-radius: 1em;
   margin: 1em 0em;
 }
+.single-product #bidAmount {
+  margin: 0em 0.5em 0.5em 0em;
+  border-radius: 0.5em;
+  border: 1px solid #2E2E2E;
+  background-color: #FAF9F6;
+}
 .single-product .bidding-btn {
   color: #FAF9F6;
   background-color: #2E8B57;
   border: none;
-  border-radius: 1em;
+  border-radius: 0.5em;
   padding: 0.5em 1em;
   cursor: pointer;
-  width: 10em;
 }
 .single-product .swiper {
   margin-top: 1em;
@@ -531,6 +539,10 @@ nav .search-bar {
   .single-product img {
     width: 100%;
     height: auto;
+  }
+  .single-product p {
+    text-align: justify;
+    margin-bottom: 1em;
   }
   .single-product .purchase-btn {
     align-self: center;

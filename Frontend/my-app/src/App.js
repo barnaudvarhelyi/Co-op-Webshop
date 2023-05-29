@@ -164,7 +164,6 @@ function App() {
       body: JSON.stringify({amount: bidAmount})
     })
     const data = await res.json()
-    console.log(res, data, bidAmount);
   }
 
   return (

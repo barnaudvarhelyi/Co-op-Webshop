@@ -51,19 +51,19 @@ export default function SingleProduct(props){
 
                 <div className="product-details">
                 <Link to={productPage.uploader === localStorage.getItem('username') ? '/profile' : `/user/${productPage.uploader}`} className="user-link">Uploaded by: {productPage.uploader}</Link>
-                <h3>Purchase Price: ${productPage.purchasePrice}</h3>
-                <h3>{productPage.startingPrice && "Staring Price: $" + productPage.startingPrice}</h3>
                 <h3 className="description">Description</h3>
 
                 <p>{productPage.description}</p>
-                <h3>{productPage.expiresAt && "Auction ends at: " + productPage.expiresAt}</h3>
-                
-                <button className="purchase-btn" onClick={() => props.purchase(productId)}>Purchase</button>
 
-                <div>
+                <h3>{productPage.expiresAt && "Auction ends at: " + productPage.expiresAt}</h3>
+                <h3>{productPage.startingPrice && "Staring Price: $" + productPage.startingPrice}</h3>
+                <div className="bidding-section">
                     {productPage.startingPrice && <input type="number" placeholder="Amount of bid" id="bidAmount" />}
                     {productPage.startingPrice && <button className="bidding-btn" onClick={() => props.placeBid(productId)}>Place your bid</button>}
                 </div>
+
+                <h3>Purchase Price: ${productPage.purchasePrice}</h3>
+                <button className="purchase-btn" onClick={() => props.purchase(productId)}>Purchase</button>
 
                 </div>
             </div>

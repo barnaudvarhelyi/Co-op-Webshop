@@ -490,19 +490,24 @@ nav {
     }
 
     .product-img {
-        width: 50%;
+        width: 100%;
     }
 
     .product-details {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        width: 50%;
+        width: 100%;
     }
 
     .description {
         border-bottom: 0.3rem solid $green-color;
         width: 10rem;
+    }
+
+    p {
+        text-align: justify;
+        margin-bottom: 0.5em;
     }
 
     h1 {
@@ -526,14 +531,27 @@ nav {
         margin-bottom: 0.5em;
     }
 
+    .bidding-section {
+        display: flex;
+        margin-bottom: 0.5em;
+
+        input {
+            width: 70%;
+        }
+
+        button {
+            width: 30%;
+        }
+    }
+
     .purchase-btn {
         color: $white-color;
         background-color: $green-color;
         border: none;
-        border-radius: 1em;
+        border-radius: 0.5em;
         padding: 0.5em 1em;
         cursor: pointer;
-        width: 10em;
+        width: 15em;
     }
 
     input {
@@ -542,14 +560,21 @@ nav {
         margin: 1em 0em;
     }
 
+    #bidAmount {
+        margin: 0em 0.5em 0.5em 0em;
+        border-radius: 0.5em;
+        border: 1px solid $black-color;
+        background-color: $white-color;
+        height: 100%;
+    }
+
     .bidding-btn {
         color: $white-color;
         background-color: $green-color;
         border: none;
-        border-radius: 1em;
+        border-radius: 0.5em;
         padding: 0.5em 1em;
         cursor: pointer;
-        width: 10em;
     }
 
     .swiper {
@@ -647,9 +672,11 @@ nav {
             height: auto;
         }
 
-        .purchase-btn {
-            align-self: center;
+        p {
+            text-align: justify;
+            margin-bottom: 1em;
         }
+
     }
 
 }
