@@ -25,8 +25,8 @@ export default function SingleProduct(props){
 
     if(productPage){
     moreItems = productPage.randomProducts.map(function(item){
-        return <SwiperSlide>
-        <div key={item.id}>
+        return <SwiperSlide key={item.id}>
+        <div>
         <Link to={`/products/${item.id}`}>
         <Product
         title={item.name} 
@@ -50,7 +50,7 @@ export default function SingleProduct(props){
                 </div>
 
                 <div className="product-details">
-                <Link to={`/user/${productPage.uploader}`} className="user-link">Uploaded by: {productPage.uploader}</Link>
+                <Link to={productPage.uploader === localStorage.getItem('username') ? '/profile' : `/user/${productPage.uploader}`} className="user-link">Uploaded by: {productPage.uploader}</Link>
                 <h3>Purchase Price: ${productPage.purchasePrice}</h3>
                 <h3>{productPage.startingPrice && "Staring Price: $" + productPage.startingPrice}</h3>
                 <h3 className="description">Description</h3>
