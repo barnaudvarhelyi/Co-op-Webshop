@@ -50,10 +50,7 @@ public class ProductExpirationSchedulerComponent {
           bidOrPurchaseService.setSoldProduct(product, firstHighestBidder);
         } else {
           //If no one bid for the product
-          product.setForSale(true);
-          product.setExpiresAt(null);
-          product.setStartingPrice(null);
-          productRepository.save(product);
+          productRepository.delete(product);
         }
       }
     }
