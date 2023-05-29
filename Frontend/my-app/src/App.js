@@ -124,7 +124,6 @@ function App() {
     const data = await res.json()
     setUserProfile(data)
     document.title = `${data.username} | Greenbay`
-    console.log(data);
   }
 
   /* Updating balance section */
@@ -151,7 +150,21 @@ function App() {
       }
     })
     const data = await res.json()
-    console.log(data);
+  }
+
+  /* Place a bid */
+  async function placeBid(productId){
+    const bidAmount = document.getElementById('bidAmount').value
+    const res = await fetch(`http://localhost:8080/bid?productId=${productId}`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
+      },
+      body: JSON.stringify({amount: bidAmount})
+    })
+    const data = await res.json()
+    console.log(res, data, bidAmount);
   }
 
   return (
@@ -161,7 +174,7 @@ function App() {
           <Route index element={<Home products={products} displayAllProducts={displayAllProducts} searchResult={searchResult} displayProfileInformation={displayProfileInformation}/>} />
           <Route path="login" element={<Login login={login} loginData={loginData} handleChange={handleChange} formData={formData} register={register} handleRegister={handleRegister} registerData={registerData}/>} />
           <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts} userProfile={userProfile} displayProfileInformation={displayProfileInformation} uploadFunds={uploadFunds}/>} />
-          <Route path="products/:productId" element={<SinglePageProduct products={products} purchase={purchase} />}/>
+          <Route path="products/:productId" element={<SinglePageProduct products={products} purchase={purchase} placeBid={placeBid} />}/>
           <Route path="user/:username" element={<UploaderProfile />}/>
         </Route>
       </Routes>

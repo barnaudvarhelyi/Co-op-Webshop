@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom'
 import Product from './Product';
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/css'
 
 export default function SingleProduct(props){
 
@@ -23,7 +25,8 @@ export default function SingleProduct(props){
 
     if(productPage){
     moreItems = productPage.randomProducts.map(function(item){
-        return <div key={item.id}>
+        return <SwiperSlide>
+        <div key={item.id}>
         <Link to={`/products/${item.id}`}>
         <Product
         title={item.name} 
@@ -31,10 +34,9 @@ export default function SingleProduct(props){
         purchasePrice={item.purchasePrice}/>
         </Link>
         </div>
+        </SwiperSlide>
     })
     }
-
-    console.log(productPage);
 
     if(productPage != undefined){
     return (
@@ -47,23 +49,42 @@ export default function SingleProduct(props){
                 <img src={productPage.photoUrl} alt={productPage.name} />
                 </div>
 
-                <div className="single-product-informations">
+                <div className="product-details">
                 <Link to={`/user/${productPage.uploader}`} className="user-link">Uploaded by: {productPage.uploader}</Link>
                 <h3>Purchase Price: ${productPage.purchasePrice}</h3>
                 <h3>{productPage.startingPrice && "Staring Price: $" + productPage.startingPrice}</h3>
-                <h3>Description</h3>
+                <h3 className="description">Description</h3>
 
                 <p>{productPage.description}</p>
                 <h3>{productPage.expiresAt && "Auction ends at: " + productPage.expiresAt}</h3>
                 
                 <button className="purchase-btn" onClick={() => props.purchase(productId)}>Purchase</button>
-                
+
+                <div>
+                    {productPage.startingPrice && <input type="number" placeholder="Amount of bid" id="bidAmount" />}
+                    {productPage.startingPrice && <button className="bidding-btn" onClick={() => props.placeBid(productId)}>Place your bid</button>}
+                </div>
+
                 </div>
             </div>
 
-            <div className="more-items">
+            <Swiper
+                className="swiper"
+                spaceBetween={50}
+                breakpoints={{
+                    0: {
+                        slidesPerView: 1
+                    },
+                    500: {
+                        slidesPerView: 3
+                    },
+                    1000: {
+                        slidesPerView: 4
+                    }
+                }}
+            >
                 {moreItems}
-            </div>
+            </Swiper>
 
         </div>
     )
