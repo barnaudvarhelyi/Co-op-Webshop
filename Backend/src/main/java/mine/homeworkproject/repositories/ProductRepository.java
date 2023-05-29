@@ -18,8 +18,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
   List<Product> findAllByUploaderAndAvailable(@Param("uploader") User uploader);
   @Query("SELECT p FROM Product p WHERE p.owner = :owner AND p.owner != p.uploader")
   List<Product> findAllByOwnerNotEqualsUploader(@Param("owner") User owner);
-  @Query("SELECT p FROM Product p WHERE p.uploader = :uploader AND p.owner != p.uploader")
-  List<Product> findAllByUploaderAndUploaderNotEqualsOwner(@Param("uploader") User uploader);
   List<Product> findAllByForSale(Boolean forSale);
   List<Product> findByExpiresAtNotNull();
 

@@ -7,10 +7,8 @@ public class UserProfileResponseDto {
   private BalanceDto balance;
   private Integer uploadedProductsCount;
   private Integer ownedProductsCount;
-  private Integer soldProductsCount;
   private List<ProductDto> uploadedProducts;
   private List<ProductDto> ownedProducts;
-  private List<ProductDto> soldProducts;
 
   public UserProfileResponseDto(
       String username,
@@ -18,9 +16,7 @@ public class UserProfileResponseDto {
       List<ProductDto> uploadedProducts,
       BalanceDto balance,
       List<ProductDto> ownedProducts,
-      Integer ownedProductsCount,
-      List<ProductDto> soldProducts,
-      Integer soldProductsCount
+      Integer ownedProductsCount
   ) {
     this.username = username;
     this.uploadedProductsCount = uploadedProductsCount;
@@ -28,8 +24,6 @@ public class UserProfileResponseDto {
     this.uploadedProducts = uploadedProducts;
     this.balance = balance;
     this.ownedProducts = ownedProducts;
-    this.soldProducts = soldProducts;
-    this.soldProductsCount = soldProductsCount;
   }
 
   public String getUsername() {
@@ -67,17 +61,5 @@ public class UserProfileResponseDto {
   }
   public void setOwnedProductsCount(Integer ownedProductsCount) {
     this.ownedProductsCount = ownedProductsCount;
-  }
-  public List<ProductDto> getSoldProducts() {
-    return soldProducts;
-  }
-  public void setSoldProducts(List<ProductDto> soldProducts) {
-    this.soldProducts = soldProducts;
-  }
-  public Integer getSoldProductsCount() {
-    return soldProductsCount;
-  }
-  public void setSoldProductsCount(Integer soldProductsCount) {
-    this.soldProductsCount = soldProductsCount;
   }
 }

@@ -65,7 +65,6 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
       return ResponseEntity.status(200).body(new RegistrationResponseDto(user.getId(), user.getUsername(), new BalanceDto(newBalance)));
     }
   }
-
   private Boolean checkIfUsernameExists(String username) {
     return userRepository.findByUsername(username).orElse(null) != null;
   }
