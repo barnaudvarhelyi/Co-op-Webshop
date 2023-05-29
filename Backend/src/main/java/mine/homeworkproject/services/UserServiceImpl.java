@@ -7,12 +7,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
-import mine.homeworkproject.dtos.ProductAllDto;
 import mine.homeworkproject.dtos.ProductDto;
 import mine.homeworkproject.dtos.ResponseDto;
 import mine.homeworkproject.dtos.UserByIdResponseDto;
 import mine.homeworkproject.dtos.UserProfileResponseDto;
-import mine.homeworkproject.models.Product;
 import mine.homeworkproject.models.User;
 import mine.homeworkproject.repositories.ProductRepository;
 import mine.homeworkproject.repositories.UserRepository;
@@ -43,17 +41,14 @@ public class UserServiceImpl implements UserService {
                     username + " is not found!"));
 
   }
-
   @Override
   public List<User> findAllUsers() {
     return userRepository.findAll();
   }
-
   @Override
   public User findUserById(Long id) {
     return userRepository.findById(id).orElse(null);
   }
-
   @Override
   public Optional<User> getUserByToken(HttpServletRequest request) {
     String header = request.getHeader(JwtProperties.HEADER_STRING);
@@ -75,7 +70,6 @@ public class UserServiceImpl implements UserService {
     }
     return Optional.empty();
   }
-
   @Override
   public ResponseEntity getUserProfile(HttpServletRequest request) {
     Optional<User> user = getUserByToken(request);
@@ -89,9 +83,6 @@ public class UserServiceImpl implements UserService {
     List<ProductDto> ownedProducts = productRepository.findAllByOwnerNotEqualsUploader(user.get()).stream()
         .map(ProductDto::new)
         .collect(Collectors.toList());
-    List<ProductDto> soldProducts = productRepository.findAllByUploaderAndUploaderNotEqualsOwner(user.get()).stream()
-        .map(ProductDto::new)
-        .collect(Collectors.toList());
 
     return ResponseEntity.status(200).body(
       new UserProfileResponseDto(
@@ -100,13 +91,10 @@ public class UserServiceImpl implements UserService {
         uploadedProducts,
         user.get().getBalance(),
         ownedProducts,
-        ownedProducts.size(),
-        soldProducts,
-        soldProducts.size()
+        ownedProducts.size()
       )
     );
   }
-
   @Override
   public ResponseEntity addBalance(HashMap<String, String> balance, HttpServletRequest request) {
     Optional<User> user = getUserByToken(request);
@@ -125,7 +113,6 @@ public class UserServiceImpl implements UserService {
     userRepository.save(user.get());
     return ResponseEntity.status(200).body(new ResponseDto("Balance added successfully!"));
   }
-
   @Override
   public ResponseEntity getUserProfileById(String username) {
     User user = findUserByUsername(username);
@@ -138,7 +125,6 @@ public class UserServiceImpl implements UserService {
         .collect(Collectors.toList());
     return ResponseEntity.ok(new UserByIdResponseDto(user, productsDto));
   }
-
   @Override
   public void save(User user) {
     userRepository.save(user);
