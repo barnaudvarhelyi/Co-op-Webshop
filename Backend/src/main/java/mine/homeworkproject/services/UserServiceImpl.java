@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
-import mine.homeworkproject.dtos.ProductResponseDto;
+import mine.homeworkproject.dtos.ProductAllDto;
+import mine.homeworkproject.dtos.ProductDto;
 import mine.homeworkproject.dtos.ResponseDto;
 import mine.homeworkproject.dtos.UserByIdResponseDto;
 import mine.homeworkproject.dtos.UserProfileResponseDto;
@@ -42,14 +43,17 @@ public class UserServiceImpl implements UserService {
                     username + " is not found!"));
 
   }
+
   @Override
   public List<User> findAllUsers() {
     return userRepository.findAll();
   }
+
   @Override
   public User findUserById(Long id) {
     return userRepository.findById(id).orElse(null);
   }
+
   @Override
   public Optional<User> getUserByToken(HttpServletRequest request) {
     String header = request.getHeader(JwtProperties.HEADER_STRING);
@@ -71,6 +75,7 @@ public class UserServiceImpl implements UserService {
     }
     return Optional.empty();
   }
+
   @Override
   public ResponseEntity getUserProfile(HttpServletRequest request) {
     Optional<User> user = getUserByToken(request);
@@ -78,12 +83,30 @@ public class UserServiceImpl implements UserService {
       ResponseDto response = new ResponseDto("User not found!");
       return ResponseEntity.status(404).body(response);
     }
-    List<Product> uploadedProducts = productRepository.findAllByUploaderAndAvailable(user.get());
-    List<Product> ownedProducts = productRepository.findAllByOwnerNotEqualsUploader(user.get());
+    List<ProductDto> uploadedProducts = productRepository.findAllByUploaderAndAvailable(user.get()).stream()
+        .map(ProductDto::new)
+        .collect(Collectors.toList());;
+    List<ProductDto> ownedProducts = productRepository.findAllByOwnerNotEqualsUploader(user.get()).stream()
+        .map(ProductDto::new)
+        .collect(Collectors.toList());
+    List<ProductDto> soldProducts = productRepository.findAllByUploaderAndUploaderNotEqualsOwner(user.get()).stream()
+        .map(ProductDto::new)
+        .collect(Collectors.toList());
 
-    return ResponseEntity.status(200).body(new UserProfileResponseDto(user.get().getUsername(),
-        uploadedProducts.size(), uploadedProducts, user.get().getBalance(), ownedProducts, ownedProducts.size()));
+    return ResponseEntity.status(200).body(
+      new UserProfileResponseDto(
+        user.get().getUsername(),
+        uploadedProducts.size(),
+        uploadedProducts,
+        user.get().getBalance(),
+        ownedProducts,
+        ownedProducts.size(),
+        soldProducts,
+        soldProducts.size()
+      )
+    );
   }
+
   @Override
   public ResponseEntity addBalance(HashMap<String, String> balance, HttpServletRequest request) {
     Optional<User> user = getUserByToken(request);
@@ -102,19 +125,20 @@ public class UserServiceImpl implements UserService {
     userRepository.save(user.get());
     return ResponseEntity.status(200).body(new ResponseDto("Balance added successfully!"));
   }
+
   @Override
   public ResponseEntity getUserProfileById(String username) {
     User user = findUserByUsername(username);
     if (user == null) {
       return ResponseEntity.status(404).body(new ResponseDto("User not found!"));
     }
-    List<ProductResponseDto> productsDto = productRepository.findAllByUploaderAndAvailable(user)
+    List<ProductDto> productsDto = productRepository.findAllByUploaderAndAvailable(user)
         .stream()
-        .map(ProductResponseDto::new)
+        .map(ProductDto::new)
         .collect(Collectors.toList());
-    //TODO ne jelenjen meg a már megvásárolt2
     return ResponseEntity.ok(new UserByIdResponseDto(user, productsDto));
   }
+
   @Override
   public void save(User user) {
     userRepository.save(user);

@@ -2,6 +2,7 @@ package mine.homeworkproject.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import mine.homeworkproject.models.Product;
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -13,14 +14,15 @@ public class ProductByIdResponseDto {
   private String description;
   private String photoUrl;
   private Double purchasePrice;
-  private LocalDateTime createdAt;
+  private String createdAt;
   private Double startingPrice;
-  private LocalDateTime expiresAt;
+  private String expiresAt;
   private List<Product> randomProducts;
 
   public ProductByIdResponseDto() {}
   public ProductByIdResponseDto(Product p, String username, Long userId,
       List<Product> randomProducts) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     this.id = p.getId();
     this.name = p.getName();
     this.description = p.getDescription();
@@ -29,8 +31,8 @@ public class ProductByIdResponseDto {
     this.startingPrice = p.getStartingPrice();
     this.uploader = username;
     this.uploaderId = userId;
-    this.expiresAt = p.getExpiresAt();
-    this.createdAt = p.getCreatedAt();
+    this.createdAt = p.getCreatedAt().format(formatter);
+    this.expiresAt = p.getExpiresAt() == null ? null : p.getExpiresAt().format(formatter);
     this.randomProducts = randomProducts;
   }
 
@@ -82,16 +84,16 @@ public class ProductByIdResponseDto {
   public void setUploaderId(Long uploaderId) {
     this.uploaderId = uploaderId;
   }
-  public LocalDateTime getCreatedAt() {
+  public String getCreatedAt() {
     return createdAt;
   }
-  public void setCreatedAt(LocalDateTime createdAt) {
+  public void setCreatedAt(String createdAt) {
     this.createdAt = createdAt;
   }
-  public LocalDateTime getExpiresAt() {
+  public String getExpiresAt() {
     return expiresAt;
   }
-  public void setExpiresAt(LocalDateTime expiresAt) {
+  public void setExpiresAt(String expiresAt) {
     this.expiresAt = expiresAt;
   }
   public List<Product> getRandomProducts() {

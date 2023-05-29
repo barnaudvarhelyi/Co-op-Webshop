@@ -3,6 +3,7 @@ package mine.homeworkproject.dtos;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sun.istack.Nullable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import mine.homeworkproject.models.Bid;
 import mine.homeworkproject.models.Product;
@@ -16,23 +17,24 @@ public class ProductAllDto {
   private String description;
   private String photoUrl;
   private Double purchasePrice;
-  private LocalDateTime createdAt;
+  private String createdAt;
   @Nullable
   private Double startingPrice;
   @Nullable
-  private LocalDateTime expiresAt;
+  private String expiresAt;
   private User uploader;
   @Nullable
   private List<BidDto> bids;
 
   public ProductAllDto(Product product) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     this.id = product.getId();
     this.name = product.getName();
     this.description = product.getDescription();
     this.photoUrl = product.getPhotoUrl();
-    this.createdAt = product.getCreatedAt();
+    this.createdAt = product.getCreatedAt().format(formatter);
     this.purchasePrice = product.getPurchasePrice();
-    this.expiresAt = product.getExpiresAt();
+    this.expiresAt = product.getExpiresAt() == null ? null : product.getExpiresAt().format(formatter);
     this.startingPrice = product.getStartingPrice();
   }
 
@@ -66,10 +68,10 @@ public class ProductAllDto {
   public void setPurchasePrice(Double purchasePrice) {
     this.purchasePrice = purchasePrice;
   }
-  public LocalDateTime getCreatedAt() {
+  public String getCreatedAt() {
     return createdAt;
   }
-  public void setCreatedAt(LocalDateTime createdAt) {
+  public void setCreatedAt(String createdAt) {
     this.createdAt = createdAt;
   }
   public Double getStartingPrice() {
@@ -78,10 +80,10 @@ public class ProductAllDto {
   public void setStartingPrice(Double startingPrice) {
     this.startingPrice = startingPrice;
   }
-  public LocalDateTime getExpiresAt() {
+  public String getExpiresAt() {
     return expiresAt;
   }
-  public void setExpiresAt(LocalDateTime expiresAt) {
+  public void setExpiresAt(String expiresAt) {
     this.expiresAt = expiresAt;
   }
   public User getUploader() {

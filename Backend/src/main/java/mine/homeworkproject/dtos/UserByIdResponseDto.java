@@ -8,9 +8,9 @@ public class UserByIdResponseDto {
   private String username;
   private String email;
   private Integer productsCount;
-  private List<ProductResponseDto> products;
+  private List<ProductDto> products;
 
-  public UserByIdResponseDto(User user, List<ProductResponseDto> products) {
+  public UserByIdResponseDto(User user, List<ProductDto> products) {
     this.username = user.getUsername();
     this.email = user.getEmail();
     this.productsCount = products.size();
@@ -35,10 +35,10 @@ public class UserByIdResponseDto {
   public void setProductsCount(Integer productsCount) {
     this.productsCount = productsCount;
   }
-  public List<ProductResponseDto> getProducts() {
+  public List<ProductDto> getProducts() {
     return products;
   }
-  public void setProducts(List<ProductResponseDto> products) {
+  public void setProducts(List<ProductDto> products) {
     this.products = products;
   }
 }

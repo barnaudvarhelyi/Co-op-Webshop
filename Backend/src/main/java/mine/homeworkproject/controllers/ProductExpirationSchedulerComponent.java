@@ -1,9 +1,16 @@
 package mine.homeworkproject.controllers;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import mine.homeworkproject.models.Bid;
 import mine.homeworkproject.models.Product;
+import mine.homeworkproject.models.User;
 import mine.homeworkproject.repositories.ProductRepository;
+import mine.homeworkproject.services.BidOrPurchaseService;
 import mine.homeworkproject.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -15,20 +22,36 @@ import org.springframework.stereotype.Component;
 public class ProductExpirationSchedulerComponent {
   @Autowired
   private ProductRepository productRepository;
-//  @Autowired
-//  private ProductService productService;
+  @Autowired
+  private BidOrPurchaseService bidOrPurchaseService;
 
+  //TODO test this
   @Scheduled(fixedDelay = 60000)
   public void forTestCheckExpiredProducts() {
 
     LocalDateTime currentDateTime = LocalDateTime.now();
-    List<Product> expiredProducts = productRepository.findByExpiresAtNotNull();
+    List<Product> ableToExpireProducts = productRepository.findByExpiresAtNotNull();
 
-    for (Product product : expiredProducts) {
+    for (Product product : ableToExpireProducts) {
       if (currentDateTime.isAfter(product.getExpiresAt())) {
-        //TODO update to set the product to owner!
-        System.out.println("This product is expired:" + product.getName());
-        productRepository.delete(product);
+        User firstHighestBidder = product.getBids().stream()
+            .collect(Collectors.groupingBy(Bid::getAmount))
+            .entrySet()
+            .stream()
+            .max(Map.Entry.comparingByKey())
+            .map(Map.Entry::getValue)
+            .orElse(Collections.emptyList())
+            .stream()
+            .map(Bid::getUser)
+            .findFirst()
+            .orElse(null);
+
+        if (firstHighestBidder != null) {
+          bidOrPurchaseService.setSoldProduct(product, firstHighestBidder);
+        } else {
+          //If no one bid for the product
+          productRepository.delete(product);
+        }
       }
     }
   }

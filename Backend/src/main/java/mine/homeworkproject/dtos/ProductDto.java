@@ -1,30 +1,31 @@
 package mine.homeworkproject.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import mine.homeworkproject.models.Product;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProductResponseDto {
+public class ProductDto {
   private Long productId;
   private Long userId;
   private String name;
   private String description;
   private String photoUrl;
   private Double purchasePrice;
-  private LocalDateTime createdAt;
+  private String createdAt;
   private Double startingPrice;
-  private LocalDateTime expiresAt;
-  public ProductResponseDto() {}
-  public ProductResponseDto(Product product) {
+  private String expiresAt;
+  public ProductDto() {}
+  public ProductDto(Product product) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     this.productId = product.getId();
     this.name = product.getName();
     this.description = product.getDescription();
     this.photoUrl = product.getPhotoUrl();
     this.purchasePrice = product.getPurchasePrice();
     this.userId = product.getUploader();
-    this.createdAt = product.getCreatedAt();
-    this.expiresAt = product.getExpiresAt();
+    this.createdAt = product.getCreatedAt().format(formatter);
+    this.expiresAt = product.getExpiresAt() == null ? null : product.getExpiresAt().format(formatter);
     this.startingPrice = product.getStartingPrice();
   }
 
@@ -84,19 +85,19 @@ public class ProductResponseDto {
     this.purchasePrice = purchasePrice;
   }
 
-  public LocalDateTime getCreatedAt() {
+  public String getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(LocalDateTime createdAt) {
+  public void setCreatedAt(String createdAt) {
     this.createdAt = createdAt;
   }
 
-  public LocalDateTime getExpiresAt() {
+  public String getExpiresAt() {
     return expiresAt;
   }
 
-  public void setExpiresAt(LocalDateTime expiresAt) {
+  public void setExpiresAt(String expiresAt) {
     this.expiresAt = expiresAt;
   }
 }
