@@ -17,11 +17,11 @@ public class Bid {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private Double amount;
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(cascade = CascadeType.REFRESH)
   @JoinColumn(name = "user_id")
   private User user;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+  @ManyToOne(cascade = CascadeType.REFRESH)
   @JoinColumn(name = "product_id")
   private Product product;
 

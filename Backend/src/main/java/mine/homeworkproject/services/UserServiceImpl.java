@@ -6,6 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import mine.homeworkproject.dtos.ProductDto;
 import mine.homeworkproject.dtos.ResponseDto;
@@ -21,7 +27,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
-
+  @PersistenceContext
+  private EntityManager entityManager;
   private final UserRepository userRepository;
   private final ProductRepository productRepository;
 
@@ -89,7 +96,7 @@ public class UserServiceImpl implements UserService {
         user.get().getUsername(),
         uploadedProducts.size(),
         uploadedProducts,
-        user.get().getBalance(),
+        user.get().getBalanceAsDto(),
         ownedProducts,
         ownedProducts.size()
       )
@@ -128,5 +135,17 @@ public class UserServiceImpl implements UserService {
   @Override
   public void save(User user) {
     userRepository.save(user);
+  }
+  @Override
+  public User findUserByIdWithOwnedProducts(Long userId) {
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<User> query = criteriaBuilder.createQuery(User.class);
+    Root<User> root = query.from(User.class);
+
+    root.fetch("ownedProducts", JoinType.LEFT);
+
+    query.select(root).where(criteriaBuilder.equal(root.get("id"), userId));
+
+    return entityManager.createQuery(query).getSingleResult();
   }
 }

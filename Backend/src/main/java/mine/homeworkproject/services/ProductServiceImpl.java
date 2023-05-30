@@ -201,7 +201,7 @@ public class ProductServiceImpl implements ProductService {
       User u = userService.findUserById(1L);
       product.setUploader(u);
       product.setOwner(u);
-      if (i % 2 == 0) { product.setExpiresAt(product.getCreatedAt().plusDays(1).withHour(12).withMinute(0).withSecond(0)); }
+      if (i % 2 == 0) { product.setExpiresAt(product.getCreatedAt().plusMinutes(1)); } // .plusDays(1).withHour(12).withMinute(0).withSecond(0));
       else { product.setStartingPrice(null); }
       productRepository.save(product);
       i++;

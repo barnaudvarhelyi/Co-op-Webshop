@@ -26,14 +26,14 @@ public class User {
   private String email;
   private String password;
   private String role;
-  @OneToMany(mappedBy = "uploader", cascade = CascadeType.REFRESH)
-  private List<Product> uploadedProducts;
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
   @JoinColumn(name = "balance_id")
   private Balance balance;
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "uploader", fetch = FetchType.LAZY)
+  private List<Product> uploadedProducts;
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
   private List<Bid> bids;
-  @OneToMany(mappedBy = "owner")
+  @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
   private List<Product> ownedProducts;
 
   public User() {}
@@ -46,6 +46,7 @@ public class User {
     this.balance = balance;
     this.bids = new ArrayList<>();
     this.ownedProducts = new ArrayList<>();
+    this.uploadedProducts = new ArrayList<>();
   }
 
   public User(Long id, String username) {
@@ -87,11 +88,12 @@ public class User {
     this.role = role;
   }
   public void setBalance(Balance balance) {this.setBalance(balance);}
-  public BalanceDto getBalance() {
+  public BalanceDto getBalanceAsDto() {
     return new BalanceDto(this.balance);
   }
-  public void setPlusBalance(Double balance) { this.balance.setBalance(this.getBalance().getBalance() + balance); }
-  public void setMinusBalance(Double balance) { this.balance.setBalance(this.getBalance().getBalance() - balance); }
+  public Balance getBalance() {return this.balance; }
+  public void setPlusBalance(Double balance) { this.balance.setBalance(this.getBalanceAsDto().getBalance() + balance); }
+  public void setMinusBalance(Double balance) { this.balance.setBalance(this.getBalanceAsDto().getBalance() - balance); }
   public List<Bid> getBids() {
     return bids;
   }
@@ -113,16 +115,17 @@ public class User {
     }
     return longs;
   }
-  public void setUploadedProducts(List<Product> uploadedProducts) {
-    this.uploadedProducts = uploadedProducts;
+  public void setUploadedProducts(Product product) {
+    this.uploadedProducts.add(product);
   }
-  public List<Long> getOwnedProducts() {
-    List<Long> longs = new ArrayList<>();
-    for (Product i : ownedProducts) {
-      longs.add(i.getId());
-    }
-    return longs;
-  }
+//  public List<Long> getOwnedProducts() {
+//    List<Long> longs = new ArrayList<>();
+//    for (Product i : ownedProducts) {
+//      longs.add(i.getId());
+//    }
+//    return longs;
+//  }
+  public List<Product> getOwnedProducts(){return ownedProducts;}
   public void setOwnedProducts(Product product) {
     this.ownedProducts.add(product);
   }
@@ -139,14 +142,14 @@ public class User {
     return Objects.equals(id, user.id) && Objects.equals(username, user.username)
         && Objects.equals(email, user.email) && Objects.equals(password,
         user.password) && Objects.equals(role, user.role) && Objects.equals(
-        uploadedProducts, user.uploadedProducts) && Objects.equals(balance, user.balance)
+        balance, user.balance) && Objects.equals(uploadedProducts, user.uploadedProducts)
         && Objects.equals(bids, user.bids) && Objects.equals(ownedProducts,
         user.ownedProducts);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, username, email, password, role, uploadedProducts, balance, bids,
+    return Objects.hash(id, username, email, password, role, balance, uploadedProducts, bids,
         ownedProducts);
   }
 

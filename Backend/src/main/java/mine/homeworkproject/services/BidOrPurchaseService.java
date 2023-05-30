@@ -9,5 +9,5 @@ import org.springframework.http.ResponseEntity;
 public interface BidOrPurchaseService {
   ResponseEntity addBidToProductById(Long productId, HashMap<String, Double> amount, HttpServletRequest request);
   ResponseEntity purchaseProductById(Long productId, HttpServletRequest request);
-  void setSoldProduct(Product product, User user);
+  void handleLeftBidsOnProductAndProduct(Product product, User customer);
 }

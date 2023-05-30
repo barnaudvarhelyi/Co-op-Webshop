@@ -31,21 +31,20 @@ public class Product {
   private String photoUrl;
   private Double purchasePrice;
   private LocalDateTime createdAt;
-  @JsonIgnore
   private Boolean forSale;
   @Nullable
   private Double startingPrice;
   @Nullable
   private LocalDateTime expiresAt;
+  @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
+  private List<Bid> bids;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "owner_id")
+  private User owner;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "uploader_id")
   private User uploader;
-  @JsonIgnore
-  @OneToMany(mappedBy = "product")
-  private List<Bid> bids;
-  @ManyToOne
-  @JoinColumn(name = "owner_id")
-  private User owner;
 
   public Product() {
   }
