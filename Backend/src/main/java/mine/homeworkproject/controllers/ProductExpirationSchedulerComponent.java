@@ -95,8 +95,7 @@ public class ProductExpirationSchedulerComponent {
     product.getBids().remove(highestBid);
     productRepository.save(product);
 
-//    bidRepository.delete(highestBid);
-//    productRepository.save(product);
+    bidRepository.delete(highestBid);
 
     bidOrPurchaseService.handleLeftBidsOnProductAndProduct(product, customer);
   }

@@ -101,6 +101,7 @@ public class BidOrPurchaseServiceImpl implements BidOrPurchaseService {
       for (Bid bid : product.getBids()) {
         bid.getUser().setMinusOnLicit(bid.getAmount());
         bid.getUser().setPlusBalance(bid.getAmount());
+        balanceRepository.save(bid.getUser().getBalance());
         bidRepository.delete(bid);
       }
     }

@@ -37,13 +37,16 @@ public class AppMain implements CommandLineRunner {
     Balance balance1 = new Balance(100.0);
     Balance balance2 = new Balance(100.0);
     Balance balance3 = new Balance(100.0);
+    Balance balance4 = new Balance(100.0);
     balanceRepository.save(balance1);
     balanceRepository.save(balance2);
     balanceRepository.save(balance3);
+    balanceRepository.save(balance4);
 
     userRepository.save(new User("Admin", "admin@gmail.com", passwordEncoder.encode("Admin"), "Admin", balance1));
     userRepository.save(new User("User", "user@gmail.com", passwordEncoder.encode("User"), "User", balance2));
     userRepository.save(new User("User2", "user2@gmail.com", passwordEncoder.encode("User2"), "User", balance3));
+    userRepository.save(new User("User3", "user3@gmail.com", passwordEncoder.encode("User3"), "User", balance4));
 
     productService.getRandomProductsFromAPI();
 
