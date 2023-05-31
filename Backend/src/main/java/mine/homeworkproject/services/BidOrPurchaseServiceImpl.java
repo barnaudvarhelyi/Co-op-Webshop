@@ -94,7 +94,6 @@ public class BidOrPurchaseServiceImpl implements BidOrPurchaseService {
       return ResponseEntity.status(e.getStatus()).body(new ResponseDto("Purchase error!"));
     }
   }
-
   @Override
   public void handleLeftBidsOnProductAndProduct(Product product, User customer) {
     if (product.getBids().size() > 0) {

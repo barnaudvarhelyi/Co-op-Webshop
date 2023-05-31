@@ -1,5 +1,7 @@
 package mine.homeworkproject.controllers;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import mine.homeworkproject.repositories.BalanceRepository;
 import mine.homeworkproject.repositories.BidRepository;
 import mine.homeworkproject.services.BidOrPurchaseService;
@@ -32,8 +34,28 @@ public class ProductExpirationSchedulerComponent {
     this.bidRepository = bidRepository;
     this.bidOrPurchaseService = bidOrPurchaseService;
   }
-
-  @Scheduled(fixedDelay = 30000)
+//  @Scheduled(fixedDelay = 300000) //one day 86400000
+//  public void checkForExpiredProducts() {
+//
+//    System.out.println("5 min started at: " + LocalDateTime.now());
+//    long initialDelay = 10000; // One minute 60000
+//    Timer timer = new Timer();
+//    TimerTask task = new TimerTask() {
+//      private int count = 0;
+//
+//      public void run() {
+//        System.out.println("Task was called at: " + LocalDateTime.now() + " and " + count + ". times");
+//        checkExpiredProducts();
+//        System.out.println(count);
+//        count++;
+//        if (count >= 5) {
+//          timer.cancel();
+//        }
+//      }
+//    };
+//    timer.schedule(task, initialDelay);
+//  }
+  @Scheduled(fixedDelay = 300000)
   public void checkExpiredProducts() {
     LocalDateTime currentDateTime = LocalDateTime.now();
     List<Product> ableToExpireProducts = productRepository.findAllByExpiresAtNotNullAndForSale(true);
@@ -61,7 +83,6 @@ public class ProductExpirationSchedulerComponent {
       }
     }
   }
-
   private Object[] getFirstHighestBidderForProduct(Product product) {
     List<Bid> bids = product.getBids();
     if (bids.size() > 0) {
@@ -80,7 +101,6 @@ public class ProductExpirationSchedulerComponent {
       return new Object[] {null};
     }
   }
-  //TODO finnish
   private void setSoldProduct(Product product, User customer, Bid highestBid, Double amount) {
     User owner = userService.findUserById(product.getOwner());
     owner.setPlusBalance(amount);
@@ -99,9 +119,4 @@ public class ProductExpirationSchedulerComponent {
 
     bidOrPurchaseService.handleLeftBidsOnProductAndProduct(product, customer);
   }
-  //TODO every day should run for some times and check!
-//  @Scheduled(fixedDelay = 86400000)
-//  public void checkExpiredProducts() {
-//
-//  }
 }
