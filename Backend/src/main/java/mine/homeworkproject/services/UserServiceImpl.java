@@ -2,6 +2,7 @@ package mine.homeworkproject.services;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -160,9 +161,18 @@ public class UserServiceImpl implements UserService {
   private List<UsersActiveBidsDto> getUsersAllActiveBid(User user) {
     List<Bid> bids = bidRepository.findAllByUser(user);
     List<UsersActiveBidsDto> usersActiveBids = new ArrayList<>();
+    //TODO átbeszélni
     if (bids.size() > 0) {
       for (Bid bid : bids) {
-        usersActiveBids.add(new UsersActiveBidsDto(bid.getProduct().getName(), bid.getAmount()));
+        usersActiveBids.add(
+            new UsersActiveBidsDto(
+                bid.getProduct().getExpiresAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
+                bid.getProduct().getPhotoUrl(),
+                bid.getProduct().getId(),
+                bid.getProduct().getName(),
+                bid.getAmount()
+            )
+        );
       }
     }
     return usersActiveBids;
