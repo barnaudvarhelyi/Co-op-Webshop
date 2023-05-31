@@ -22,7 +22,6 @@ public class BidOrPurchaseController {
     return bidOrPurchaseService.purchaseProductById(productId, request);
   }
 
-  //TODO highest bid, licit lépcső a minimum összeg
   @PostMapping("/bid")
   public ResponseEntity addBidToProductById(@RequestParam(required = false) Long productId, @RequestBody HashMap<String, Double> amount, HttpServletRequest request) {
     return bidOrPurchaseService.addBidToProductById(productId, amount, request);

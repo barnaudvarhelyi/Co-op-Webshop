@@ -17,7 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-@EnableScheduling
+//@EnableScheduling
 public class ProductExpirationSchedulerComponent {
   private final ProductRepository productRepository;
   private final BalanceRepository balanceRepository;

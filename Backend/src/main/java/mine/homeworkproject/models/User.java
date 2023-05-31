@@ -118,13 +118,6 @@ public class User {
   public void setUploadedProducts(Product product) {
     this.uploadedProducts.add(product);
   }
-//  public List<Long> getOwnedProducts() {
-//    List<Long> longs = new ArrayList<>();
-//    for (Product i : ownedProducts) {
-//      longs.add(i.getId());
-//    }
-//    return longs;
-//  }
   public List<Product> getOwnedProducts(){return ownedProducts;}
   public void setOwnedProducts(Product product) {
     this.ownedProducts.add(product);

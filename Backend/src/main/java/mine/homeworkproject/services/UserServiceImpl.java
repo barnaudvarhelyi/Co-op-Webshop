@@ -2,6 +2,7 @@ package mine.homeworkproject.services;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +18,10 @@ import mine.homeworkproject.dtos.ProductDto;
 import mine.homeworkproject.dtos.ResponseDto;
 import mine.homeworkproject.dtos.UserByIdResponseDto;
 import mine.homeworkproject.dtos.UserProfileResponseDto;
+import mine.homeworkproject.dtos.UsersActiveBidsDto;
+import mine.homeworkproject.models.Bid;
 import mine.homeworkproject.models.User;
+import mine.homeworkproject.repositories.BidRepository;
 import mine.homeworkproject.repositories.ProductRepository;
 import mine.homeworkproject.repositories.UserRepository;
 import mine.homeworkproject.security.JwtProperties;
@@ -31,11 +35,14 @@ public class UserServiceImpl implements UserService {
   private EntityManager entityManager;
   private final UserRepository userRepository;
   private final ProductRepository productRepository;
+  private final BidRepository bidRepository;
 
   @Autowired
-  public UserServiceImpl(UserRepository userRepository, ProductRepository productRepository) {
+  public UserServiceImpl(UserRepository userRepository, ProductRepository productRepository,
+      BidRepository bidRepository) {
     this.userRepository = userRepository;
     this.productRepository = productRepository;
+    this.bidRepository = bidRepository;
   }
 
   @Override
@@ -86,11 +93,12 @@ public class UserServiceImpl implements UserService {
     }
     List<ProductDto> uploadedProducts = productRepository.findAllByUploaderAndAvailable(user.get()).stream()
         .map(ProductDto::new)
-        .collect(Collectors.toList());;
+        .collect(Collectors.toList());
     List<ProductDto> ownedProducts = productRepository.findAllByOwnerNotEqualsUploader(user.get()).stream()
         .map(ProductDto::new)
         .collect(Collectors.toList());
 
+    //TODO ext: active products
     return ResponseEntity.status(200).body(
       new UserProfileResponseDto(
         user.get().getUsername(),
@@ -98,7 +106,8 @@ public class UserServiceImpl implements UserService {
         uploadedProducts,
         user.get().getBalanceAsDto(),
         ownedProducts,
-        ownedProducts.size()
+        ownedProducts.size(),
+        getUsersAllActiveBid(user.get())
       )
     );
   }
@@ -147,5 +156,15 @@ public class UserServiceImpl implements UserService {
     query.select(root).where(criteriaBuilder.equal(root.get("id"), userId));
 
     return entityManager.createQuery(query).getSingleResult();
+  }
+  private List<UsersActiveBidsDto> getUsersAllActiveBid(User user) {
+    List<Bid> bids = bidRepository.findAllByUser(user);
+    List<UsersActiveBidsDto> usersActiveBids = new ArrayList<>();
+    if (bids.size() > 0) {
+      for (Bid bid : bids) {
+        usersActiveBids.add(new UsersActiveBidsDto(bid.getProduct().getName(), bid.getAmount()));
+      }
+    }
+    return usersActiveBids;
   }
 }

@@ -9,14 +9,15 @@ public class UserProfileResponseDto {
   private Integer ownedProductsCount;
   private List<ProductDto> uploadedProducts;
   private List<ProductDto> ownedProducts;
-
+  private List<UsersActiveBidsDto> usersActiveBids;
   public UserProfileResponseDto(
       String username,
       Integer uploadedProductsCount,
       List<ProductDto> uploadedProducts,
       BalanceDto balance,
       List<ProductDto> ownedProducts,
-      Integer ownedProductsCount
+      Integer ownedProductsCount,
+      List<UsersActiveBidsDto> usersActiveBids
   ) {
     this.username = username;
     this.uploadedProductsCount = uploadedProductsCount;
@@ -24,6 +25,7 @@ public class UserProfileResponseDto {
     this.uploadedProducts = uploadedProducts;
     this.balance = balance;
     this.ownedProducts = ownedProducts;
+    this.usersActiveBids = usersActiveBids;
   }
 
   public String getUsername() {
@@ -61,5 +63,12 @@ public class UserProfileResponseDto {
   }
   public void setOwnedProductsCount(Integer ownedProductsCount) {
     this.ownedProductsCount = ownedProductsCount;
+  }
+  public List<UsersActiveBidsDto> getUsersActiveBids() {
+    return usersActiveBids;
+  }
+  public void setUsersActiveBids(
+      List<UsersActiveBidsDto> usersActiveBids) {
+    this.usersActiveBids = usersActiveBids;
   }
 }
