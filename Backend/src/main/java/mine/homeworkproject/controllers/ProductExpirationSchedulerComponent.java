@@ -38,7 +38,7 @@ public class ProductExpirationSchedulerComponent {
 //  public void checkForExpiredProducts() {
 //
 //    System.out.println("5 min started at: " + LocalDateTime.now());
-//    long initialDelay = 10000; // One minute 60000
+//    long initialDelay = 100000; // One minute 60000
 //    Timer timer = new Timer();
 //    TimerTask task = new TimerTask() {
 //      private int count = 0;
@@ -48,7 +48,7 @@ public class ProductExpirationSchedulerComponent {
 //        checkExpiredProducts();
 //        System.out.println(count);
 //        count++;
-//        if (count >= 5) {
+//        if (count >= 3) {
 //          timer.cancel();
 //        }
 //      }
