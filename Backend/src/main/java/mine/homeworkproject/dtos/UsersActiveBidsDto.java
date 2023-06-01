@@ -6,12 +6,14 @@ public class UsersActiveBidsDto {
   private Long productId;
   private String productName;
   private Double amount;
-  public UsersActiveBidsDto(String bidEnd, String productPhotoUrl, Long productId, String productName, Double amount) {
+  private Boolean highestBidder;
+  public UsersActiveBidsDto(String bidEnd, String productPhotoUrl, Long productId, String productName, Double amount, Boolean highestBidder) {
     this.bidEnd = bidEnd;
     this.productPhotoUrl = productPhotoUrl;
     this.productId = productId;
     this.productName = productName;
     this.amount = amount;
+    this.highestBidder = highestBidder;
   }
 
   public String getBidEnd() {
@@ -43,5 +45,11 @@ public class UsersActiveBidsDto {
   }
   public void setProductPhotoUrl(String productPhotoUrl) {
     this.productPhotoUrl = productPhotoUrl;
+  }
+  public Boolean getHighestBidder() {
+    return highestBidder;
+  }
+  public void setHighestBidder(Boolean highestBidder) {
+    this.highestBidder = highestBidder;
   }
 }

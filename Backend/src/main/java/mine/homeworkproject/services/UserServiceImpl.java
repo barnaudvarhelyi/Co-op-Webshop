@@ -99,7 +99,6 @@ public class UserServiceImpl implements UserService {
         .map(ProductDto::new)
         .collect(Collectors.toList());
 
-    //TODO ext: active products
     return ResponseEntity.status(200).body(
       new UserProfileResponseDto(
         user.get().getUsername(),
@@ -161,7 +160,6 @@ public class UserServiceImpl implements UserService {
   private List<UsersActiveBidsDto> getUsersAllActiveBid(User user) {
     List<Bid> bids = bidRepository.findAllByUser(user);
     List<UsersActiveBidsDto> usersActiveBids = new ArrayList<>();
-    //TODO átbeszélni
     if (bids.size() > 0) {
       for (Bid bid : bids) {
         usersActiveBids.add(
@@ -170,7 +168,8 @@ public class UserServiceImpl implements UserService {
                 bid.getProduct().getPhotoUrl(),
                 bid.getProduct().getId(),
                 bid.getProduct().getName(),
-                bid.getAmount()
+                bid.getAmount(),
+                bidRepository.isHighestBidderOnProduct(bid.getProduct(), user)
             )
         );
       }

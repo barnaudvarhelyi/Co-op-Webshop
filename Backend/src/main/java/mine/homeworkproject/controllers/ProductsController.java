@@ -33,14 +33,14 @@ public class ProductsController {
   public List<ProductAllDto> getAllProducts() {
     return productService.getAllAvailableProducts();
   }
-  @GetMapping("/products/search")
-  public ResponseEntity searchProductsByStr(@RequestParam(required = false, defaultValue = "") String search) {
-    return productService.searchItemByStr(search);
-  }
-  @GetMapping("/products/sort/{direction}")
-  public ResponseEntity sortProducts(@PathVariable(required = false) String direction){
-    return productService.sortProducts(direction);
-  }
+//  @GetMapping("/products/search")
+//  public ResponseEntity searchProductsByStr(@RequestParam(required = false, defaultValue = "") String search) {
+//    return productService.searchItemByStr(search);
+//  }
+//  @GetMapping("/products/sort/{direction}")
+//  public ResponseEntity sortProducts(@PathVariable(required = false) String direction){
+//    return productService.sortProducts(direction);
+//  }
 
   @RequestMapping(value = "/products", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, params = "id")
   public ResponseEntity<?> handleProduct(@RequestParam("id") Long id, @RequestBody ProductCreateDto productCreateDto, HttpServletRequest request) {

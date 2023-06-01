@@ -168,30 +168,31 @@ public class ProductServiceImpl implements ProductService {
     product.setStartingPrice(productCreateDto.getStartingPrice());
     return ResponseEntity.status(200).body(productRepository.save(product));
   }
-  @Override
-  public ResponseEntity searchItemByStr(String searchItem) {
-    return ResponseEntity
-        .status(200)
-        .body(productRepository.findAllByForSale(true).stream()
-            .filter(p -> p.getName().toLowerCase().contains(searchItem.toLowerCase()) || p.getDescription().toLowerCase().contains(searchItem.toLowerCase()))
-            .collect(Collectors.toList()));
-  }
-  @Override
-  public ResponseEntity sortProducts(String direction) {
-    ResponseEntity response;
-    if (direction.equals("asc")){
-      response = ResponseEntity.status(200).body(productRepository.findAllByForSale(true).stream()
-          .sorted(Comparator.comparingDouble(Product::getPurchasePrice))
-          .collect(Collectors.toList()));
-    } else if (direction.equals("desc")) {
-      response = ResponseEntity.status(200).body(productRepository.findAllByForSale(true).stream()
-          .sorted(Comparator.comparingDouble(Product::getPurchasePrice).reversed())
-          .collect(Collectors.toList()));
-    } else {
-       response = ResponseEntity.status(400).body(new ResponseDto("Bad request!"));
-    }
-    return response;
-  }
+
+//  @Override
+//  public ResponseEntity searchItemByStr(String searchItem) {
+//    return ResponseEntity
+//        .status(200)
+//        .body(productRepository.findAllByForSale(true).stream()
+//            .filter(p -> p.getName().toLowerCase().contains(searchItem.toLowerCase()) || p.getDescription().toLowerCase().contains(searchItem.toLowerCase()))
+//            .collect(Collectors.toList()));
+//  }
+//  @Override
+//  public ResponseEntity sortProducts(String direction) {
+//    ResponseEntity response;
+//    if (direction.equals("asc")){
+//      response = ResponseEntity.status(200).body(productRepository.findAllByForSale(true).stream()
+//          .sorted(Comparator.comparingDouble(Product::getPurchasePrice))
+//          .collect(Collectors.toList()));
+//    } else if (direction.equals("desc")) {
+//      response = ResponseEntity.status(200).body(productRepository.findAllByForSale(true).stream()
+//          .sorted(Comparator.comparingDouble(Product::getPurchasePrice).reversed())
+//          .collect(Collectors.toList()));
+//    } else {
+//       response = ResponseEntity.status(400).body(new ResponseDto("Bad request!"));
+//    }
+//    return response;
+//  }
   @Override
   public void saveProduct(Product product) {
     productRepository.save(product);
