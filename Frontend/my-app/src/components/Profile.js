@@ -193,6 +193,7 @@ export default function Profile(props){
     let uploadedProducts
     let uploadedProductsCount
     let balance
+    let activeBids
 
     const [visible, setVisible] = useState(4)
     function showMoreItems(){
@@ -220,6 +221,19 @@ export default function Profile(props){
                 </Link>
                 <button className="delete-btn" onClick={() => deleteAlert(item.productId)}><i className="fa-solid fa-xmark"></i></button>
                 <button className="edit-btn" onClick={() => editProduct(item.productId)}><i className="fa-solid fa-gear"></i></button>
+            </div>
+        })
+
+        activeBids = props.userProfile.usersActiveBids.slice(0, visible).map(function(item){
+            return <div className="product" key={item.productId}>
+                <Link to={`/products/${item.productId}`}>
+                <div className="product-img">
+                    <img src={item.productPhotoUrl} alt="" />
+                </div>
+                <div className="product-text">
+                <h3>{item.productName}</h3>
+                </div>
+                </Link>
             </div>
         })
 
@@ -361,6 +375,11 @@ export default function Profile(props){
                 {uploadedProducts}
             </div>
             <button className="show-more" onClick={showMoreItems}>Show more items</button>
+
+            <h1>Active bids</h1>
+            <div className="products">
+                {activeBids}
+            </div>
 
             <div className="alert-overlay"></div>
             <div className="delete-alert">

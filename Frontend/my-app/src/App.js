@@ -124,6 +124,7 @@ function App() {
     const data = await res.json()
     setUserProfile(data)
     document.title = `${data.username} | Greenbay`
+    console.log(data);
   }
 
   /* Updating balance section */
