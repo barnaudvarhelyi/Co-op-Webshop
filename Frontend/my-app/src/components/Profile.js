@@ -105,11 +105,11 @@ export default function Profile(props){
             if(data.startingPrice){
                 document.getElementById("startingPrice").style.display = 'block'
                 document.querySelector(".expiresAt").style.display = 'block'
-                document.querySelector(".enable-bidding").style.display = 'none'
+                document.querySelector("#checkboxBidding").style.display = 'none'
             } else {
                 document.getElementById("startingPrice").style.display = 'none'
                 document.querySelector(".expiresAt").style.display = 'none'
-                document.querySelector(".enable-bidding").style.display = 'block'
+                document.querySelector("#checkboxBidding").style.display = 'block'
             }
             let url = new URL(window.location.href)
             url.searchParams.set("id", id)
@@ -142,8 +142,27 @@ export default function Profile(props){
     }
 
     /* User deletes a product */
-    function deleteProduct(id){
-        fetch(`http://localhost:8080/products/${id}`, {
+    let deletedProduct
+
+    function deleteAlert(id){
+        document.querySelector('.delete-alert').style.display = 'block'
+        document.querySelector('.alert-overlay').style.display = 'block'
+        deletedProduct = id
+    }
+
+    function cancelDelete(){
+        document.querySelector('.delete-alert').style.display = 'none'
+        document.querySelector('.alert-overlay').style.display = 'none'
+    }
+
+    function confirmDelete(){
+        document.querySelector('.delete-alert').style.display = 'none'
+        document.querySelector('.alert-overlay').style.display = 'none'
+        deleteProduct(deletedProduct)
+    }
+
+    function deleteProduct(){
+        fetch(`http://localhost:8080/products/${deletedProduct}`, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem("token")}`
@@ -174,10 +193,23 @@ export default function Profile(props){
     let uploadedProducts
     let uploadedProductsCount
     let balance
+    let activeBids
+
+    const [visible, setVisible] = useState(4)
+    function showMoreItems(){
+        const btn = document.querySelector('.show-more')
+        if(visible === 4){
+            setVisible(props.userProfile.uploadedProducts.length)
+            btn.innerText = "Show less items"
+        } else {
+            setVisible(4)
+            btn.innerText = "Show all items"
+        }
+    }
 
     if(props.userProfile){
 
-        uploadedProducts = props.userProfile.uploadedProducts.map(function(item){
+        uploadedProducts = props.userProfile.uploadedProducts.slice(0, visible).map(function(item){
             return <div className="product" key={item.productId}>
                 <Link to={`/products/${item.productId}`}>
                 <div className="product-img">
@@ -187,8 +219,21 @@ export default function Profile(props){
                 <h3>{item.name}</h3>
                 </div>
                 </Link>
-                <button className="delete-btn" onClick={() => deleteProduct(item.id)}><i className="fa-solid fa-xmark"></i></button>
-                <button className="edit-btn" onClick={() => editProduct(item.id)}><i className="fa-solid fa-gear"></i></button>
+                <button className="delete-btn" onClick={() => deleteAlert(item.productId)}><i className="fa-solid fa-xmark"></i></button>
+                <button className="edit-btn" onClick={() => editProduct(item.productId)}><i className="fa-solid fa-gear"></i></button>
+            </div>
+        })
+
+        activeBids = props.userProfile.usersActiveBids.slice(0, visible).map(function(item){
+            return <div className="product" key={item.productId}>
+                <Link to={`/products/${item.productId}`}>
+                <div className="product-img">
+                    <img src={item.productPhotoUrl} alt="" />
+                </div>
+                <div className="product-text">
+                <h3>{item.productName}</h3>
+                </div>
+                </Link>
             </div>
         })
 
@@ -198,13 +243,40 @@ export default function Profile(props){
     }
 
     /* User displays the fund options */
-    function addFunds(){
-        const addFunds = document.querySelector('.add-funds')
+    function displayFunds(){
+        const displayFunds = document.querySelector('.add-funds')
         const cancelItem = document.querySelector('.cancel-fund')
         const addItem = document.querySelector('.add-item-animation')
-        addFunds.style.display = addFunds.style.display == 'flex' ? 'none' : 'flex'
+        displayFunds.style.display = displayFunds.style.display == 'flex' ? 'none' : 'flex'
         cancelItem.style.display = cancelItem.style.display == 'flex' ? 'none' : 'flex'
         addItem.style.display = addItem.style.display == 'none' ? 'flex' : 'none'
+    }
+
+    let fund
+
+    function fundsAlert(amount){
+        document.querySelector('.cancel').style.display = 'inline-block'
+        document.querySelector('.confirm').style.display = 'inline-block'
+        document.querySelector('.funds-alert').style.display = 'block'
+        document.querySelector('.alert-overlay').style.display = 'block'
+        fund = amount
+        console.log(fund);
+    }
+
+    function cancelFunds(){
+        document.querySelector('.funds-alert').style.display = 'none'
+        document.querySelector('.alert-overlay').style.display = 'none'
+    }
+
+    function confirmFunds(){
+        document.querySelector('.alert-title').innerText = 'Thank you for your purchase!'
+        document.querySelector('.cancel').style.display = 'none'
+        document.querySelector('.confirm').style.display = 'none'
+        props.uploadFunds(fund)
+        setTimeout(function(){
+            document.querySelector('.funds-alert').style.display = 'none'
+            document.querySelector('.alert-overlay').style.display = 'none'
+        }, 1000)
     }
 
     /* User toggles "Auction mode" */
@@ -233,7 +305,7 @@ export default function Profile(props){
                     <h1>Create new item</h1>
                     <h1>+</h1>
                 </div>
-                <div onClick={addFunds} className="btn-gradient">
+                <div onClick={displayFunds} className="btn-gradient">
                     <h1>Add funds to your balance</h1>
                     <h1>+</h1>
                 </div>
@@ -278,12 +350,19 @@ export default function Profile(props){
             </form>
 
             {/* Add funds section */}
-            <div className="add-funds">
-                <div onClick={() => props.uploadFunds(10)}>$10</div>
-                <div onClick={() => props.uploadFunds(50)}>$50</div>
-                <div onClick={() => props.uploadFunds(100)}>$100</div>
+            <div className="alert-overlay"></div>
+            <div className="funds-alert">
+                <h1 className="alert-title">Are you sure you want to transfer money to your account?</h1>
+                <button className="cancel" onClick={cancelFunds}>Cancel</button>
+                <button className="confirm" onClick={confirmFunds}>Confirm</button>
             </div>
-            <h4 className="cancel-fund" onClick={addFunds}>Cancel</h4>
+
+            <div className="add-funds">
+                <div onClick={() => fundsAlert(10)}>$10</div>
+                <div onClick={() => fundsAlert(50)}>$50</div>
+                <div onClick={() => fundsAlert(100)}>$100</div>
+            </div>
+            <h4 className="cancel-fund" onClick={displayFunds}>Cancel</h4>
 
             {/* Displays the amount of the user's uploaded products and can enter "Editing mode" */}
             <div className="profile-text">
@@ -294,6 +373,19 @@ export default function Profile(props){
             {/* Displays the user's uploaded products */}
             <div className="products">
                 {uploadedProducts}
+            </div>
+            <button className="show-more" onClick={showMoreItems}>Show more items</button>
+
+            <h1>Active bids</h1>
+            <div className="products">
+                {activeBids}
+            </div>
+
+            <div className="alert-overlay"></div>
+            <div className="delete-alert">
+                <h1 className="alert-title">Are you sure you want to delete this item?</h1>
+                <button className="cancel" onClick={cancelDelete}>Cancel</button>
+                <button className="confirm" onClick={confirmDelete}>Confirm</button>
             </div>
 
             </div>
