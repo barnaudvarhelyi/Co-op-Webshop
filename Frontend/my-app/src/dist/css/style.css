@@ -208,9 +208,10 @@ nav .search-bar {
 .profile .container {
   max-width: 1100px;
   margin: auto;
+  padding: 1em;
 }
 .profile .balance {
-  margin: 1em;
+  margin-bottom: 1em;
   padding: 0.5em 1em;
   width: -moz-fit-content;
   width: fit-content;
@@ -218,8 +219,8 @@ nav .search-bar {
   color: #FAF9F6;
   background-color: #2E8B57;
 }
-.profile .profile-text {
-  padding: 0em 1em;
+.profile .profile-text h1 {
+  margin-top: 1em;
 }
 .profile .profile-text i {
   margin-right: 0.3em;
@@ -231,7 +232,6 @@ nav .search-bar {
   color: #8A8A8A;
 }
 .profile form {
-  padding: 1em;
   display: none;
   flex-direction: column;
 }
@@ -318,7 +318,7 @@ nav .search-bar {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 1em;
+  margin-bottom: 1em;
   color: #FAF9F6;
   cursor: pointer;
   gap: 1em;
@@ -351,7 +351,6 @@ nav .search-bar {
   height: 300px;
   display: none;
   gap: 1em;
-  margin: 1em;
   color: #FAF9F6;
 }
 .profile .add-funds div {
@@ -379,8 +378,73 @@ nav .search-bar {
 .profile .cancel-fund {
   display: none;
   cursor: pointer;
-  margin: 1em;
+  margin-top: 1em;
   color: #696969;
+}
+.profile .alert-overlay {
+  height: 100%;
+  width: 100%;
+  background-color: black;
+  position: fixed;
+  z-index: 2;
+  left: 0;
+  top: 0;
+  opacity: 0.3;
+  display: none;
+}
+.profile .funds-alert {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 0.5em;
+  text-align: center;
+  padding: 1em;
+  z-index: 3;
+  display: none;
+}
+.profile .funds-alert button {
+  margin-left: 1em;
+  padding: 0.5em;
+  border: none;
+  border-radius: 0.5em;
+  cursor: pointer;
+}
+.profile .funds-alert .cancel {
+  background-color: red;
+  color: white;
+}
+.profile .funds-alert .confirm {
+  background-color: #2E8B57;
+  color: #FAF9F6;
+}
+.profile .delete-alert {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 0.5em;
+  text-align: center;
+  padding: 1em;
+  z-index: 3;
+  display: none;
+}
+.profile .delete-alert button {
+  margin-left: 1em;
+  padding: 0.5em;
+  border: none;
+  border-radius: 0.5em;
+  cursor: pointer;
+}
+.profile .delete-alert .cancel {
+  background-color: red;
+  color: white;
+}
+.profile .delete-alert .confirm {
+  background-color: #2E8B57;
+  color: #FAF9F6;
 }
 .profile .products {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -411,6 +475,44 @@ nav .search-bar {
   padding: 1em;
   color: #2E2E2E;
 }
+.single-product .purchase-alert {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 0.5em;
+  text-align: center;
+  padding: 1em;
+  z-index: 3;
+  display: none;
+}
+.single-product .purchase-alert button {
+  margin-left: 1em;
+  padding: 0.5em;
+  border: none;
+  border-radius: 0.5em;
+  cursor: pointer;
+}
+.single-product .purchase-alert .cancel {
+  background-color: red;
+  color: white;
+}
+.single-product .purchase-alert .confirm {
+  background-color: #2E8B57;
+  color: #FAF9F6;
+}
+.single-product .alert-overlay {
+  height: 100%;
+  width: 100%;
+  background-color: black;
+  position: fixed;
+  z-index: 2;
+  left: 0;
+  top: 0;
+  opacity: 0.3;
+  display: none;
+}
 .single-product .product-informations {
   display: flex;
   gap: 1em;
@@ -430,6 +532,7 @@ nav .search-bar {
 }
 .single-product p {
   text-align: justify;
+  margin-bottom: 0.5em;
 }
 .single-product h1 {
   margin: 0.5em 0em;
@@ -449,32 +552,38 @@ nav .search-bar {
   font-weight: bold;
   margin-bottom: 0.5em;
 }
+.single-product .bidding-section {
+  display: flex;
+  margin-bottom: 0.5em;
+}
+.single-product .bidding-section input {
+  width: 70%;
+}
+.single-product .bidding-section button {
+  width: 30%;
+}
 .single-product .purchase-btn {
   color: #FAF9F6;
   background-color: #2E8B57;
   border: none;
-  border-radius: 1em;
+  border-radius: 0.5em;
   padding: 0.5em 1em;
   cursor: pointer;
-  width: 10em;
-}
-.single-product input {
-  padding: 0.5em;
-  border-radius: 1em;
-  margin: 1em 0em;
+  width: 15em;
 }
 .single-product #bidAmount {
   margin: 0em 0.5em 0.5em 0em;
   border-radius: 0.5em;
   border: 1px solid #2E2E2E;
   background-color: #FAF9F6;
+  height: 100%;
+  padding: 0.5em;
 }
 .single-product .bidding-btn {
   color: #FAF9F6;
   background-color: #2E8B57;
   border: none;
   border-radius: 0.5em;
-  padding: 0.5em 1em;
   cursor: pointer;
 }
 .single-product .swiper {
@@ -496,6 +605,38 @@ nav .search-bar {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Uploader's Page */
+.uploader-profile {
+  max-width: 1100px;
+  margin: 1em auto;
+}
+.uploader-profile .products {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  padding: 0em;
+  margin-bottom: 0.5em;
+}
+.uploader-profile .products .product {
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  border-radius: 10px;
+  padding: 1em;
+  transition: all 0.1s ease-in;
+}
+.uploader-profile .products .product:hover {
+  transform: scale(105%);
+}
+.uploader-profile .products .product .product-img {
+  height: 200px;
+}
+.uploader-profile h1, .uploader-profile h4 {
+  text-align: center;
+}
+.uploader-profile h4 {
+  margin-bottom: 1em;
+}
+.uploader-profile h3 {
+  margin-bottom: 0.5em;
 }
 
 @media (max-width: 500px) {
@@ -543,8 +684,5 @@ nav .search-bar {
   .single-product p {
     text-align: justify;
     margin-bottom: 1em;
-  }
-  .single-product .purchase-btn {
-    align-self: center;
   }
 }/*# sourceMappingURL=style.css.map */

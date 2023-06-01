@@ -13,7 +13,6 @@ export default function UploaderProfile(props){
     const res = await fetch(`http://localhost:8080/user-profile/${username}`)
     const data = await res.json()
     setUploaderProfile(data)
-    console.log(data);
   }
 
   useEffect(() => {
@@ -33,9 +32,21 @@ export default function UploaderProfile(props){
 
   let uploadersProducts
 
+  const [visible, setVisible] = useState(4)
+  function showMoreItems(){
+      const btn = document.querySelector('.show-more')
+      if(visible === 4){
+          setVisible(uploaderProfile.products.length)
+          btn.innerText = "Show less items"
+      } else {
+          setVisible(4)
+          btn.innerText = "Show all items"
+      }
+  }
+
   /* Displays a user's uploaded products */
   if(uploaderProfile){
-    uploadersProducts = uploaderProfile.products.map(function(item){
+    uploadersProducts = uploaderProfile.products.slice(0, visible).map(function(item){
         return <div className="product" key={item.productId}>
             <Link to={`/products/${item.productId}`}>
             <div className="product-img">
@@ -50,11 +61,12 @@ export default function UploaderProfile(props){
 }
 
     return (
-        <div>
+        <div className="uploader-profile">
           {uploaderInformations}
           <div className="products">
             {uploadersProducts}
           </div>
+          <button className="show-more" onClick={showMoreItems}>Show more items</button>
         </div>
     )
 }

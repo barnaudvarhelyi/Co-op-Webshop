@@ -150,6 +150,7 @@ function App() {
       }
     })
     const data = await res.json()
+    document.querySelector('.alert-title').innerText = data.message
   }
 
   /* Place a bid */
