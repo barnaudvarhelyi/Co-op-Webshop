@@ -125,7 +125,10 @@ public class ProductServiceImpl implements ProductService {
       userId = u.getId();
     }
 
-    List<Product> randomProducts = productRepository.findRandomProducts(PageRequest.of(0, 8));
+    List<ProductDto> randomProducts = productRepository.findRandomProducts(PageRequest.of(0, 8))
+        .stream()
+        .map(ProductDto::new)
+        .collect(Collectors.toList());
     ProductByIdResponseDto response = new ProductByIdResponseDto(product.get(), user, userId, randomProducts);
     return ResponseEntity.status(200).body(response);
   }

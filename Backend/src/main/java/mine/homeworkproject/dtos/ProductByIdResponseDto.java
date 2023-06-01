@@ -17,11 +17,11 @@ public class ProductByIdResponseDto {
   private String createdAt;
   private Double startingPrice;
   private String expiresAt;
-  private List<Product> randomProducts;
+  private List<ProductDto> randomProducts;
 
   public ProductByIdResponseDto() {}
   public ProductByIdResponseDto(Product p, String username, Long userId,
-      List<Product> randomProducts) {
+      List<ProductDto> randomProducts) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     this.id = p.getId();
     this.name = p.getName();
@@ -96,10 +96,10 @@ public class ProductByIdResponseDto {
   public void setExpiresAt(String expiresAt) {
     this.expiresAt = expiresAt;
   }
-  public List<Product> getRandomProducts() {
+  public List<ProductDto> getRandomProducts() {
     return randomProducts;
   }
-  public void setRandomProducts(List<Product> randomProducts) {
+  public void setRandomProducts(List<ProductDto> randomProducts) {
     this.randomProducts = randomProducts;
   }
 }
