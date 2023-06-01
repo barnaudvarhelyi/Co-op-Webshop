@@ -26,7 +26,6 @@ public class UserController {
   public ResponseEntity userProfile(HttpServletRequest request) {
     return userService.getUserProfile(request);
   }
-
   @GetMapping("/user-profile/{username}")
   public ResponseEntity userProfileById(@PathVariable String username) {
     return userService.getUserProfileById(username);

@@ -36,6 +36,9 @@ public class User {
   @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
   private List<Product> ownedProducts;
 
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+  private List<Transaction> userTransactions;
+
   public User() {}
 
   public User(String username, String email, String password, String role, Balance balance) {
@@ -47,6 +50,7 @@ public class User {
     this.bids = new ArrayList<>();
     this.ownedProducts = new ArrayList<>();
     this.uploadedProducts = new ArrayList<>();
+    this.userTransactions = new ArrayList<>();
   }
 
   public User(Long id, String username) {
@@ -121,6 +125,13 @@ public class User {
   public List<Product> getOwnedProducts(){return ownedProducts;}
   public void setOwnedProducts(Product product) {
     this.ownedProducts.add(product);
+  }
+  public List<Transaction> getUserTransactions() {
+    return userTransactions;
+  }
+  public void setUserTransactions(
+      List<Transaction> userTransactions) {
+    this.userTransactions = userTransactions;
   }
 
   @Override

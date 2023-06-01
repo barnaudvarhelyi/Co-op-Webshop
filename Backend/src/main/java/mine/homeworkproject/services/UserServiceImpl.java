@@ -2,8 +2,12 @@ package mine.homeworkproject.services;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -15,15 +19,19 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
+import jdk.javadoc.internal.doclets.toolkit.util.Comparators;
 import mine.homeworkproject.dtos.ProductDto;
 import mine.homeworkproject.dtos.ResponseDto;
+import mine.homeworkproject.dtos.TransactionDto;
 import mine.homeworkproject.dtos.UserByIdResponseDto;
 import mine.homeworkproject.dtos.UserProfileResponseDto;
 import mine.homeworkproject.dtos.UsersActiveBidsDto;
 import mine.homeworkproject.models.Bid;
+import mine.homeworkproject.models.Transaction;
 import mine.homeworkproject.models.User;
 import mine.homeworkproject.repositories.BidRepository;
 import mine.homeworkproject.repositories.ProductRepository;
+import mine.homeworkproject.repositories.TransactionRepository;
 import mine.homeworkproject.repositories.UserRepository;
 import mine.homeworkproject.security.JwtProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +45,17 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final ProductRepository productRepository;
   private final BidRepository bidRepository;
+  private final TransactionService transactionService;
+  private final TransactionRepository transactionRepository;
 
   @Autowired
   public UserServiceImpl(UserRepository userRepository, ProductRepository productRepository,
-      BidRepository bidRepository) {
+      BidRepository bidRepository, TransactionService transactionService, TransactionRepository transactionRepository) {
     this.userRepository = userRepository;
     this.productRepository = productRepository;
     this.bidRepository = bidRepository;
+    this.transactionService = transactionService;
+    this.transactionRepository = transactionRepository;
   }
 
   @Override
@@ -98,6 +110,10 @@ public class UserServiceImpl implements UserService {
     List<ProductDto> ownedProducts = productRepository.findAllByOwnerNotEqualsUploader(user.get()).stream()
         .map(ProductDto::new)
         .collect(Collectors.toList());
+    List<TransactionDto> userTransactions = transactionRepository.findAllByUser(user.get()).stream()
+        .map(TransactionDto::new)
+        .collect(Collectors.toList());
+    Collections.reverse(userTransactions);
 
     return ResponseEntity.status(200).body(
       new UserProfileResponseDto(
@@ -107,7 +123,8 @@ public class UserServiceImpl implements UserService {
         user.get().getBalanceAsDto(),
         ownedProducts,
         ownedProducts.size(),
-        getUsersAllActiveBid(user.get())
+        getUsersAllActiveBid(user.get()),
+        userTransactions
       )
     );
   }
@@ -127,6 +144,12 @@ public class UserServiceImpl implements UserService {
     }
     user.get().setPlusBalance(balanceDb);
     userRepository.save(user.get());
+    transactionService.save(
+        user.get(),
+        "Added balance!",
+        true,
+        balanceDb
+    );
     return ResponseEntity.status(200).body(new ResponseDto("Balance added successfully!"));
   }
   @Override

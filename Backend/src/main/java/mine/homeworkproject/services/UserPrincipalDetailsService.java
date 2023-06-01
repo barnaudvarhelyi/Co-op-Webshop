@@ -1,6 +1,6 @@
 package mine.homeworkproject.services;
 
-import mine.homeworkproject.models.UserPrincipal;
+import mine.homeworkproject.dtos.UserPrincipalDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,6 +17,6 @@ public class UserPrincipalDetailsService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) {
-    return new UserPrincipal(userService.findUserByUsername(username));
+    return new UserPrincipalDto(userService.findUserByUsername(username));
   }
 }

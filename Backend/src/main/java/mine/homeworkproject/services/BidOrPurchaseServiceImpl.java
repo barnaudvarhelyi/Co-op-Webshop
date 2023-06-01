@@ -21,13 +21,16 @@ public class BidOrPurchaseServiceImpl implements BidOrPurchaseService {
   private final ProductService productService;
   private final BidRepository bidRepository;
   private final BalanceRepository balanceRepository;
+  public final TransactionService transactionService;
 
   public BidOrPurchaseServiceImpl(UserService userService, ProductService productService, BidRepository bidRepository,
-      BalanceRepository balanceRepository) {
+      BalanceRepository balanceRepository, TransactionService transactionService
+  ) {
     this.userService = userService;
     this.productService = productService;
     this.bidRepository = bidRepository;
     this.balanceRepository = balanceRepository;
+    this.transactionService = transactionService;
   }
   @Override
   public ResponseEntity addBidToProductById(Long productId, HashMap<String, Double> amount, HttpServletRequest request) {
@@ -108,7 +111,18 @@ public class BidOrPurchaseServiceImpl implements BidOrPurchaseService {
         bidRepository.delete(bid);
       }
     }
-
+    transactionService.save(
+        userService.findUserById(product.getOwner()),
+        "Sold: " + product.getName(),
+        true,
+        product.getPurchasePrice()
+    );
+    transactionService.save(
+        customer,
+        "Purchased: " + product.getName(),
+        false,
+        product.getPurchasePrice()
+    );
     product.setOwner(customer);
     product.setPurchasePrice(0.00);
     product.setStartingPrice(0.00);

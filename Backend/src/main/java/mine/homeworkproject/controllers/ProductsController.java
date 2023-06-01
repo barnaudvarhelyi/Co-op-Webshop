@@ -33,6 +33,7 @@ public class ProductsController {
   public List<ProductAllDto> getAllProducts() {
     return productService.getAllAvailableProducts();
   }
+
 //  @GetMapping("/products/search")
 //  public ResponseEntity searchProductsByStr(@RequestParam(required = false, defaultValue = "") String search) {
 //    return productService.searchItemByStr(search);
@@ -60,7 +61,6 @@ public class ProductsController {
     }
     return response;
   }
-
   @GetMapping("/products/{id}")
   public ResponseEntity getProductById(@PathVariable Long id) {
     return productService.getProductById(id);

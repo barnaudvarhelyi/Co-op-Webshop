@@ -9,7 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import mine.homeworkproject.models.User;
-import mine.homeworkproject.models.UserPrincipal;
+import mine.homeworkproject.dtos.UserPrincipalDto;
 import mine.homeworkproject.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -62,7 +62,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
       if (!user.isPresent()) {
         return null;
       } else {
-        UserPrincipal principal = new UserPrincipal(user.get());
+        UserPrincipalDto principal = new UserPrincipalDto(user.get());
         UsernamePasswordAuthenticationToken auth =
             new UsernamePasswordAuthenticationToken(username, null, principal.getAuthorities());
         return auth;
