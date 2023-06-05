@@ -6,7 +6,6 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -204,21 +203,31 @@ public class ProductServiceImpl implements ProductService {
   public List<ProductDto> search(String searchTerm) {
     List<Product> searchResults = productRepository.findByForSaleAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
         true, searchTerm, searchTerm);
-    return convertToDTOs(searchResults);
+    return convertToDto(searchResults);
   }
   @Override
-  public List<ProductDto> searchAndSortByAmountAsc(String searchTerm) {
+  public List<ProductDto> searchAndSortByPurchasePriceAsc(String searchTerm) {
     List<Product> searchResults = productRepository.findByForSaleAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrderByPurchasePriceAsc(
         true, searchTerm, searchTerm);
-    return convertToDTOs(searchResults);
+    return convertToDto(searchResults);
   }
   @Override
-  public List<ProductDto> searchAndSortByAmountDesc(String searchTerm) {
+  public List<ProductDto> sortByPurchasePriceAsc() {
+    List<Product> searchResults = productRepository.findByForSaleOrderByPurchasePriceAsc(true);
+    return convertToDto(searchResults);
+  }
+  @Override
+  public List<ProductDto> sortByPurchasePriceDesc() {
+    List<Product> searchResults = productRepository.findByForSaleOrderByPurchasePriceDesc(true);
+    return convertToDto(searchResults);
+  }
+  @Override
+  public List<ProductDto> searchAndSortByPurchasePriceDesc(String searchTerm) {
     List<Product> searchResults = productRepository.findByForSaleAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrderByPurchasePriceDesc(
         true, searchTerm, searchTerm);
-    return convertToDTOs(searchResults);
+    return convertToDto(searchResults);
   }
-  private List<ProductDto> convertToDTOs(List<Product> products) {
+  private List<ProductDto> convertToDto(List<Product> products) {
     List<ProductDto> productDTOs = new ArrayList<>();
     for (Product product : products) {
       ProductDto productDTO = new ProductDto(product);
@@ -226,12 +235,10 @@ public class ProductServiceImpl implements ProductService {
     }
     return productDTOs;
   }
-
   @Override
   public void saveProduct(Product product) {
     productRepository.save(product);
   }
-
   @Override
   public void getRandomProductsFromAPI() {
     int i = 0;
@@ -251,7 +258,6 @@ public class ProductServiceImpl implements ProductService {
       i++;
     }
   }
-
   private Object[] getUserProductAndAccess(Long id, HttpServletRequest request) {
     Optional<Product> product = productRepository.findById(id);
     Optional<User> user = userService.getUserByToken(request);
@@ -267,7 +273,6 @@ public class ProductServiceImpl implements ProductService {
     }
     return new Object[]{null, user.get(), product.get()};
   }
-
   private String getDataFromAPI() {
     String apiUrl = "https://fakestoreapi.com/products";
     StringBuilder response = new StringBuilder();
@@ -297,14 +302,12 @@ public class ProductServiceImpl implements ProductService {
     }
     return response.toString();
   }
-
   private List<ProductAPIDto> parseResponse(String data) {
     Gson gson = new Gson();
     Type productListType = new TypeToken<List<ProductAPIDto>>() {
     }.getType();
     return gson.fromJson(data, productListType);
   }
-
   private ResponseEntity validateInputFields(ProductCreateDto p) {
     ResponseDto responseDto;
 

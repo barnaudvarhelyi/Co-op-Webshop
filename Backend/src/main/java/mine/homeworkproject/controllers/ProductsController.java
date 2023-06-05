@@ -35,16 +35,20 @@ public class ProductsController {
   }
 
   @GetMapping("/search")
-  public ResponseEntity searchProducts(@RequestParam String searchTerm,
+  public ResponseEntity searchProducts(@RequestParam(required = false, defaultValue = "") String keyword,
       @RequestParam(required = false, defaultValue = "default") String sort) {
     List<ProductDto> products;
 
-    if ("asc".equalsIgnoreCase(sort)) {
-      products = productService.searchAndSortByAmountAsc(searchTerm);
+    if ("asc".equalsIgnoreCase(sort) && keyword.equals("")) {
+      products = productService.sortByPurchasePriceAsc();
+    } else if ("esc".equalsIgnoreCase(sort) && keyword.equals("")) {
+      products = productService.sortByPurchasePriceDesc();
+    } else if ("asc".equalsIgnoreCase(sort)) {
+      products = productService.searchAndSortByPurchasePriceAsc(keyword);
     } else if ("desc".equalsIgnoreCase(sort)) {
-      products = productService.searchAndSortByAmountDesc(searchTerm);
+      products = productService.searchAndSortByPurchasePriceDesc(keyword);
     } else {
-      products = productService.search(searchTerm);
+      products = productService.search(keyword);
     }
 
     return ResponseEntity.status(200).body(products);
