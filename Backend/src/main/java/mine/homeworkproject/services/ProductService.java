@@ -4,6 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import mine.homeworkproject.dtos.ProductAllDto;
 import mine.homeworkproject.dtos.ProductCreateDto;
+import mine.homeworkproject.dtos.ProductDto;
 import mine.homeworkproject.models.Product;
 import org.springframework.http.ResponseEntity;
 
@@ -16,7 +17,8 @@ public interface ProductService {
   Product findProductById(Long id);
   ResponseEntity deleteProductById(Long id, HttpServletRequest request);
   ResponseEntity editProductById(Long id, ProductCreateDto product, HttpServletRequest request);
-//  ResponseEntity searchItemByStr(String searchItem);
-//  ResponseEntity sortProducts(String direction);
+  List<ProductDto> search(String searchTerm);
+  List<ProductDto> searchAndSortByAmountAsc(String searchTerm);
+  List<ProductDto> searchAndSortByAmountDesc(String searchTerm);
   void saveProduct(Product product);
 }

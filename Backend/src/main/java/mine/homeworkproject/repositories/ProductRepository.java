@@ -21,5 +21,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
   List<Product> findAllByExpiresAtNotNullAndForSale(Boolean forSale);
   List<Product> findAllByForSale(Boolean forSale);
 
+  List<Product> findByForSaleAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(Boolean forSale, String searchTerm, String searchTerm2);
+
+  List<Product> findByForSaleAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrderByPurchasePriceAsc(Boolean forSale, String searchTerm, String searchTerm2);
+
+  List<Product> findByForSaleAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrderByPurchasePriceDesc(Boolean forSale, String searchTerm, String searchTerm2);
+
   Optional<Product> findById(Long id);
 }

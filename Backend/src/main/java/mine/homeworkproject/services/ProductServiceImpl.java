@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -50,6 +51,7 @@ public class ProductServiceImpl implements ProductService {
         .map(ProductAllDto::new)
         .collect(Collectors.toList());
   }
+
   @Override
   public ResponseEntity createProduct(ProductCreateDto productCreateDto,
       HttpServletRequest request) {
@@ -73,28 +75,51 @@ public class ProductServiceImpl implements ProductService {
         String expires = productCreateDto.getExpiresAt();
         startingPrice = productCreateDto.getStartingPrice();
         switch (expires) {
-          case "two_minutes": { expiresAt = LocalDateTime.now().plusMinutes(2); break; }
-          case "five_minutes": { expiresAt = LocalDateTime.now().plusMinutes(5); break; }
-          case "one_day": { expiresAt = LocalDateTime.now().plusDays(1); break; }
-          case "three_days": { expiresAt = LocalDateTime.now().plusDays(3); break; }
-          case "one_week": { expiresAt = LocalDateTime.now().plusWeeks(1); break; }
-          case "two_weeks": { expiresAt = LocalDateTime.now().plusWeeks(2); break; }
-          case "one_month": { expiresAt = LocalDateTime.now().plusMonths(1); break; }
-          default: { return ResponseEntity.status(400).body(new ResponseDto("Please provide a valid expiration time!")); }
+          case "two_minutes": {
+            expiresAt = LocalDateTime.now().plusMinutes(2);
+            break;
+          }
+          case "five_minutes": {
+            expiresAt = LocalDateTime.now().plusMinutes(5);
+            break;
+          }
+          case "one_day": {
+            expiresAt = LocalDateTime.now().plusDays(1);
+            break;
+          }
+          case "three_days": {
+            expiresAt = LocalDateTime.now().plusDays(3);
+            break;
+          }
+          case "one_week": {
+            expiresAt = LocalDateTime.now().plusWeeks(1);
+            break;
+          }
+          case "two_weeks": {
+            expiresAt = LocalDateTime.now().plusWeeks(2);
+            break;
+          }
+          case "one_month": {
+            expiresAt = LocalDateTime.now().plusMonths(1);
+            break;
+          }
+          default: {
+            return ResponseEntity.status(400)
+                .body(new ResponseDto("Please provide a valid expiration time!"));
+          }
         }
         expiresAt = expiresAt.plusDays(1).withHour(12).withMinute(0).withSecond(0);
-      }
-      else {
+      } else {
         startingPrice = null;
         expiresAt = null;
       }
       Product product = new Product
           (productCreateDto.getName(),
-          productCreateDto.getDescription(),
-          productCreateDto.getPhotoUrl(),
-          productCreateDto.getPurchasePrice(),
-          startingPrice,
-          expiresAt);
+              productCreateDto.getDescription(),
+              productCreateDto.getPhotoUrl(),
+              productCreateDto.getPurchasePrice(),
+              startingPrice,
+              expiresAt);
 
       product.setUploader(user.get());
       product.setOwner(user.get());
@@ -106,6 +131,7 @@ public class ProductServiceImpl implements ProductService {
       return ResponseEntity.status(e.getStatus()).body(responseDto);
     }
   }
+
   @Override
   public ResponseEntity getProductById(Long id) {
     Optional<Product> product = productRepository.findById(id);
@@ -129,13 +155,16 @@ public class ProductServiceImpl implements ProductService {
         .stream()
         .map(ProductDto::new)
         .collect(Collectors.toList());
-    ProductByIdResponseDto response = new ProductByIdResponseDto(product.get(), user, userId, randomProducts);
+    ProductByIdResponseDto response = new ProductByIdResponseDto(product.get(), user, userId,
+        randomProducts);
     return ResponseEntity.status(200).body(response);
   }
+
   @Override
   public Product findProductById(Long id) {
     return productRepository.findById(id).orElse(null);
   }
+
   @Override
   public ResponseEntity deleteProductById(Long id, HttpServletRequest request) {
     Object[] response = getUserProductAndAccess(id, request);
@@ -146,6 +175,7 @@ public class ProductServiceImpl implements ProductService {
     productRepository.delete(product);
     return ResponseEntity.status(200).body(new ResponseDto("Resource deleted successfully!"));
   }
+
   @Override
   public ResponseEntity editProductById(Long id, ProductCreateDto productCreateDto,
       HttpServletRequest request) {
@@ -157,7 +187,8 @@ public class ProductServiceImpl implements ProductService {
     Product product = (Product) response[2];
 
     if (product.getExpiresAt() != null && product.getBids().size() > 0) {
-      return ResponseEntity.status(400).body(new ResponseDto("Product cannot be edited after someone has bid on it"));
+      return ResponseEntity.status(400)
+          .body(new ResponseDto("Product cannot be edited after someone has bid on it"));
     }
 
     product.setUploader(user);
@@ -169,48 +200,58 @@ public class ProductServiceImpl implements ProductService {
     return ResponseEntity.status(200).body(productRepository.save(product));
   }
 
-//  @Override
-//  public ResponseEntity searchItemByStr(String searchItem) {
-//    return ResponseEntity
-//        .status(200)
-//        .body(productRepository.findAllByForSale(true).stream()
-//            .filter(p -> p.getName().toLowerCase().contains(searchItem.toLowerCase()) || p.getDescription().toLowerCase().contains(searchItem.toLowerCase()))
-//            .collect(Collectors.toList()));
-//  }
-//  @Override
-//  public ResponseEntity sortProducts(String direction) {
-//    ResponseEntity response;
-//    if (direction.equals("asc")){
-//      response = ResponseEntity.status(200).body(productRepository.findAllByForSale(true).stream()
-//          .sorted(Comparator.comparingDouble(Product::getPurchasePrice))
-//          .collect(Collectors.toList()));
-//    } else if (direction.equals("desc")) {
-//      response = ResponseEntity.status(200).body(productRepository.findAllByForSale(true).stream()
-//          .sorted(Comparator.comparingDouble(Product::getPurchasePrice).reversed())
-//          .collect(Collectors.toList()));
-//    } else {
-//       response = ResponseEntity.status(400).body(new ResponseDto("Bad request!"));
-//    }
-//    return response;
-//  }
+  @Override
+  public List<ProductDto> search(String searchTerm) {
+    List<Product> searchResults = productRepository.findByForSaleAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+        true, searchTerm, searchTerm);
+    return convertToDTOs(searchResults);
+  }
+  @Override
+  public List<ProductDto> searchAndSortByAmountAsc(String searchTerm) {
+    List<Product> searchResults = productRepository.findByForSaleAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrderByPurchasePriceAsc(
+        true, searchTerm, searchTerm);
+    return convertToDTOs(searchResults);
+  }
+  @Override
+  public List<ProductDto> searchAndSortByAmountDesc(String searchTerm) {
+    List<Product> searchResults = productRepository.findByForSaleAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrderByPurchasePriceDesc(
+        true, searchTerm, searchTerm);
+    return convertToDTOs(searchResults);
+  }
+  private List<ProductDto> convertToDTOs(List<Product> products) {
+    List<ProductDto> productDTOs = new ArrayList<>();
+    for (Product product : products) {
+      ProductDto productDTO = new ProductDto(product);
+      productDTOs.add(productDTO);
+    }
+    return productDTOs;
+  }
+
   @Override
   public void saveProduct(Product product) {
     productRepository.save(product);
   }
+
   @Override
   public void getRandomProductsFromAPI() {
     int i = 0;
     for (ProductAPIDto p : parseResponse(getDataFromAPI())) {
-      Product product = new Product(p.getTitle(), p.getDescription(), p.getImage(), p.getPrice(), p.getPrice() * 0.7, null);
+      Product product = new Product(p.getTitle(), p.getDescription(), p.getImage(), p.getPrice(),
+          p.getPrice() * 0.7, null);
       User u = userService.findUserById(1L);
       product.setUploader(u);
       product.setOwner(u);
-      if (i % 2 == 0) { product.setExpiresAt(product.getCreatedAt().plusDays(1).withHour(12).withMinute(0).withSecond(0)); }
-      else { product.setStartingPrice(null); }
+      if (i % 2 == 0) {
+        product.setExpiresAt(
+            product.getCreatedAt().plusDays(1).withHour(12).withMinute(0).withSecond(0));
+      } else {
+        product.setStartingPrice(null);
+      }
       productRepository.save(product);
       i++;
     }
   }
+
   private Object[] getUserProductAndAccess(Long id, HttpServletRequest request) {
     Optional<Product> product = productRepository.findById(id);
     Optional<User> user = userService.getUserByToken(request);
@@ -226,6 +267,7 @@ public class ProductServiceImpl implements ProductService {
     }
     return new Object[]{null, user.get(), product.get()};
   }
+
   private String getDataFromAPI() {
     String apiUrl = "https://fakestoreapi.com/products";
     StringBuilder response = new StringBuilder();
@@ -255,12 +297,14 @@ public class ProductServiceImpl implements ProductService {
     }
     return response.toString();
   }
+
   private List<ProductAPIDto> parseResponse(String data) {
     Gson gson = new Gson();
     Type productListType = new TypeToken<List<ProductAPIDto>>() {
     }.getType();
     return gson.fromJson(data, productListType);
   }
+
   private ResponseEntity validateInputFields(ProductCreateDto p) {
     ResponseDto responseDto;
 
