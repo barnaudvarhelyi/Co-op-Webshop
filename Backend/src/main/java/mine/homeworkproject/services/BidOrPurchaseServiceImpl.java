@@ -52,18 +52,19 @@ public class BidOrPurchaseServiceImpl implements BidOrPurchaseService {
       if (amountDb < product.getStartingPrice()) {
         return ResponseEntity.status(400).body(new ResponseDto("The bid amount must start from the Starting Price"));
       } else {
-        List<Bid> usersBidsOnProduct = bidRepository.findAllByUser(u);
-        if (u.getBalanceAsDto().getBalance() - amountDb < 0 && usersBidsOnProduct.size() == 0 || amountDb < product.getStartingPrice()) {
+        List<Bid> bidsOnProduct = bidRepository.findAllByProduct(product);
+        if (u.getBalanceAsDto().getBalance() - amountDb < 0 || amountDb < product.getStartingPrice()) {
           return ResponseEntity.status(403).body(new ResponseDto("Not enough balance!"));
         }
-        if (usersBidsOnProduct.size() > 0) {
-          for (Bid bid : usersBidsOnProduct) {
+        for (Bid bid : bidsOnProduct) {
+          if (bid.getUser() == u) {
             u.setPlusBalance(bid.getAmount());
             u.setMinusOnLicit(bid.getAmount());
             product.getBids().remove(bid);
             bidRepository.delete(bid);
           }
         }
+
         product.setStartingPrice(amountDb);
         productService.saveProduct(product);
         u.setMinusBalance(amountDb);

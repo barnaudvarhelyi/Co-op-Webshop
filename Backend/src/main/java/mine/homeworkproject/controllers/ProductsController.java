@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ProductsController {
-
   private final ProductService productService;
   @Autowired
   public ProductsController(ProductService productService) {
@@ -33,7 +32,6 @@ public class ProductsController {
   public List<ProductAllDto> getAllProducts() {
     return productService.getAllAvailableProducts();
   }
-
   @GetMapping("/search")
   public ResponseEntity searchProducts(@RequestParam(required = false, defaultValue = "") String keyword,
       @RequestParam(required = false, defaultValue = "default") String sort) {
@@ -50,12 +48,10 @@ public class ProductsController {
     } else {
       products = productService.search(keyword);
     }
-
     return ResponseEntity.status(200).body(products);
   }
-
   @RequestMapping(value = "/products", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, params = "id")
-  public ResponseEntity<?> handleProduct(@RequestParam("id") Long id, @RequestBody ProductCreateDto productCreateDto, HttpServletRequest request) {
+  public ResponseEntity handleProduct(@RequestParam("id") Long id, @RequestBody ProductCreateDto productCreateDto, HttpServletRequest request) {
     ResponseEntity<?> response;
     String method = request.getMethod();
 
