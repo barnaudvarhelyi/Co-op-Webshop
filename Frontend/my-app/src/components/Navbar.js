@@ -15,14 +15,19 @@ export default function Navbar(props){
             document.querySelector('.search-bar').style.display = 'block'
         }
     }, [location])
+
+    function resetSearch(){
+        document.querySelector('.search-bar').value = ""
+        props.search()
+    }
  
     return (
         <section className="navbar">
 
         <nav>
             <div className="container">
-                <Link to="/"><h1>Greenbay</h1></Link>               
-                <input type="text" className="search-bar" placeholder="Start typing..." onChange={(e) => props.searchBar(e.target.value)}/>
+                <Link to="/" onClick={resetSearch}><h1>Greenbay</h1></Link>               
+                <input type="text" className="search-bar" placeholder="Start typing..." onChange={props.search}/>
                 <Link to={loggedIn ? "/profile" : "/login"}>{loggedIn ? loggedIn : "Login"}</Link>
             </div>
         </nav>

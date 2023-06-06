@@ -85,19 +85,7 @@ function App() {
   const [products, setProducts] = useState()
 
   async function displayAllProducts(){
-    let url = new URL(window.location.href)
-    const sort = url.searchParams.get("sort")
-    window.history.replaceState({}, "", url.toString())
-    let fetchUrl
-    if(sort === 'desc'){
-      fetchUrl = 'http://localhost:8080/products/sort/desc'
-    } else if (sort === 'asc'){
-      fetchUrl = 'http://localhost:8080/products/sort/asc'
-    } else {
-      fetchUrl = 'http://localhost:8080/products/all'
-      window.history.replaceState({}, "", url.origin + url.pathname)
-    }
-    const res = await fetch(fetchUrl)
+    const res = await fetch('http://localhost:8080/products/all')
     const data = await res.json()
     setProducts(data)
     document.title = 'Greenbay'
@@ -106,8 +94,10 @@ function App() {
   /* Searchbar */
   const [searchResult, setSearchResult] = useState()
 
-  async function searchBar(result){
-    const res = await fetch(`http://localhost:8080/products/search?search=${result}`)
+  async function search(){
+    const searchBar = document.querySelector('.search-bar').value
+    const sortOptions = document.querySelector('#sort-options').value
+    const res = await fetch(`http://localhost:8080/search?keyword=${searchBar}&sort=${sortOptions}`)
     const data = await res.json()
     setSearchResult(data)
   }
@@ -171,8 +161,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navbar userProfile={userProfile} searchBar={searchBar} />}>
-          <Route index element={<Home products={products} displayAllProducts={displayAllProducts} searchResult={searchResult} displayProfileInformation={displayProfileInformation}/>} />
+        <Route path="/" element={<Navbar userProfile={userProfile} search={search} />}>
+          <Route index element={<Home products={products} displayAllProducts={displayAllProducts} searchResult={searchResult} displayProfileInformation={displayProfileInformation} search={search} />} />
           <Route path="login" element={<Login login={login} loginData={loginData} handleChange={handleChange} formData={formData} register={register} handleRegister={handleRegister} registerData={registerData}/>} />
           <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts} userProfile={userProfile} displayProfileInformation={displayProfileInformation} uploadFunds={uploadFunds}/>} />
           <Route path="products/:productId" element={<SinglePageProduct products={products} purchase={purchase} placeBid={placeBid} />}/>

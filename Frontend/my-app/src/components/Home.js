@@ -14,8 +14,8 @@ export default function Home(props) {
     if(props.searchResult){
 
         displayItems = props.searchResult.map(function(searchResult){
-            return <div key={searchResult.id}>
-            <Link to={`/products/${searchResult.id}`}>
+            return <div key={searchResult.productId}>
+            <Link to={`/products/${searchResult.productId}`}>
             <Product description={searchResult.description} 
             title={searchResult.name} 
             image={searchResult.photoUrl} 
@@ -44,11 +44,8 @@ export default function Home(props) {
     }
 
     /* Gets the selected sorting option and uploads it to the URL, re-renders the uploaded products on "Home Page" in the selected sorting option */
-    function sortItems(sorting){
-        let url = new URL(window.location.href)
-        url.searchParams.set("sort", sorting)
-        window.history.replaceState({}, "", url.toString())
-        props.displayAllProducts()
+    function sortItems(){
+        props.search()
     }
     
     return (
@@ -56,7 +53,7 @@ export default function Home(props) {
 
             {/* Sorting items section */}
             <div className="sort-items">
-            <select id="sort-options" onChange={(e) => sortItems(e.target.value)}>
+            <select id="sort-options" onChange={sortItems}>
                 <option value="">Sort by default</option>
                 <option value="asc">Sort by ascending</option>
                 <option value="desc">Sort by descending</option>
