@@ -146,7 +146,7 @@ public class UserServiceImpl implements UserService {
     userRepository.save(user.get());
     transactionService.save(
         user.get(),
-        "Added balance!",
+        "Added balance",
         true,
         balanceDb
     );

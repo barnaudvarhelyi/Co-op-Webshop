@@ -114,13 +114,13 @@ public class BidOrPurchaseServiceImpl implements BidOrPurchaseService {
     }
     transactionService.save(
         userService.findUserById(product.getOwner()),
-        "Sold: " + product.getName(),
+        product.getName(),
         true,
         product.getPurchasePrice()
     );
     transactionService.save(
         customer,
-        "Purchased: " + product.getName(),
+        product.getName(),
         false,
         product.getPurchasePrice()
     );
