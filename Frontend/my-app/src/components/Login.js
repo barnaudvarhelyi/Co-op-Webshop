@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom"
 export default function Login(props) {
 
     const navigate = useNavigate()
+
+    document.title = 'Login | Greenbay'
  
   /* Checks if the login datas are correct, and then navigates to the logged in user's profile, saves "token" and "username" to localstorage */  
   useEffect(()=> {
@@ -21,6 +23,7 @@ export default function Login(props) {
         loginForm.style.display = 'none'
         registerForm.style.display = 'flex'
         loginForm.reset()
+        document.title = 'Register | Greenbay'
     }
 
     /* Displays login form and resets the register form */
@@ -30,6 +33,7 @@ export default function Login(props) {
         loginForm.style.display = 'flex'
         registerForm.style.display = 'none'
         registerForm.reset()
+        document.title = 'Login | Greenbay'
     }
 
     return (

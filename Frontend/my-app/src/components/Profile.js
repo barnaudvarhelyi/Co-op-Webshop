@@ -46,7 +46,7 @@ export default function Profile(props){
         productForm.style.display = 'flex'
         addProduct.style.display = 'none'
     }
-    
+
     /* User uploads a product */
     async function uploadProduct(e){
         e.preventDefault()
@@ -69,14 +69,16 @@ export default function Profile(props){
     }
 
     /* User clicks on "Edit" button and enters "Editing mode" */
-    function editButton(){
+    const [editMode, setEditMode] = useState(false)
+    async function editButton(){
+        setEditMode(prevState => !prevState)
         const deleteBtn = document.querySelectorAll('.delete-btn')
         const editBtn = document.querySelectorAll('.edit-btn')
         deleteBtn.forEach(item => {
-            item.style.display = item.style.display == 'block' ? 'none' : 'block'
+            item.style.display = editMode === true ? 'none' : 'block'
         });
         editBtn.forEach(item => {
-            item.style.display = item.style.display == 'block' ? 'none' : 'block'
+            item.style.display = editMode === true ? 'none' : 'block'
         });
     }
 
@@ -100,6 +102,8 @@ export default function Profile(props){
             document.getElementById("purchasePrice").value = data.purchasePrice
             document.getElementById("startingPrice").value = data.startingPrice
             document.getElementById("addItem").style.display = "none"
+            document.querySelector("#checkboxBidding").style.display = 'none'
+            document.querySelector("#checkboxLabel").style.display = 'none'
             document.getElementById("editItem").style.display = "block"
             document.getElementById("editItem").style.display = "block"
             if(data.startingPrice){
@@ -109,7 +113,6 @@ export default function Profile(props){
             } else {
                 document.getElementById("startingPrice").style.display = 'none'
                 document.querySelector(".expiresAt").style.display = 'none'
-                document.querySelector("#checkboxBidding").style.display = 'block'
             }
             let url = new URL(window.location.href)
             url.searchParams.set("id", id)
@@ -126,6 +129,7 @@ export default function Profile(props){
             photoUrl: document.getElementById("photoUrl").value,
             startingPrice: document.getElementById("startingPrice").value,
             purchasePrice: document.getElementById("purchasePrice").value,
+            expiresAt: document.querySelector('.expiresAt').value
         }
         const res = await fetch(`http://localhost:8080/products/${id}`, {
             method: 'PUT',
@@ -148,6 +152,10 @@ export default function Profile(props){
         document.querySelector('.delete-alert').style.display = 'block'
         document.querySelector('.alert-overlay').style.display = 'block'
         deletedProduct = id
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        })
     }
 
     function cancelDelete(){
@@ -194,10 +202,12 @@ export default function Profile(props){
     let uploadedProductsCount
     let balance
     let activeBids
+    let displayTransactions
 
     const [visible, setVisible] = useState(4)
     function showMoreItems(){
         const btn = document.querySelector('.show-more')
+
         if(visible === 4){
             setVisible(props.userProfile.uploadedProducts.length)
             btn.innerText = "Show less items"
@@ -205,6 +215,15 @@ export default function Profile(props){
             setVisible(4)
             btn.innerText = "Show all items"
         }
+
+        const deleteBtn = document.querySelectorAll('.delete-btn')
+        const editBtn = document.querySelectorAll('.edit-btn')
+        deleteBtn.forEach(item => {
+            item.style.display = editMode === false ? 'none' : 'block'
+        });
+        editBtn.forEach(item => {
+            item.style.display = editMode === false ? 'none' : 'block'
+        });
     }
 
     if(props.userProfile){
@@ -224,6 +243,14 @@ export default function Profile(props){
             </div>
         })
 
+        // const emptyProducts = document.querySelector('.empty-products')
+
+        // if(uploadedProducts){
+        //     emptyProducts.style.display = "none"
+        // } else {
+        //     emptyProducts.style.display = "flex"
+        // }
+
         activeBids = props.userProfile.usersActiveBids.slice(0, visible).map(function(item){
             return <div className="product" key={item.productId}>
                 <Link to={`/products/${item.productId}`}>
@@ -237,10 +264,34 @@ export default function Profile(props){
             </div>
         })
 
+        // const emptyBids = document.querySelector('.empty-bids')
+
+        // if(props.userProfile.usersActiveBids){
+        //     emptyBids.style.display = "none"
+        // } else {
+        //     emptyBids.style.display = "flex"
+        // }
+
+        displayTransactions = props.userProfile.transactions.map(function(item){
+            return <tr key={item.transactionId}>
+                <td><i className={item.transaction === true ? "fa-solid fa-arrow-up" : "fa-solid fa-arrow-down"}></i></td>
+                <td>{item.name}</td>
+                <td>${item.amount}</td>
+            </tr>
+        })
+
         uploadedProductsCount = props.userProfile.uploadedProductsCount
         balance = props.userProfile.balance.balance
 
     }
+
+    useEffect(() => {
+        if(uploadedProductsCount > 0){
+            document.querySelector('.show-more-container').style.display = 'block'
+        } else {
+            document.querySelector('.show-more-container').style.display = 'none'
+        }
+    }, [uploadedProductsCount])
 
     /* User displays the fund options */
     function displayFunds(){
@@ -260,7 +311,6 @@ export default function Profile(props){
         document.querySelector('.funds-alert').style.display = 'block'
         document.querySelector('.alert-overlay').style.display = 'block'
         fund = amount
-        console.log(fund);
     }
 
     function cancelFunds(){
@@ -294,12 +344,18 @@ export default function Profile(props){
         })
     }
 
+    function logout(){
+        localStorage.clear()
+        navigate('/')
+        window.location.reload()
+    }
+
     return(
         <section className="profile">
 
             {/* Two main buttons on Profile page */}
             <div className="container">
-            <h3 className="balance">Your balance: {balance}</h3>
+            <h3 className="balance">Your balance: ${balance}</h3>
             <div className="add-item-animation btn-grad">
                 <div onClick={displayForm} className="btn-grad">
                     <h1>Create new item</h1>
@@ -324,7 +380,7 @@ export default function Profile(props){
                     <input type="number" name="purchasePrice" onChange={handleItem} placeholder="Purchase Price" step=".01" id="purchasePrice"/>
                     </div>
 
-                    <label htmlFor="forBid">Do you want to list your item for auction?</label>
+                    <label htmlFor="forBid" id="checkboxLabel">Do you want to list your item for auction?</label>
                     <input type="checkbox" name="forBid" onClick={(e) => toggleBidding(e)} id="checkboxBidding" />
 
                     <div className="auction">
@@ -373,13 +429,34 @@ export default function Profile(props){
             {/* Displays the user's uploaded products */}
             <div className="products">
                 {uploadedProducts}
+                {/* <div className="empty-products">
+                    <h1>There are no active bids currently.</h1>
+                </div> */}
             </div>
-            <button className="show-more" onClick={showMoreItems}>Show more items</button>
+            <div className="show-more-container">
+                <button className="show-more" onClick={showMoreItems}>Show more items</button>
+            </div>
+            
 
             <h1>Active bids</h1>
             <div className="products">
                 {activeBids}
+                {/* <div className="empty-bids">
+                    <h1>There are no active bids currently.</h1>
+                </div> */}
             </div>
+
+            <h1>Transactions</h1>
+            <table>
+                <tbody>
+                    <tr>
+                        <th>Transaction</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                    </tr>
+                    {displayTransactions}
+                </tbody>
+            </table>
 
             <div className="alert-overlay"></div>
             <div className="delete-alert">
@@ -387,6 +464,8 @@ export default function Profile(props){
                 <button className="cancel" onClick={cancelDelete}>Cancel</button>
                 <button className="confirm" onClick={confirmDelete}>Confirm</button>
             </div>
+
+            <button className="logout" onClick={logout}>Logout</button>
 
             </div>
         </section>
