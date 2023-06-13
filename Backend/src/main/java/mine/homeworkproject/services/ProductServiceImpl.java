@@ -158,12 +158,10 @@ public class ProductServiceImpl implements ProductService {
         randomProducts);
     return ResponseEntity.status(200).body(response);
   }
-
   @Override
   public Product findProductById(Long id) {
     return productRepository.findById(id).orElse(null);
   }
-
   @Override
   public ResponseEntity deleteProductById(Long id, HttpServletRequest request) {
     Object[] response = getUserProductAndAccess(id, request);
@@ -174,7 +172,6 @@ public class ProductServiceImpl implements ProductService {
     productRepository.delete(product);
     return ResponseEntity.status(200).body(new ResponseDto("Resource deleted successfully!"));
   }
-
   @Override
   public ResponseEntity editProductById(Long id, ProductCreateDto productCreateDto,
       HttpServletRequest request) {
@@ -198,7 +195,6 @@ public class ProductServiceImpl implements ProductService {
     product.setStartingPrice(productCreateDto.getStartingPrice());
     return ResponseEntity.status(200).body(productRepository.save(product));
   }
-
   @Override
   public List<ProductDto> search(String searchTerm) {
     List<Product> searchResults = productRepository.findByForSaleAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
