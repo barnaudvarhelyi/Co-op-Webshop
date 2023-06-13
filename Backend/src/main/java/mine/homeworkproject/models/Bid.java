@@ -1,5 +1,6 @@
 package mine.homeworkproject.models;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,15 +17,19 @@ public class Bid {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private Double amount;
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(cascade = CascadeType.REFRESH)
   @JoinColumn(name = "user_id")
   private User user;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(cascade = CascadeType.REFRESH)
   @JoinColumn(name = "product_id")
   private Product product;
 
-  public Bid() {
+  public Bid() {}
+  public Bid(Double amount, User user, Product product) {
+    this.amount = amount;
+    this.user = user;
+    this.product = product;
   }
 
   public Long getId() {

@@ -1,7 +1,7 @@
 package mine.homeworkproject;
 
 import mine.homeworkproject.models.User;
-import mine.homeworkproject.models.UserBalance;
+import mine.homeworkproject.models.Balance;
 import mine.homeworkproject.repositories.BalanceRepository;
 import mine.homeworkproject.repositories.UserRepository;
 import mine.homeworkproject.services.ProductService;
@@ -34,16 +34,19 @@ public class AppMain implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    UserBalance balance1 = new UserBalance(100.0);
-    UserBalance balance2 = new UserBalance(100.0);
-    UserBalance balance3 = new UserBalance(100.0);
+    Balance balance1 = new Balance(100.0);
+    Balance balance2 = new Balance(100.0);
+    Balance balance3 = new Balance(100.0);
+    Balance balance4 = new Balance(100.0);
     balanceRepository.save(balance1);
     balanceRepository.save(balance2);
     balanceRepository.save(balance3);
+    balanceRepository.save(balance4);
 
     userRepository.save(new User("Admin", "admin@gmail.com", passwordEncoder.encode("Admin"), "Admin", balance1));
     userRepository.save(new User("User", "user@gmail.com", passwordEncoder.encode("User"), "User", balance2));
     userRepository.save(new User("User2", "user2@gmail.com", passwordEncoder.encode("User2"), "User", balance3));
+    userRepository.save(new User("User3", "user3@gmail.com", passwordEncoder.encode("User3"), "User", balance4));
 
     productService.getRandomProductsFromAPI();
 

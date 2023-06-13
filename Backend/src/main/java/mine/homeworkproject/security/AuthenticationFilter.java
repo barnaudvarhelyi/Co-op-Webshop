@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import mine.homeworkproject.dtos.LoginResponseDto;
 import mine.homeworkproject.dtos.ResponseDto;
 import mine.homeworkproject.dtos.UserDto;
-import mine.homeworkproject.models.UserPrincipal;
+import mine.homeworkproject.dtos.UserPrincipalDto;
 import mine.homeworkproject.repositories.UserRepository;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -88,7 +88,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
       Authentication authResult)
       throws IOException {
 
-    UserPrincipal principal = (UserPrincipal) authResult.getPrincipal();
+    UserPrincipalDto principal = (UserPrincipalDto) authResult.getPrincipal();
     response.setStatus(200);
     String token =
         JWT.create()

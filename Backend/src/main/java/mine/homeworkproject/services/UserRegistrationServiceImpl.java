@@ -1,15 +1,14 @@
 package mine.homeworkproject.services;
 
 import mine.homeworkproject.dtos.BalanceDto;
-import mine.homeworkproject.dtos.RegistrationErrorDto;
 import mine.homeworkproject.dtos.RegistrationResponseDto;
 import mine.homeworkproject.dtos.ResponseDto;
 import mine.homeworkproject.dtos.UserRegistrationDto;
 import mine.homeworkproject.models.User;
-import mine.homeworkproject.models.UserBalance;
+import mine.homeworkproject.models.Balance;
 import mine.homeworkproject.repositories.BalanceRepository;
 import mine.homeworkproject.repositories.UserRepository;
-import mine.homeworkproject.security.UserRole;
+import mine.homeworkproject.enums.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -51,7 +50,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
       }
       return ResponseEntity.status(400).body(new ResponseDto(message));
     } else {
-      UserBalance newBalance = new UserBalance(0.00);
+      Balance newBalance = new Balance(0.00);
       balanceRepository.save(newBalance);
       passwordEncoder = new BCryptPasswordEncoder();
 
@@ -66,7 +65,6 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
       return ResponseEntity.status(200).body(new RegistrationResponseDto(user.getId(), user.getUsername(), new BalanceDto(newBalance)));
     }
   }
-
   private Boolean checkIfUsernameExists(String username) {
     return userRepository.findByUsername(username).orElse(null) != null;
   }

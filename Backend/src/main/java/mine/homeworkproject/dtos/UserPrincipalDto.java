@@ -1,17 +1,18 @@
-package mine.homeworkproject.models;
+package mine.homeworkproject.dtos;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import mine.homeworkproject.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class UserPrincipal implements UserDetails {
+public class UserPrincipalDto implements UserDetails {
 
   private User user;
 
-  public UserPrincipal(User user) {
+  public UserPrincipalDto(User user) {
     this.user = user;
   }
 

@@ -1,7 +1,13 @@
 package mine.homeworkproject.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.istack.Nullable;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -13,7 +19,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import mine.homeworkproject.dtos.ProductCreateDto;
 
 @Entity
 @Table(name = "products")
@@ -24,41 +29,60 @@ public class Product {
   private String name;
   private String description;
   private String photoUrl;
-  private Double startingPrice;
   private Double purchasePrice;
+  private LocalDateTime createdAt;
+  private Boolean forSale;
+  @Nullable
+  private Double startingPrice;
+  @Nullable
+  private LocalDateTime expiresAt;
+  @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
+  private List<Bid> bids;
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
-  private User user;
-  @OneToMany(mappedBy = "product")
-  private List<Bid> bids = new ArrayList<>();
+  @JoinColumn(name = "owner_id")
+  private User owner;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "uploader_id")
+  private User uploader;
 
   public Product() {
   }
 
-  public Product(String name, String description, String photoUrl, Double purchasePrice, Double startingPrice) {
+  public Product(
+      String name,
+      String description,
+      String photoUrl,
+      Double purchasePrice,
+      Double startingPrice,
+      LocalDateTime expiresAt
+  ) {
     this.name = name;
     this.description = description;
     this.photoUrl = photoUrl;
-    this.startingPrice = Math.round(startingPrice*100.0)/100.0;
+    this.createdAt = getFormattedCurrentTime(LocalDateTime.now());
     this.purchasePrice = Math.round(purchasePrice*100.0)/100.0;
+    this.expiresAt = expiresAt == null || expiresAt.equals("") ? null : getFormattedCurrentTime(expiresAt);
+    this.startingPrice = startingPrice == null ? null : Math.round(startingPrice*100.0)/100.0;
+    this.bids = new ArrayList<>();
+    this.forSale = true;
   }
-
+  private LocalDateTime getFormattedCurrentTime(LocalDateTime datetime) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    return LocalDateTime.parse(datetime.format(formatter), formatter);
+  }
   public Long getId() {
     return id;
   }
-
   public void setId(Long id) {
     this.id = id;
   }
-
-  public Long getUser() {
-    return user == null ? 1 : user.getId();
+  public Long getUploader() {
+    return uploader == null ? 1 : uploader.getId();
   }
-
-  public void setUser(User user) {
-    this.user = user;
+  public void setUploader(User user) {
+    this.uploader = user;
   }
-
   public String getName() {
     return name;
   }
@@ -89,11 +113,39 @@ public class Product {
   public void setPurchasePrice(Double purchasePrice) {
     this.purchasePrice = purchasePrice;
   }
+  public void setBid(Bid bid) {
+    this.bids.add(bid);
+  }
+  public void resetBids() {this.bids = new ArrayList<>(); }
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
+  public LocalDateTime getExpiresAt() {
+    return expiresAt;
+  }
+  public void setExpiresAt(LocalDateTime expiresAt) {
+    this.expiresAt = expiresAt;
+  }
+  public Long getOwner() {
+    return owner == null ? 1 : owner.getId();
+  }
+  public void setOwner(User owner) {
+    this.owner = owner;
+  }
+  public Boolean getForSale() {
+    return forSale;
+  }
+  public void setForSale(Boolean forSale) {
+    this.forSale = forSale;
+  }
   public List<Bid> getBids() {
     return bids;
   }
-  public void setBid(Bid bid) {
-    this.bids.add(bid);
+  public void setBids(List<Bid> bids) {
+    this.bids = bids;
   }
 
   @Override
@@ -107,13 +159,16 @@ public class Product {
     Product product = (Product) o;
     return Objects.equals(id, product.id) && Objects.equals(name, product.name)
         && Objects.equals(description, product.description) && Objects.equals(
-        photoUrl, product.photoUrl) && Objects.equals(startingPrice, product.startingPrice)
-        && Objects.equals(purchasePrice, product.purchasePrice) && Objects.equals(
-        user, product.user);
+        photoUrl, product.photoUrl) && Objects.equals(purchasePrice, product.purchasePrice)
+        && Objects.equals(createdAt, product.createdAt) && Objects.equals(
+        startingPrice, product.startingPrice) && Objects.equals(expiresAt,
+        product.expiresAt) && Objects.equals(uploader, product.uploader)
+        && Objects.equals(bids, product.bids);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, description, photoUrl, startingPrice, purchasePrice, user);
+    return Objects.hash(id, name, description, photoUrl, purchasePrice, createdAt, startingPrice,
+        expiresAt, uploader, bids);
   }
 }
