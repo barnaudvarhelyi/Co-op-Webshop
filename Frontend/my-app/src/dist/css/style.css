@@ -514,6 +514,14 @@ nav .search-bar {
   text-align: center;
   padding: 0.2em;
 }
+.profile .empty-products, .profile .empty-bids {
+  height: 200px;
+  background-color: rgba(128, 128, 128, 0.2);
+  border-radius: 1em;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
 
 /* Single Page Product Page */
 .single-product {
@@ -561,6 +569,34 @@ nav .search-bar {
   opacity: 0.3;
   display: none;
 }
+.single-product .bidding-alert {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 0.5em;
+  text-align: center;
+  padding: 1em;
+  z-index: 3;
+  display: none;
+}
+.single-product .bidding-alert button {
+  margin-left: 1em;
+  padding: 0.5em;
+  border: none;
+  border-radius: 0.5em;
+  margin-top: 0.5em;
+  cursor: pointer;
+}
+.single-product .bidding-alert .cancel {
+  background-color: #FF4C4C;
+  color: white;
+}
+.single-product .bidding-alert .confirm {
+  background-color: #2E8B57;
+  color: #FAF9F6;
+}
 .single-product .product-informations {
   display: flex;
   gap: 1em;
@@ -575,7 +611,6 @@ nav .search-bar {
   width: 100%;
 }
 .single-product .description {
-  border-bottom: 0.3rem solid #2E8B57;
   width: 10rem;
 }
 .single-product p {
@@ -619,6 +654,9 @@ nav .search-bar {
   cursor: pointer;
   width: 15em;
   margin-bottom: 1em;
+}
+.single-product .bidding-btn {
+  height: 100%;
 }
 .single-product #bidAmount {
   margin: 0em 0.5em 0.5em 0em;

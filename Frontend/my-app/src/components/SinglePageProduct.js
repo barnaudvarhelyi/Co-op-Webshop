@@ -49,6 +49,15 @@ export default function SingleProduct(props){
         document.querySelector('.alert-overlay').style.display = 'none'
     }
 
+    function biddingAlert(productId){
+        document.querySelector('.bidding-alert').style.display = 'block'
+        document.querySelector('.alert-overlay').style.display = 'block'
+        props.placeBid(productId)
+        setTimeout(function(){
+            navigate('/profile')
+        }, 1000)
+    }
+
     const navigate = useNavigate()
 
     function confirmPurchase(){
@@ -79,12 +88,15 @@ export default function SingleProduct(props){
                 <h3 className="description">Description</h3>
 
                 <p>{productPage.description}</p>
-
                 <h3>{productPage.expiresAt && "Auction ends at: " + productPage.expiresAt}</h3>
                 <h3>{productPage.startingPrice && "Staring Price: $" + productPage.startingPrice}</h3>
                 <div className="bidding-section">
                     {productPage.startingPrice && <input type="number" placeholder="Amount of bid" id="bidAmount" />}
-                    {productPage.startingPrice && <button className="bidding-btn" onClick={() => props.placeBid(productId)}>Place your bid</button>}
+                    {productPage.startingPrice && <button className="bidding-btn" onClick={() => biddingAlert(productId)}>Place your bid</button>}
+                </div>
+
+                <div className="bidding-alert">
+                    <h1 className="alert-title">{props.placeBid.message}</h1>
                 </div>
 
                 <h3>Purchase Price: ${productPage.purchasePrice}</h3>

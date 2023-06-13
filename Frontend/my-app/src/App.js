@@ -155,6 +155,7 @@ function App() {
       body: JSON.stringify({amount: bidAmount})
     })
     const data = await res.json()
+    document.querySelector('.alert-title').innerText = data.message
   }
 
   return (

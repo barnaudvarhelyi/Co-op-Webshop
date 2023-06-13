@@ -569,6 +569,10 @@ nav {
         @include alert-overlay;
     }
 
+    .bidding-alert {
+        @include alert;
+    }
+
     .product-informations {
         display: flex;
         gap: 1em;
@@ -586,7 +590,6 @@ nav {
     }
 
     .description {
-        border-bottom: 0.3rem solid $green-color;
         width: 10rem;
     }
 
@@ -638,6 +641,10 @@ nav {
         cursor: pointer;
         width: 15em;
         margin-bottom: 1em;
+    }
+
+    .bidding-btn {
+        height: 100%;
     }
 
     #bidAmount {
