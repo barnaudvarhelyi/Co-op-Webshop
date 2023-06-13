@@ -203,6 +203,8 @@ export default function Profile(props){
     let balance
     let activeBids
     let displayTransactions
+    const emptyProducts = document.querySelector('.empty-products')
+    const emptyBids = document.querySelector('.empty-bids')
 
     const [visible, setVisible] = useState(4)
     function showMoreItems(){
@@ -226,7 +228,7 @@ export default function Profile(props){
         });
     }
 
-    if(props.userProfile){
+    if(props.userProfile && emptyProducts){
 
         uploadedProducts = props.userProfile.uploadedProducts.slice(0, visible).map(function(item){
             return <div className="product" key={item.productId}>
@@ -243,13 +245,11 @@ export default function Profile(props){
             </div>
         })
 
-        // const emptyProducts = document.querySelector('.empty-products')
-
-        // if(uploadedProducts){
-        //     emptyProducts.style.display = "none"
-        // } else {
-        //     emptyProducts.style.display = "flex"
-        // }
+        if(props.userProfile.uploadedProductsCount > 0){
+            emptyProducts.style.display = "none"
+        } else {
+            emptyProducts.style.display = "flex"
+        }
 
         activeBids = props.userProfile.usersActiveBids.slice(0, visible).map(function(item){
             return <div className="product" key={item.productId}>
@@ -264,13 +264,11 @@ export default function Profile(props){
             </div>
         })
 
-        // const emptyBids = document.querySelector('.empty-bids')
-
-        // if(props.userProfile.usersActiveBids){
-        //     emptyBids.style.display = "none"
-        // } else {
-        //     emptyBids.style.display = "flex"
-        // }
+        if(props.userProfile.usersActiveBids.length > 0){
+            emptyBids.style.display = "none"
+        } else {
+            emptyBids.style.display = "flex"
+        }
 
         displayTransactions = props.userProfile.transactions.map(function(item){
             return <tr key={item.transactionId}>
@@ -286,7 +284,7 @@ export default function Profile(props){
     }
 
     useEffect(() => {
-        if(uploadedProductsCount > 0){
+        if(uploadedProductsCount > 4){
             document.querySelector('.show-more-container').style.display = 'block'
         } else {
             document.querySelector('.show-more-container').style.display = 'none'
@@ -429,9 +427,9 @@ export default function Profile(props){
             {/* Displays the user's uploaded products */}
             <div className="products">
                 {uploadedProducts}
-                {/* <div className="empty-products">
+                <div className="empty-products">
                     <h1>There are no active bids currently.</h1>
-                </div> */}
+                </div>
             </div>
             <div className="show-more-container">
                 <button className="show-more" onClick={showMoreItems}>Show more items</button>
@@ -441,9 +439,9 @@ export default function Profile(props){
             <h1>Active bids</h1>
             <div className="products">
                 {activeBids}
-                {/* <div className="empty-bids">
+                <div className="empty-bids">
                     <h1>There are no active bids currently.</h1>
-                </div> */}
+                </div>
             </div>
 
             <h1>Transactions</h1>

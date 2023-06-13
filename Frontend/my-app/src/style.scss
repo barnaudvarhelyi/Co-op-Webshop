@@ -543,14 +543,14 @@ nav {
         }
     }
 
-    // .empty-products, .empty-bids {
-    //     height: 200px;
-    //     background-color: rgba(gray, 0.2);
-    //     border-radius: 1em;
-    //     display: none;
-    //     justify-content: center;
-    //     align-items: center;
-    // }
+    .empty-products, .empty-bids {
+        height: 200px;
+        background-color: rgba(gray, 0.2);
+        border-radius: 1em;
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
 
 }
 
