@@ -4,14 +4,16 @@ package mine.homeworkproject.services;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import java.util.Comparator;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import mine.homeworkproject.dtos.ProductAPIDto;
-import mine.homeworkproject.dtos.ProductByIdResponsDto;
+import mine.homeworkproject.dtos.ProductAllDto;
+import mine.homeworkproject.dtos.ProductByIdResponseDto;
 import mine.homeworkproject.dtos.ProductCreateDto;
 import mine.homeworkproject.dtos.ProductDto;
 import mine.homeworkproject.dtos.ResponseDto;
@@ -24,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -41,8 +44,11 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public List<Product> getAllProducts() {
-    return productRepository.findAll();
+  public List<ProductAllDto> getAllAvailableProducts() {
+    return productRepository.findAllByForSale(true)
+        .stream()
+        .map(ProductAllDto::new)
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -61,17 +67,70 @@ public class ProductServiceImpl implements ProductService {
       if (response != null) {
         return response;
       }
-      Product product = new Product(productCreateDto.getName(), productCreateDto.getDescription(),
-          productCreateDto.getPhotoUrl(), productCreateDto.getPurchasePrice(),
-          productCreateDto.getStartingPrice());
-      product.setUser(user.get());
+      LocalDateTime expiresAt;
+      Double startingPrice;
+
+      if (productCreateDto.getForBid()) {
+        String expires = productCreateDto.getExpiresAt();
+        startingPrice = productCreateDto.getStartingPrice();
+        switch (expires) {
+          case "two_minutes": {
+            expiresAt = LocalDateTime.now().plusMinutes(2);
+            break;
+          }
+          case "five_minutes": {
+            expiresAt = LocalDateTime.now().plusMinutes(5);
+            break;
+          }
+          case "one_day": {
+            expiresAt = LocalDateTime.now().plusDays(1);
+            break;
+          }
+          case "three_days": {
+            expiresAt = LocalDateTime.now().plusDays(3);
+            break;
+          }
+          case "one_week": {
+            expiresAt = LocalDateTime.now().plusWeeks(1);
+            break;
+          }
+          case "two_weeks": {
+            expiresAt = LocalDateTime.now().plusWeeks(2);
+            break;
+          }
+          case "one_month": {
+            expiresAt = LocalDateTime.now().plusMonths(1);
+            break;
+          }
+          default: {
+            return ResponseEntity.status(400)
+                .body(new ResponseDto("Please provide a valid expiration time!"));
+          }
+        }
+        expiresAt = expiresAt.plusDays(1).withHour(12).withMinute(0).withSecond(0);
+      } else {
+        startingPrice = null;
+        expiresAt = null;
+      }
+      Product product = new Product
+          (productCreateDto.getName(),
+              productCreateDto.getDescription(),
+              productCreateDto.getPhotoUrl(),
+              productCreateDto.getPurchasePrice(),
+              startingPrice,
+              expiresAt);
+
+      product.setUploader(user.get());
+      product.setOwner(user.get());
       productRepository.save(product);
       return ResponseEntity.status(201).body(new ProductDto(product));
+
     } catch (ResponseStatusException e) {
       responseDto = new ResponseDto("Product creation error!");
       return ResponseEntity.status(e.getStatus()).body(responseDto);
     }
   }
+
   @Override
   public ResponseEntity getProductById(Long id) {
     Optional<Product> product = productRepository.findById(id);
@@ -81,14 +140,27 @@ public class ProductServiceImpl implements ProductService {
       return ResponseEntity.status(404).body(responseDto);
     }
     String user;
-    if (product.get().getUser() == null) {
+    Long userId;
+    if (product.get().getUploader() == null) {
       user = "Not given!";
+      userId = 1L;
     } else {
-      user = userService.findUserById(product.get().getUser()).getUsername();
+      User u = userService.findUserById(product.get().getUploader());
+      user = u.getUsername();
+      userId = u.getId();
     }
 
-    ProductByIdResponsDto response = new ProductByIdResponsDto(product.get(), user);
+    List<ProductDto> randomProducts = productRepository.findRandomProducts(PageRequest.of(0, 8))
+        .stream()
+        .map(ProductDto::new)
+        .collect(Collectors.toList());
+    ProductByIdResponseDto response = new ProductByIdResponseDto(product.get(), user, userId,
+        randomProducts);
     return ResponseEntity.status(200).body(response);
+  }
+  @Override
+  public Product findProductById(Long id) {
+    return productRepository.findById(id).orElse(null);
   }
   @Override
   public ResponseEntity deleteProductById(Long id, HttpServletRequest request) {
@@ -110,49 +182,78 @@ public class ProductServiceImpl implements ProductService {
     User user = (User) response[1];
     Product product = (Product) response[2];
 
-    product.setUser(user);
+    if (product.getExpiresAt() != null && product.getBids().size() > 0) {
+      return ResponseEntity.status(400)
+          .body(new ResponseDto("Product cannot be edited after someone has bid on it"));
+    }
+
+    product.setUploader(user);
     product.setName(productCreateDto.getName());
     product.setDescription(productCreateDto.getDescription());
     product.setPhotoUrl(productCreateDto.getPhotoUrl());
     product.setPurchasePrice(productCreateDto.getPurchasePrice());
     product.setStartingPrice(productCreateDto.getStartingPrice());
-
     return ResponseEntity.status(200).body(productRepository.save(product));
   }
   @Override
-  public ResponseEntity searchItemByStr(String searchItem) {
-    return ResponseEntity
-        .status(200)
-        .body(productRepository.findAll().stream()
-            .filter(p -> p.getName().toLowerCase().contains(searchItem.toLowerCase()) || p.getDescription().toLowerCase().contains(searchItem.toLowerCase()))
-            .collect(Collectors.toList()));
+  public List<ProductDto> search(String searchTerm) {
+    List<Product> searchResults = productRepository.findByForSaleAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+        true, searchTerm, searchTerm);
+    return convertToDto(searchResults);
   }
   @Override
-  public ResponseEntity sortProducts(String direction) {
-    ResponseEntity response;
-    if (direction.equals("asc")){
-      response = ResponseEntity.status(200).body(productRepository.findAll().stream()
-          .sorted(Comparator.comparingDouble(Product::getPurchasePrice))
-          .collect(Collectors.toList()));
-    } else if (direction.equals("desc")) {
-      response = ResponseEntity.status(200).body(productRepository.findAll().stream()
-          .sorted(Comparator.comparingDouble(Product::getPurchasePrice).reversed())
-          .collect(Collectors.toList()));
-    } else {
-       response = ResponseEntity.status(400).body(new ResponseDto("Bad request!"));
+  public List<ProductDto> searchAndSortByPurchasePriceAsc(String searchTerm) {
+    List<Product> searchResults = productRepository.findByForSaleAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrderByPurchasePriceAsc(
+        true, searchTerm, searchTerm);
+    return convertToDto(searchResults);
+  }
+  @Override
+  public List<ProductDto> sortByPurchasePriceAsc() {
+    List<Product> searchResults = productRepository.findByForSaleOrderByPurchasePriceAsc(true);
+    return convertToDto(searchResults);
+  }
+  @Override
+  public List<ProductDto> sortByPurchasePriceDesc() {
+    List<Product> searchResults = productRepository.findByForSaleOrderByPurchasePriceDesc(true);
+    return convertToDto(searchResults);
+  }
+  @Override
+  public List<ProductDto> searchAndSortByPurchasePriceDesc(String searchTerm) {
+    List<Product> searchResults = productRepository.findByForSaleAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrderByPurchasePriceDesc(
+        true, searchTerm, searchTerm);
+    return convertToDto(searchResults);
+  }
+  private List<ProductDto> convertToDto(List<Product> products) {
+    List<ProductDto> productDTOs = new ArrayList<>();
+    for (Product product : products) {
+      ProductDto productDTO = new ProductDto(product);
+      productDTOs.add(productDTO);
     }
-    return response;
+    return productDTOs;
+  }
+  @Override
+  public void saveProduct(Product product) {
+    productRepository.save(product);
   }
   @Override
   public void getRandomProductsFromAPI() {
+    int i = 0;
     for (ProductAPIDto p : parseResponse(getDataFromAPI())) {
       Product product = new Product(p.getTitle(), p.getDescription(), p.getImage(), p.getPrice(),
-          p.getPrice() * 0.8);
-      product.setUser(userService.findUserById(1L));
+          p.getPrice() * 0.7, null);
+      User u = userService.findUserById(1L);
+      product.setUploader(u);
+      product.setOwner(u);
+      if (i % 2 == 0) {
+        product.setExpiresAt(
+            product.getCreatedAt().plusDays(1).withHour(12).withMinute(0).withSecond(0));
+      } else {
+        product.setStartingPrice(null);
+      }
       productRepository.save(product);
+      i++;
     }
   }
-
   private Object[] getUserProductAndAccess(Long id, HttpServletRequest request) {
     Optional<Product> product = productRepository.findById(id);
     Optional<User> user = userService.getUserByToken(request);
@@ -163,7 +264,7 @@ public class ProductServiceImpl implements ProductService {
     if (!product.isPresent()) {
       return new Object[]{ResponseEntity.status(404).body(new ResponseDto("Product not found!"))};
     }
-    if (!product.get().getUser().equals(user.get().getId())) {
+    if (!product.get().getUploader().equals(user.get().getId())) {
       return new Object[]{ResponseEntity.status(403).body(new ResponseDto("Access denied!"))};
     }
     return new Object[]{null, user.get(), product.get()};
@@ -209,13 +310,19 @@ public class ProductServiceImpl implements ProductService {
     if (p.getDescription().equals("") || p.getDescription() == null
         || p.getPhotoUrl().equals("") || p.getPhotoUrl() == null
         || p.getName().equals("") || p.getName() == null
-        || Objects.isNull(p.getStartingPrice())
         || Objects.isNull(p.getPurchasePrice())
+        || p.getForBid() && Objects.isNull(p.getStartingPrice())
     ) {
       responseDto = new ResponseDto("Please provide valid inputs!");
       return ResponseEntity.status(400).body(responseDto);
     }
-    if (p.getPurchasePrice() <= 0 || p.getStartingPrice() <= 0) {
+    if (p.getForBid()) {
+      if (p.getStartingPrice() <= 0) {
+        responseDto = new ResponseDto("Please provide valid numbers!");
+        return ResponseEntity.status(400).body(responseDto);
+      }
+    }
+    if (p.getPurchasePrice() <= 0) {
       responseDto = new ResponseDto("Please provide valid numbers!");
       return ResponseEntity.status(400).body(responseDto);
     }

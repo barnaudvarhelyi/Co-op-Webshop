@@ -1,5 +1,5 @@
-import { Link, json } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
+import { useEffect } from "react"
 import Product from './Product';
 
 export default function Home(props) {
@@ -8,46 +8,59 @@ export default function Home(props) {
         props.displayAllProducts()
       }, [])
 
-    let displayItems = ""
+    let displayItems
 
+    /* Displays uploaded products on "Home Page" and re-renders if the user sorts the items */
     if(props.searchResult){
+
         displayItems = props.searchResult.map(function(searchResult){
-            return <div key={searchResult.id}>
+            return <div key={searchResult.productId}>
+            <Link to={`/products/${searchResult.productId}`}>
             <Product description={searchResult.description} 
             title={searchResult.name} 
             image={searchResult.photoUrl} 
             purchasePrice={searchResult.purchasePrice} 
             startingPrice={searchResult.startingPrice} />
-            <Link to={`/products/${searchResult.id}`}>More information</Link>
+            <p>More information</p>
+            </Link>
             </div>
         })
+        
     } else if(props.products){
+
         displayItems = props.products.map(function(product){
             return <div key={product.id}>
+            <Link to={`/products/${product.id}`}>
             <Product description={product.description} 
             title={product.name} 
             image={product.photoUrl} 
             purchasePrice={product.purchasePrice} 
             startingPrice={product.startingPrice} />
-            <Link to={`/products/${product.id}`}>More information</Link>
+            <p>More information</p>
+            </Link>
             </div>
         })
+
     }
 
-    function sortItems(sorting){
-        let url = new URL(window.location.href)
-        url.searchParams.set("sort", sorting)
-        window.history.replaceState({}, "", url.toString())
-        props.displayAllProducts()
+    /* Gets the selected sorting option and uploads it to the URL, re-renders the uploaded products on "Home Page" in the selected sorting option */
+    function sortItems(){
+        props.search()
     }
     
     return (
         <div>
-            <ul className="sorting-menu">
-                <li onClick={() => sortItems()}>Sort by default</li>
-                <li onClick={() => sortItems('desc')}>Sort by ascending</li>
-                <li onClick={() => sortItems('asc')}>Sort by descending</li>
-            </ul>
+
+            {/* Sorting items section */}
+            <div className="sort-items">
+            <select id="sort-options" onChange={sortItems}>
+                <option value="">Sort by default</option>
+                <option value="asc">Sort by ascending</option>
+                <option value="desc">Sort by descending</option>
+            </select>
+            </div>
+
+            {/* Display uploaded products on "Home Page" */}
             <div className="products">
                 {displayItems}
             </div>

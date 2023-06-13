@@ -1,17 +1,17 @@
-import logo from './logo.svg';
-import './App.css';
-import './style.scss';
 import React from 'react'
 import { useState, useEffect } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import Navbar from './components/Navbar';
+import './style.scss';
 import Home from './components/Home';
 import Login from './components/Login';
+import Navbar from './components/Navbar';
 import Profile from './components/Profile';
-import SingleProduct from './components/SingleProduct';
+import SinglePageProduct from './components/SinglePageProduct';
+import UploaderProfile from './components/UploaderProfile';
 
 function App() {
 
+  /* Login section */
   const [loginData, setLoginData] = useState([])
 
   const [formData, setFormData] = useState({
@@ -29,6 +29,22 @@ function App() {
       })
   }
 
+  function login(e){
+    e.preventDefault()
+
+    fetch('http://localhost:8080/login', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+    })
+    .then(res => res.json())
+    .then(data => setLoginData(data))
+    .catch(err => console.log("Error: " + err))
+}
+
+  /* Register section */
   const [registerData, setRegisterData] = useState({
       username: '',
       email: '',
@@ -45,21 +61,6 @@ function App() {
       })
   }
 
-  function submitForm(e){
-      e.preventDefault()
-
-      fetch('http://localhost:8080/login', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-      })
-      .then(res => res.json())
-      .then(data => setLoginData(data))
-      .catch(err => console.log("Error: " + err))
-  }
-
   async function register(e){
     e.preventDefault()
     const res = await fetch('http://localhost:8080/register', {
@@ -70,7 +71,6 @@ function App() {
       body: JSON.stringify(registerData)
     })
     const data = res.json()
-    console.log(res, data);
     if(res.status === 200){
       const loginForm = document.querySelector('#loginForm')
       const registerForm = document.querySelector('#registerForm')
@@ -81,38 +81,42 @@ function App() {
     }
   }
 
-  const [products, setProducts] = useState([])
+  /* Displaying products section */
+  const [products, setProducts] = useState()
 
   async function displayAllProducts(){
-    let url = new URL(window.location.href)
-    const sort = url.searchParams.get("sort")
-    window.history.replaceState({}, "", url.toString())
-    let fetchUrl
-    if(sort === 'desc'){
-      fetchUrl = 'http://localhost:8080/products/sort/desc'
-    } else if (sort === 'asc'){
-      fetchUrl = 'http://localhost:8080/products/sort/asc'
-    } else {
-      fetchUrl = 'http://localhost:8080/api/products/all'
-      window.history.replaceState({}, "", url.origin + url.pathname)
-    }
-    const res = await fetch(fetchUrl)
+    const res = await fetch('http://localhost:8080/products/all')
     const data = await res.json()
     setProducts(data)
+    document.title = 'Greenbay'
   }
 
+  /* Searchbar */
+  const [searchResult, setSearchResult] = useState()
+
+  async function search(){
+    const searchBar = document.querySelector('.search-bar').value
+    const sortOptions = document.querySelector('#sort-options').value
+    const res = await fetch(`http://localhost:8080/search?keyword=${searchBar}&sort=${sortOptions}`)
+    const data = await res.json()
+    setSearchResult(data)
+  }
+
+  /* User's profile section */
   const [userProfile, setUserProfile] = useState()
 
-  function displayProfileInformations(){
-    fetch('http://localhost:8080/profile', {
+  async function displayProfileInformation(){
+    const res = await fetch('http://localhost:8080/profile', {
       headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`
       }
     })
-    .then(res => res.json())
-    .then(data => setUserProfile(data))
+    const data = await res.json()
+    setUserProfile(data)
+    document.title = `${data.username} | Greenbay`
   }
 
+  /* Updating balance section */
   async function uploadFunds(fund){
     const res = await fetch('http://localhost:8080/balance', {
     method: 'POST',
@@ -123,25 +127,46 @@ function App() {
     body: JSON.stringify({balance: fund})
     })
     const data = await res.json()
-    displayProfileInformations()
+    displayProfileInformation()
 }
 
-  const [searchResult, setSearchResult] = useState()
-
-  async function searchBar(result){
-    const res = await fetch(`http://localhost:8080/products/search?search=${result}`)
+  /* Purchase item */
+  async function purchase(productId){
+    const res = await fetch(`http://localhost:8080/purchase?productId=${productId}`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
+      }
+    })
     const data = await res.json()
-    setSearchResult(data)
+    document.querySelector('.alert-title').innerText = data.message
+  }
+
+  /* Place a bid */
+  async function placeBid(productId){
+    const bidAmount = document.getElementById('bidAmount').value
+    const res = await fetch(`http://localhost:8080/bid?productId=${productId}`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
+      },
+      body: JSON.stringify({amount: bidAmount})
+    })
+    const data = await res.json()
+    document.querySelector('.alert-title').innerText = data.message
   }
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navbar userProfile={userProfile} searchBar={searchBar} />}>
-          <Route index element={<Home products={products} displayAllProducts={displayAllProducts} searchResult={searchResult} displayProfileInformations={displayProfileInformations}/>} />
-          <Route path="login" element={<Login loginData={loginData} submitForm={submitForm} handleChange={handleChange} formData={formData} register={register} registerData={registerData} handleRegister={handleRegister}/>} />
-          <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts} userProfile={userProfile} displayProfileInformations={displayProfileInformations} uploadFunds={uploadFunds}/>} />
-          <Route path="products/:productId" element={<SingleProduct products={products} />}/>
+        <Route path="/" element={<Navbar userProfile={userProfile} search={search} />}>
+          <Route index element={<Home products={products} displayAllProducts={displayAllProducts} searchResult={searchResult} displayProfileInformation={displayProfileInformation} search={search} />} />
+          <Route path="login" element={<Login login={login} loginData={loginData} handleChange={handleChange} formData={formData} register={register} handleRegister={handleRegister} registerData={registerData}/>} />
+          <Route path="profile" element={<Profile products={products} displayAllProducts={displayAllProducts} userProfile={userProfile} displayProfileInformation={displayProfileInformation} uploadFunds={uploadFunds}/>} />
+          <Route path="products/:productId" element={<SinglePageProduct products={products} purchase={purchase} placeBid={placeBid} />}/>
+          <Route path="user/:username" element={<UploaderProfile />}/>
         </Route>
       </Routes>
     </BrowserRouter>

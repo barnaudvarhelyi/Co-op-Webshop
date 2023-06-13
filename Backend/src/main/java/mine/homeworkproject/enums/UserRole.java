@@ -1,4 +1,4 @@
-package mine.homeworkproject.security;
+package mine.homeworkproject.enums;
 public enum UserRole {
   Admin,
   User

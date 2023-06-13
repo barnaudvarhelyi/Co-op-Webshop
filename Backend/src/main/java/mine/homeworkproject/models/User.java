@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -20,7 +19,6 @@ import mine.homeworkproject.dtos.BalanceDto;
 @Entity
 @Table(name = "users")
 public class User {
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -28,25 +26,31 @@ public class User {
   private String email;
   private String password;
   private String role;
-  @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH)
-  private List<Product> products;
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
   @JoinColumn(name = "balance_id")
-  private UserBalance balance;
-
-  @OneToMany(mappedBy = "user")
+  private Balance balance;
+  @OneToMany(mappedBy = "uploader", fetch = FetchType.LAZY)
+  private List<Product> uploadedProducts;
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
   private List<Bid> bids;
+  @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+  private List<Product> ownedProducts;
 
-  public User() {
-  }
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+  private List<Transaction> userTransactions;
 
-  public User(String username, String email, String password, String role, UserBalance balance) {
+  public User() {}
+
+  public User(String username, String email, String password, String role, Balance balance) {
     this.username = username;
     this.email = email;
     this.password = password;
     this.role = role;
     this.balance = balance;
     this.bids = new ArrayList<>();
+    this.ownedProducts = new ArrayList<>();
+    this.uploadedProducts = new ArrayList<>();
+    this.userTransactions = new ArrayList<>();
   }
 
   public User(Long id, String username) {
@@ -87,39 +91,47 @@ public class User {
   public void setRole(String role) {
     this.role = role;
   }
-  public BalanceDto getBalance() {
+  public void setBalance(Balance balance) {this.setBalance(balance);}
+  public BalanceDto getBalanceAsDto() {
     return new BalanceDto(this.balance);
   }
-  public void setBalance(Double balance) {
-    this.balance.setBalance(this.balance.getBalance() + balance);
-  }
-  public void setBalance(UserBalance balance) {this.setBalance(balance);}
+  public Balance getBalance() {return this.balance; }
+  public void setPlusBalance(Double balance) { this.balance.setBalance(this.getBalanceAsDto().getBalance() + balance); }
+  public void setMinusBalance(Double balance) { this.balance.setBalance(this.getBalanceAsDto().getBalance() - balance); }
   public List<Bid> getBids() {
     return bids;
   }
   public void setBids(Bid bid) {
     this.bids.add(bid);
   }
-  public void setOnLicit(Double onLicit) {
-    this.balance.setBalance(this.balance.getBalance() - onLicit);
-    this.balance.setOnLicit(this.balance.getOnLicit() + onLicit);
-  }
+  public void setPlusOnLicit(Double onLicit) { this.balance.setOnLicit(this.balance.getOnLicit() + onLicit); }
+  public void setMinusOnLicit(Double onLicit) { this.balance.setOnLicit(this.balance.getOnLicit() - onLicit); }
   public List<String> getRoleList() {
     if (this.role.length() > 0) {
       return Arrays.asList(this.role.split(","));
     }
     return new ArrayList<>();
   }
-  public List<Long> getProducts() {
-
+  public List<Long> getUploadedProducts() {
     List<Long> longs = new ArrayList<>();
-    for (Product i : products) {
+    for (Product i : uploadedProducts) {
       longs.add(i.getId());
     }
     return longs;
   }
-  public void setProducts(List<Product> products) {
-    this.products = products;
+  public void setUploadedProducts(Product product) {
+    this.uploadedProducts.add(product);
+  }
+  public List<Product> getOwnedProducts(){return ownedProducts;}
+  public void setOwnedProducts(Product product) {
+    this.ownedProducts.add(product);
+  }
+  public List<Transaction> getUserTransactions() {
+    return userTransactions;
+  }
+  public void setUserTransactions(
+      List<Transaction> userTransactions) {
+    this.userTransactions = userTransactions;
   }
 
   @Override
@@ -134,11 +146,29 @@ public class User {
     return Objects.equals(id, user.id) && Objects.equals(username, user.username)
         && Objects.equals(email, user.email) && Objects.equals(password,
         user.password) && Objects.equals(role, user.role) && Objects.equals(
-        products, user.products);
+        balance, user.balance) && Objects.equals(uploadedProducts, user.uploadedProducts)
+        && Objects.equals(bids, user.bids) && Objects.equals(ownedProducts,
+        user.ownedProducts);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, username, email, password, role, products);
+    return Objects.hash(id, username, email, password, role, balance, uploadedProducts, bids,
+        ownedProducts);
+  }
+
+  @Override
+  public String toString() {
+    return "User{" +
+        "id=" + id +
+        ", username='" + username + '\'' +
+        ", email='" + email + '\'' +
+        ", password='" + password + '\'' +
+        ", role='" + role + '\'' +
+        ", uploadedProducts=" + uploadedProducts +
+        ", balance=" + balance +
+        ", bids=" + bids +
+        ", ownedProducts=" + ownedProducts +
+        '}';
   }
 }

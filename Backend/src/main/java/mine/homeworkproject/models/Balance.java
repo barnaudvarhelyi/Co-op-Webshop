@@ -1,20 +1,16 @@
 package mine.homeworkproject.models;
 
-import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "balance")
-public class UserBalance {
+public class Balance {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -23,11 +19,11 @@ public class UserBalance {
 
   @OneToOne(mappedBy = "balance", cascade = CascadeType.REFRESH)
   private User user;
-  public UserBalance() {
+  public Balance() {
     this.balance = 0.00;
     this.onLicit = 0.00;
   }
-  public UserBalance(Double balance) {
+  public Balance(Double balance) {
     this.balance = balance;
     this.onLicit = 0.00;
   }

@@ -1,7 +1,10 @@
 package mine.homeworkproject.controllers;
 
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import mine.homeworkproject.dtos.ProductAllDto;
 import mine.homeworkproject.dtos.ProductCreateDto;
+import mine.homeworkproject.dtos.ProductDto;
 import mine.homeworkproject.dtos.ResponseDto;
 import mine.homeworkproject.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,23 +23,35 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ProductsController {
-
   private final ProductService productService;
   @Autowired
   public ProductsController(ProductService productService) {
     this.productService = productService;
   }
-  @GetMapping("/products/search")
-  public ResponseEntity searchProductsByStr(@RequestParam(required = false, defaultValue = "") String search) {
-    return productService.searchItemByStr(search);
+  @GetMapping("/products/all")
+  public List<ProductAllDto> getAllProducts() {
+    return productService.getAllAvailableProducts();
   }
-  @GetMapping("/products/sort/{direction}")
-  public ResponseEntity sortProducts(@PathVariable(required = false) String direction){
-    return productService.sortProducts(direction);
-  }
+  @GetMapping("/search")
+  public ResponseEntity searchProducts(@RequestParam(required = false, defaultValue = "") String keyword,
+      @RequestParam(required = false, defaultValue = "default") String sort) {
+    List<ProductDto> products;
 
+    if ("asc".equalsIgnoreCase(sort) && keyword.equals("")) {
+      products = productService.sortByPurchasePriceAsc();
+    } else if ("esc".equalsIgnoreCase(sort) && keyword.equals("")) {
+      products = productService.sortByPurchasePriceDesc();
+    } else if ("asc".equalsIgnoreCase(sort)) {
+      products = productService.searchAndSortByPurchasePriceAsc(keyword);
+    } else if ("desc".equalsIgnoreCase(sort)) {
+      products = productService.searchAndSortByPurchasePriceDesc(keyword);
+    } else {
+      products = productService.search(keyword);
+    }
+    return ResponseEntity.status(200).body(products);
+  }
   @RequestMapping(value = "/products", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, params = "id")
-  public ResponseEntity<?> handleProduct(@RequestParam("id") Long id, @RequestBody ProductCreateDto productCreateDto, HttpServletRequest request) {
+  public ResponseEntity handleProduct(@RequestParam("id") Long id, @RequestBody ProductCreateDto productCreateDto, HttpServletRequest request) {
     ResponseEntity<?> response;
     String method = request.getMethod();
 
@@ -53,7 +68,6 @@ public class ProductsController {
     }
     return response;
   }
-
   @GetMapping("/products/{id}")
   public ResponseEntity getProductById(@PathVariable Long id) {
     return productService.getProductById(id);

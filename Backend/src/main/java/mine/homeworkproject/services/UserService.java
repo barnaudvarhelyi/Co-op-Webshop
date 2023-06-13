@@ -10,14 +10,12 @@ import org.springframework.http.ResponseEntity;
 
 public interface UserService {
   User findUserByUsername(String username);
-
   List<User> findAllUsers();
-
   User findUserById(Long id);
-
   Optional<User> getUserByToken(HttpServletRequest request);
-
   ResponseEntity getUserProfile(HttpServletRequest request);
-
   ResponseEntity addBalance(HashMap<String, String> balance, HttpServletRequest request);
+  ResponseEntity getUserProfileById(String username);
+  void save(User user);
+  User findUserByIdWithOwnedProducts(Long id);
 }
